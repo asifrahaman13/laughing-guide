@@ -13,9 +13,9 @@ export default {
         foreground: "var(--foreground)",
       },
 
-      backgroundColor:{
-        "lime-green": "#02B9B0"
-      }
+      backgroundColor: {
+        "lime-green": "#02B9B0",
+      },
     },
   },
   plugins: [],

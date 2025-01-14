@@ -23,7 +23,6 @@ const MANAGE = [
   },
 ];
 
-
 const employees: Employee[] = [
   {
     id: 1,
