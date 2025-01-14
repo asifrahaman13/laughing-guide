@@ -45,6 +45,9 @@ func main() {
 	r.POST("/upload", handler.UploadHandler)
 	r.GET("/calculate-payroll", handler.CalculatePayrollHandler)
 
+
+	r.GET("/employees", handler.GetEmployeesHandler)
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"

@@ -45,6 +45,8 @@ func UploadHandler(c *gin.Context) {
 		return
 	}
 
+	var values []interface{}
+	query := `INSERT INTO employees (employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses) VALUES `
 	for i, row := range records {
 		if i == 0 {
 			continue
@@ -52,12 +54,15 @@ func UploadHandler(c *gin.Context) {
 		salary, _ := strconv.ParseFloat(row[6], 64)
 		age, _ := strconv.Atoi(row[9])
 		bonuses, _ := strconv.ParseFloat(row[10], 64)
-		_, err := database.Database.Exec(`INSERT INTO employees (employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			row[0], row[1], row[2], row[3], row[4], row[5], salary, row[7], row[8], age, bonuses)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not save employee data to database"})
-			return
-		}
+		query += `(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?),`
+		values = append(values, row[0], row[1], row[2], row[3], row[4], row[5], salary, row[7], row[8], age, bonuses)
+	}
+	query = query[:len(query)-1]
+
+	_, err = database.Database.Exec(query, values...)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not save employee data to database"})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Employees uploaded successfully"})
@@ -101,4 +106,32 @@ func CalculatePayrollHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, results)
+}
+
+func GetEmployeesHandler(c *gin.Context) {
+	rows, err := database.Database.Query("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve employee data"})
+		return
+	}
+	defer rows.Close()
+
+	var employees []Employee
+
+	for rows.Next() {
+		var employee Employee
+		err := rows.Scan(&employee.EmployeeID, &employee.EmployeeProfile, &employee.EmployeeEmail, &employee.EmployeeName, &employee.EmployeeRole, &employee.EmployeeStatus, &employee.EmployeeSalary, &employee.EmployeeJobType, &employee.EmployeeResident, &employee.EmployeeAge, &employee.Bonuses)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not scan employee data"})
+			return
+		}
+		employees = append(employees, employee)
+	}
+
+	if err = rows.Err(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error iterating over employee data"})
+		return
+	}
+
+	c.JSON(http.StatusOK, employees)
 }
