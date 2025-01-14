@@ -15,7 +15,6 @@ func InitDB() {
 		log.Fatal(err)
 	}
 
-	// Create the employees table if it doesn't exist
 	createTableSQL := `CREATE TABLE IF NOT EXISTS employees (
 		employee_id TEXT PRIMARY KEY,
 		employee_profile TEXT,

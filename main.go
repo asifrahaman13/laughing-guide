@@ -38,7 +38,6 @@ func main() {
 
 	r := gin.Default()
 
-	// Add CORS middleware
 	r.Use(cors.Default())
 
 	r.GET("/health", func(c *gin.Context) {
