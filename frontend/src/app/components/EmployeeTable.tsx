@@ -33,7 +33,7 @@ export default function EmployeeTable({ employees }: EmployeeTableProps) {
                   <div className="flex items-center ">
                     <Link
                       href="/dashboard/claims"
-                      className="text-blue-700 border-b-2 border-blue-700"
+                      className="text-[#02b9b0] border-b-2 border-[#02b9b0]"
                     >
                       {employee?.employeeName}
                     </Link>

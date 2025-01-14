@@ -53,12 +53,12 @@ export default function Layout({ children }: LayoutProps) {
                 </Link>
               ))}
             </div>
-            {/* <button
+            <button
               className="bg-teal-500 text-white py-2 px-4 mt-4 mx-4 rounded-lg"
               onClick={toggleModal}
             >
-              Bulk Employeesdf
-            </button> */}
+              Bulk Employees
+            </button>
           </div>
 
           {/* Plan Info */}
@@ -98,7 +98,7 @@ export default function Layout({ children }: LayoutProps) {
         </div>
 
         {/* Main Content */}
-        <div className="w-5/6 h-full overflow-y-scroll bg-gray-100">
+        <div className="w-5/6 h-full overflow-y-scroll bg-lime-gray">
           {children}
         </div>
 

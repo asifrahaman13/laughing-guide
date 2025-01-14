@@ -12,7 +12,7 @@ interface ArcProps {
   portions: number[];
 }
 
-const colors = ["#d6d66f", "#33FF57", "#3357FF", "#5bd9fc"];
+const colors = ["#02b9b0", "#b3bebe", "#b774fc", "#fac905"];
 
 function HollowCircle({ portions }: ArcProps) {
   const radius = 50;
@@ -83,7 +83,7 @@ export default function EmployeeStatistics({
   console.log("The portions", portions);
 
   return (
-    <div className="bg-white p-4 py-6 rounded-xl h-full w-2/5 flex flex-col">
+    <div className="bg-white border p-4 py-6 rounded-xl h-full w-2/5 flex flex-col">
       <div className="h-2/3 flex justify-between">
         <div className="flex flex-col gap-2">
           <div className="text-sm">{title}</div>

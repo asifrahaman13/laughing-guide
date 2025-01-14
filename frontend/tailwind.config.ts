@@ -15,6 +15,7 @@ export default {
 
       backgroundColor: {
         "lime-green": "#02B9B0",
+        "lime-gray": "#f9fcfc",
       },
     },
   },

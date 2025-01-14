@@ -8,7 +8,7 @@ interface EmployeeStatisticsProps {
   employeeType: EmploymentType | null;
 }
 
-const colors = ["#33FF57", "#3357FF", "#FF5733", "#FFC300"];
+const colors = ["#fac905", "#b3bebe", "#02b9b0", "#b774fc"];
 
 function LineChart({ portions }: { portions: number[] }) {
   return (
@@ -50,7 +50,7 @@ export default function EmployeeLine({
   ];
 
   return (
-    <div className="bg-white p-4 py-6 rounded-xl h-full w-2/5 flex flex-col">
+    <div className="bg-white border p-4 py-6 rounded-xl h-full w-2/5 flex flex-col">
       <div className="h-2/3 flex justify-between">
         <div className="flex flex-col gap-2">
           <div className="text-sm">{title}</div>

@@ -12,7 +12,7 @@ interface ArcProps {
   portions: number[];
 }
 
-const colors = ["#d6d66f", "#33FF57", "#3357FF"];
+const colors = ["#fac905", "#b3bebe", "#02b9b0", "#b774fc"];
 
 function HalfCircle({ portions }: ArcProps) {
   const radius = 50;
@@ -81,7 +81,7 @@ export default function EmployeeStatus({
   ];
 
   return (
-    <div className="bg-white p-4 py-6 rounded-xl h-full w-2/5 flex flex-col">
+    <div className="bg-white p-4 border py-6 rounded-xl h-full w-2/5 flex flex-col">
       <div className="h-2/3 flex justify-between">
         <div className="flex flex-col gap-2">
           <div className="text-sm">{title}</div>

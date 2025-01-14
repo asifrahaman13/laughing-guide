@@ -34,7 +34,7 @@ export default function EmployeeList() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-full bg-gray-100">
+    <div className="flex flex-col w-full h-full">
       <div className="bg-white p-2 lg:p-4 h-16 flex justify-between items-center">
         <div className="font-medium text-xl">Employees</div>
         <div>
