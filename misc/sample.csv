@@ -1,0 +1,6 @@
+EmployeeID,EmployeeProfile,EmployeeEmail,EmployeeName,EmployeeRole,EmployeeStatus,EmployeeSalary,EmployeeJobType,EmployeeResident,EmployeeAge,Bonuses
+1,Profile 1,johndoe@example.com,John Doe,Software Engineer,Active,4000,Full-time,Citizen,30,500
+2,Profile 2,janesmith@example.com,Jane Smith,Data Analyst,Active,6000,Full-time,PR,45,300
+3,Profile 3,marklee@example.com,Mark Lee,Project Manager,Active,8000,Full-time,Citizen,50,700
+4,Profile 4,susanlim@example.com,Susan Lim,HR Manager,Active,3000,Part-time,PR,65,200
+5,Profile 5,kevinchoo@example.com,Kevin Choo,Marketing Executive,Inactive,3500,Full-time,Citizen,40,0

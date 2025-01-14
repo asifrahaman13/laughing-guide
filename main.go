@@ -12,7 +12,20 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/asifrahaman13/laughing-guide/src/handler"
 )
+
+type Employee struct {
+	EmployeeID       string `json:"employeeId"`
+	EmployeeProfile  string `json:"employeeProfile"`
+	EmployeeEmail    string `json:"employeeEmail"`
+	EmployeeName     string `json:"employeeName"`
+	EmployeeRole     string `json:"employeeRole"`
+	EmployeeStatus   string `json:"employeeStatus"`
+	EmployeeSalary   string `json:"employeeSalary"`
+	EmployeeJobType  string `json:"employeeJobType"`
+	EmployeeResident string `json:"employeeResident"`
+}
 
 func main() {
 
@@ -32,6 +45,8 @@ func main() {
 	}
 
 	r := gin.Default()
+
+	r.POST("/upload", handler.UploadHandler)
 
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
