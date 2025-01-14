@@ -1,7 +1,6 @@
-# HR Payroll system
+# Blazing fast HR payroll system.⚡⚡
 
-Repository to deal with HR payroll system
-
+A blazing fast HR payroll system designed to deal with simplicity as well as blazing fast speed. The application is capable of handling thousands of files concurrently making it extremely efficient for HR payroll system.
 
 ## Backend
 
@@ -14,7 +13,6 @@ Create a .env file from the .env.example file
 ```bash
 mv .env.example .env
 ```
-
 
 Next enter your AWS credentials. Ensure you enter correct access keys as well as the regions.
 

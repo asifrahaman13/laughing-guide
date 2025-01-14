@@ -53,12 +53,12 @@ export default function Layout({ children }: LayoutProps) {
                 </Link>
               ))}
             </div>
-            <button
+            {/* <button
               className="bg-teal-500 text-white py-2 px-4 mt-4 mx-4 rounded-lg"
               onClick={toggleModal}
             >
               Bulk Employees
-            </button>
+            </button> */}
           </div>
 
           {/* Plan Info */}
