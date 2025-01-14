@@ -12,7 +12,7 @@ interface ArcProps {
   portions: number[];
 }
 
-const colors = ["#fac905", "#b3bebe", "#02b9b0", "#b774fc"];
+const colors = ["#fac905", "#02b9b0", "#b774fc"];
 
 function HalfCircle({ portions }: ArcProps) {
   const radius = 50;

@@ -3,8 +3,8 @@ EmployeeID,EmployeeProfile,EmployeeEmail,EmployeeName,EmployeeRole,EmployeeStatu
 2,Profile 2,janesmith@example.com,Jane Smith,Data Analyst,Payroll Only,6000,Full time,PR,45,300
 3,Profile 3,marklee@example.com,Mark Lee,Project Manager,Active,8000,Intern,Citizen,50,700
 4,Profile 4,susanlim@example.com,Susan Lim,HR Manager,Active,3000,Part time,PR,65,200
-5,Profile 5,kevinchoo@example.com,Kevin Choo,Marketing Executive,Inactive,3500,Full-time,Others,40,0
-6,Profile 6,user6@mail.com,Employee 6,Data Analyst,Inactive,5108,Contract,Citizen,51,479
+5,Profile 5,kevinchoo@example.com,Kevin Choo,Marketing Executive,Invite Sent,3500,Full time,Others,40,0
+6,Profile 6,user6@mail.com,Employee 6,Data Analyst,Invite Sent,5108,Contract,Citizen,51,479
 7,Profile 7,user7@company.org,Employee 7,Product Manager,Active,5013,Part time,Foreigner,58,648
 8,Profile 8,user8@corporate.net,Employee 8,Software Engineer,Active,5125,Full time,PR,54,410
 9,Profile 9,user9@example.com,Employee 9,Marketing Executive,Invite Sent,7705,Full time,PR,31,186
