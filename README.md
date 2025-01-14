@@ -2,6 +2,8 @@
 
 Repository to deal with HR payroll system
 
+![Screenshot from 2025-01-14 22-43-20](https://github.com/user-attachments/assets/2b1d1847-37ba-4afd-aa1a-de9a2b2aed0c)
+
 
 ## Backend
 
