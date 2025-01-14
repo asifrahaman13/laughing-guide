@@ -1,5 +1,5 @@
-# Use the official Golang image as the base image
-FROM golang:1.23
+# Build Stage
+FROM golang:1.23 AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -14,10 +14,14 @@ RUN go mod download
 COPY . .
 
 # Build the Go application
-RUN CGO_ENABLED=0 GOOS=linux go build -o /myapp .
+RUN CGO_ENABLED=1 GOOS=linux go build -o /myapp -ldflags '-linkmode external -extldflags "-static"' .
 
-# Check if the file exists (optional, for debugging)
-RUN ls -l /myapp
+# Final Stage
+FROM debian:buster-slim
+
+
+# Copy the binary from the builder stage
+COPY --from=builder /myapp .
 
 # Expose the port the application runs on
 EXPOSE 8000

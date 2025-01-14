@@ -6,11 +6,7 @@ services:
     ports:
       - "8000:8000"
     networks:
-      - gainlife-network
-    environment:
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - laughing-network
     env_file:
       - .env
     volumes:
@@ -24,7 +20,7 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - gainlife-network
+      - laughing-network
     depends_on:
       - backend
     volumes:
@@ -33,5 +29,5 @@ services:
     tty: true
 
 networks:
-  gainlife-network:
+  laughing-network:
     driver: bridge

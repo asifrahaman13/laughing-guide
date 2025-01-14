@@ -10,9 +10,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/asifrahaman13/laughing-guide/src/database"
+	"github.com/asifrahaman13/laughing-guide/src/handler"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/asifrahaman13/laughing-guide/src/handler"
 )
 
 type Employee struct {
@@ -44,15 +45,17 @@ func main() {
 		gin.SetMode(gin.DebugMode)
 	}
 
+	database.InitDB()
+
 	r := gin.Default()
-
-	r.POST("/upload", handler.UploadHandler)
-
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "ok",
 		})
 	})
+
+	r.POST("/upload", handler.UploadHandler)
+	r.GET("/calculate-payroll", handler.CalculatePayrollHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
