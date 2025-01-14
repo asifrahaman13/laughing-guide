@@ -16,18 +16,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type Employee struct {
-	EmployeeID       string `json:"employeeId"`
-	EmployeeProfile  string `json:"employeeProfile"`
-	EmployeeEmail    string `json:"employeeEmail"`
-	EmployeeName     string `json:"employeeName"`
-	EmployeeRole     string `json:"employeeRole"`
-	EmployeeStatus   string `json:"employeeStatus"`
-	EmployeeSalary   string `json:"employeeSalary"`
-	EmployeeJobType  string `json:"employeeJobType"`
-	EmployeeResident string `json:"employeeResident"`
-}
-
 func main() {
 
 	if err := godotenv.Load(); err != nil {
