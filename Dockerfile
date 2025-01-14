@@ -1,28 +1,29 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.12-slim
+# Use the official Golang image as the base image
+FROM golang:1.23
 
-# Set the working directory in the container
+# Set the working directory inside the container
 WORKDIR /app
 
-# Install necessary system dependencies including gcc
-RUN apt-get update && \
-    apt-get install -y gcc build-essential
+# Copy the Go modules files first for better caching
+COPY go.mod go.sum ./
 
-# Install 'uv' package for dependency management and process management
-RUN pip install uv
+# Download Go module dependencies
+RUN go mod download
 
-# Copy the pyproject.toml and poetry.lock files into the container
-COPY pyproject.toml ./
-
-# Install dependencies from pyproject.toml using 'uv sync'
-RUN uv sync
-
-# Copy the rest of the application into the container
+# Copy the rest of the application files
 COPY . .
 
-# Expose the port that the application will run on
+# Build the Go application
+RUN CGO_ENABLED=0 GOOS=linux go build -o /myapp .
+
+# Check if the file exists (optional, for debugging)
+RUN ls -l /myapp
+
+# Expose the port the application runs on
 EXPOSE 8000
 
-# Use 'uv' to run both Redis and FastAPI
-CMD ["uv", "run",  "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Ensure the executable has the right permissions
+RUN chmod +x /myapp
 
+# Command to run the application
+CMD ["/myapp"]

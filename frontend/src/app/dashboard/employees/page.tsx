@@ -12,13 +12,7 @@ export default function Page() {
   return (
     <React.Fragment>
       <div className="w-full h-full">
-        {employees.length === 0 ? (
-          <>
-            <AddEmployee />
-          </>
-        ) : (
-          <>hi</>
-        )}
+        {employees.length === 0 ? <AddEmployee /> : <>hi</>}
       </div>
     </React.Fragment>
   );
