@@ -6,23 +6,10 @@ import (
 	"strconv"
 
 	"github.com/asifrahaman13/laughing-guide/src/database"
+	"github.com/asifrahaman13/laughing-guide/src/domain"
 	"github.com/asifrahaman13/laughing-guide/src/service"
 	"github.com/gin-gonic/gin"
 )
-
-type Employee struct {
-	EmployeeID       string  `json:"employeeId"`
-	EmployeeProfile  string  `json:"employeeProfile"`
-	EmployeeEmail    string  `json:"employeeEmail"`
-	EmployeeName     string  `json:"employeeName"`
-	EmployeeRole     string  `json:"employeeRole"`
-	EmployeeStatus   string  `json:"employeeStatus"`
-	EmployeeSalary   float64 `json:"employeeSalary"`
-	EmployeeJobType  string  `json:"employeeJobType"`
-	EmployeeResident string  `json:"employeeResident"`
-	EmployeeAge      int     `json:"employeeAge"`
-	Bonuses          float64 `json:"bonuses"`
-}
 
 func UploadHandler(c *gin.Context) {
 	file, err := c.FormFile("file")
@@ -79,7 +66,7 @@ func CalculatePayrollHandler(c *gin.Context) {
 	var results []gin.H
 
 	for rows.Next() {
-		var employee Employee
+		var employee domain.Employee
 		var salary float64
 		var age int
 		var bonuses float64
@@ -116,10 +103,10 @@ func GetEmployeesHandler(c *gin.Context) {
 	}
 	defer rows.Close()
 
-	var employees []Employee
+	var employees []domain.Employee
 
 	for rows.Next() {
-		var employee Employee
+		var employee domain.Employee
 		err := rows.Scan(&employee.EmployeeID, &employee.EmployeeProfile, &employee.EmployeeEmail, &employee.EmployeeName, &employee.EmployeeRole, &employee.EmployeeStatus, &employee.EmployeeSalary, &employee.EmployeeJobType, &employee.EmployeeResident, &employee.EmployeeAge, &employee.Bonuses)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not scan employee data"})
