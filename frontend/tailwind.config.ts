@@ -12,6 +12,10 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+
+      backgroundColor:{
+        "lime-green": "#02B9B0"
+      }
     },
   },
   plugins: [],
