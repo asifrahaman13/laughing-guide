@@ -47,26 +47,17 @@ export default function EmployeeList() {
       <div className="m-8 flex gap-4">
         <EmployeeStatistics
           title="Nationality"
-          count={25}
           description="Singaporeans"
-          chartSrc="/images/charts/pie.svg"
-          chartAlt="Pie Chart"
           nationality={employeeStats?.Nationality || null}
         />
         <EmployeeLine
           title="Employment Type"
-          count={25}
           description="Full timers"
-          chartSrc="/images/charts/line.svg"
-          chartAlt="Pie Chart"
           employeeType={employeeStats?.EmploymentType || null}
         />
         <EmployeeStatus
           title="Employment Status"
-          count={25}
           description="Active Employees"
-          chartSrc="/images/charts/halfPie.svg"
-          chartAlt="Half Pie Chart"
           employmentStatus={employeeStats?.EmployeeStatus || null}
         />
       </div>

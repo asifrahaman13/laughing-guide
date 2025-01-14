@@ -4,57 +4,86 @@ import { EmploymentType } from "../types/dashboard";
 
 interface EmployeeStatisticsProps {
   title: string;
-  count: number;
   description: string;
-  chartSrc: string;
-  chartAlt: string;
   employeeType: EmploymentType | null;
+}
+
+const colors = ["#33FF57", "#3357FF", "#FF5733", "#FFC300"];
+
+function LineChart({ portions }: { portions: number[] }) {
+  return (
+    <div className="flex w-full h-2 gap-1">
+      {portions.map((portion, index) => (
+        <div
+          key={index}
+          className={`h-full rounded-md`}
+          style={{
+            width: `${portion * 100}%`,
+            backgroundColor: colors[index % colors.length],
+          }}
+        />
+      ))}
+    </div>
+  );
 }
 
 export default function EmployeeLine({
   title,
-  count,
   description,
-  chartSrc,
-  chartAlt,
   employeeType,
 }: EmployeeStatisticsProps) {
-  console.log(employeeType);
+  if (!employeeType) {
+    return null;
+  }
+
+  const total =
+    employeeType.FullTime +
+    employeeType.PartTime +
+    employeeType.Contract +
+    employeeType.Intern;
+
+  const portions = [
+    employeeType.FullTime / total,
+    employeeType.PartTime / total,
+    employeeType.Contract / total,
+    employeeType.Intern / total,
+  ];
+
   return (
-    <div className="bg-white p-4 py-2 rounded-xl h-full w-2/5 flex flex-col">
+    <div className="bg-white p-4 py-6 rounded-xl h-full w-2/5 flex flex-col">
       <div className="h-2/3 flex justify-between">
         <div className="flex flex-col gap-2">
           <div className="text-sm">{title}</div>
-          <div className="font-medium text-2xl">{count}</div>
+          <div className="font-medium text-2xl">{employeeType?.FullTime}</div>
           <div>{description}</div>
         </div>
       </div>
       <div>
-        <img src={chartSrc} alt={chartAlt} className="h-28" />
+        <LineChart portions={portions} />
       </div>
       <div className="h-1/3">
         <div className="flex text-gray-600 items-center gap-4 flex-wrap p-4 rounded-md">
           <div className="flex items-center">
             <div className="w-1 h-6 bg-cyan-500 mr-2 rounded-full"></div>
             <span className="font-medium">
-              {employeeType?.FullTime} Full Timer
+              {employeeType.FullTime} Full Timer
             </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-yellow-500 mr-2 rounded-full"></div>
             <span className="font-medium">
-              {employeeType?.PartTime} Part Timer
+              {employeeType.PartTime} Part Timer
             </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-purple-500 mr-2 rounded-full"></div>
             <span className="font-medium">
-              {employeeType?.Contract} Contract
+              {employeeType.Contract} Contract
             </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-gray-300 mr-2 rounded-full"></div>
-            <span className="font-medium">{employeeType?.Intern} Intern</span>
+            <span className="font-medium">{employeeType.Intern} Intern</span>
           </div>
         </div>
       </div>

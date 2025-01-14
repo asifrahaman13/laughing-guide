@@ -4,7 +4,10 @@ import { EmployeeStatusType } from "../types/dashboard";
 
 interface EmployeeStatisticsProps {
   title: string;
+  count: number;
   description: string;
+  chartSrc: string;
+  chartAlt: string;
   employmentStatus: EmployeeStatusType | null;
 }
 
@@ -62,7 +65,10 @@ function HalfCircle({ portions }: ArcProps) {
 
 export default function EmployeeStatus({
   title,
+  count,
   description,
+  chartSrc,
+  chartAlt,
   employmentStatus,
 }: EmployeeStatisticsProps) {
   if (!employmentStatus) {
@@ -71,13 +77,13 @@ export default function EmployeeStatus({
 
   const total =
     employmentStatus?.Active +
-    employmentStatus?.["Invite Sent"] +
-    employmentStatus?.["Payroll Only"];
+    employmentStatus?.Inactive +
+    employmentStatus?.OnLeave;
 
   const portions = [
     employmentStatus?.Active / total,
-    employmentStatus?.["Invite Sent"] / total,
-    employmentStatus?.["Payroll Only"] / total,
+    employmentStatus?.Inactive / total,
+    employmentStatus?.OnLeave / total,
   ];
 
   return (
@@ -85,7 +91,7 @@ export default function EmployeeStatus({
       <div className="h-2/3 flex justify-between">
         <div className="flex flex-col gap-2">
           <div className="text-sm">{title}</div>
-          <div className="font-medium text-2xl">{employmentStatus?.Active}</div>
+          <div className="font-medium text-2xl">{count}</div>
           <div>{description}</div>
         </div>
         <div>
@@ -103,13 +109,13 @@ export default function EmployeeStatus({
           <div className="flex items-center">
             <div className="w-1 h-6 bg-yellow-500 mr-2 rounded-full"></div>
             <span className="font-medium">
-              {employmentStatus?.["Invite Sent"]} Inactive
+              {employmentStatus?.Inactive} Inactive
             </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-purple-500 mr-2 rounded-full"></div>
             <span className="font-medium">
-              {employmentStatus?.["Payroll Only"]} On Leave
+              {employmentStatus?.OnLeave} On Leave
             </span>
           </div>
         </div>

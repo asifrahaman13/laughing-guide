@@ -4,31 +4,94 @@ import { Nationality } from "../types/dashboard";
 
 interface EmployeeStatisticsProps {
   title: string;
-  count: number;
   description: string;
-  chartSrc: string;
-  chartAlt: string;
   nationality: Nationality | null;
+}
+
+interface ArcProps {
+  portions: number[];
+}
+
+const colors = ["#d6d66f", "#33FF57", "#3357FF", "#5bd9fc"];
+
+function HollowCircle({ portions }: ArcProps) {
+  const radius = 50;
+  const circumference = 2 * Math.PI * radius;
+
+  const getArcLength = (portion: number) => portion * circumference;
+
+  let offset = circumference;
+
+  return (
+    <svg width="120" height="120" viewBox="0 0 120 120">
+      <circle
+        cx="60"
+        cy="60"
+        r={radius}
+        fill="none"
+        stroke="#e5e7eb"
+        strokeWidth="10"
+      />
+      {portions.map((portion, index) => {
+        const arcLength = getArcLength(portion);
+        const strokeDasharray = `${arcLength} ${circumference - arcLength}`;
+        const strokeDashoffset = offset;
+        offset -= arcLength;
+
+        return (
+          <circle
+            key={index}
+            cx="60"
+            cy="60"
+            r={radius}
+            fill="none"
+            stroke={colors[index % colors.length]}
+            strokeWidth="10"
+            strokeDasharray={strokeDasharray}
+            strokeDashoffset={strokeDashoffset}
+            transform="rotate(-90 60 60)"
+          />
+        );
+      })}
+    </svg>
+  );
 }
 
 export default function EmployeeStatistics({
   title,
-  count,
   description,
-  chartSrc,
-  chartAlt,
   nationality,
 }: EmployeeStatisticsProps) {
+  if (!nationality) {
+    return null;
+  }
+
+  const total =
+    nationality?.Singaporean +
+    nationality?.Foreigner +
+    nationality?.Others +
+    nationality?.PR;
+
+  console.log(nationality);
+  const portions = [
+    nationality?.Singaporean / total,
+    nationality?.PR / total,
+    nationality?.Foreigner / total,
+    nationality?.Others / total,
+  ];
+
+  console.log("The portions", portions);
+
   return (
     <div className="bg-white p-4 py-6 rounded-xl h-full w-2/5 flex flex-col">
       <div className="h-2/3 flex justify-between">
         <div className="flex flex-col gap-2">
           <div className="text-sm">{title}</div>
-          <div className="font-medium text-2xl">{count}</div>
+          <div className="font-medium text-2xl">{nationality?.Singaporean}</div>
           <div>{description}</div>
         </div>
         <div>
-          <img src={chartSrc} alt={chartAlt} className="h-28" />
+          <HollowCircle portions={portions} />
         </div>
       </div>
       <div className="h-1/3">
