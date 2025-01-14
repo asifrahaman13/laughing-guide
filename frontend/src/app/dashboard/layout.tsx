@@ -19,7 +19,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <React.Fragment>
       <div
-        className={`w-screen h-screen flex ${
+        className={`w-screen h-screen overflow-y-hidden flex ${
           isModalOpen ? "overflow-hidden" : ""
         }`}
       >
@@ -98,7 +98,7 @@ export default function Layout({ children }: LayoutProps) {
         </div>
 
         {/* Main Content */}
-        <div className="w-5/6 h-full">{children}</div>
+        <div className="w-5/6 h-full overflow-y-scroll bg-gray-100">{children}</div>
 
         {/* Modal */}
         {isModalOpen && (

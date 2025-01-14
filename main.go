@@ -12,6 +12,7 @@ import (
 
 	"github.com/asifrahaman13/laughing-guide/src/database"
 	"github.com/asifrahaman13/laughing-guide/src/handler"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -36,6 +37,10 @@ func main() {
 	database.InitDB()
 
 	r := gin.Default()
+
+	// Add CORS middleware
+	r.Use(cors.Default())
+
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "ok",
@@ -44,8 +49,6 @@ func main() {
 
 	r.POST("/upload", handler.UploadHandler)
 	r.GET("/calculate-payroll", handler.CalculatePayrollHandler)
-
-
 	r.GET("/employees", handler.GetEmployeesHandler)
 
 	port := os.Getenv("PORT")

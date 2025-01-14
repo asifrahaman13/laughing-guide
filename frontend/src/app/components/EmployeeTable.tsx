@@ -1,38 +1,20 @@
 import React from "react";
-import { employees } from "@/constants/dashboard";
+import { Employee } from "../types/dashboard";
 
 interface EmployeeTableProps {
-  selectedRows: number[];
-  handleCheckboxChange: (id: number) => void;
-  setSelectedRows: React.Dispatch<React.SetStateAction<number[]>>;
+  employees: Employee[];
 }
 
-export default function EmployeeTable({
-  selectedRows,
-  handleCheckboxChange,
-  setSelectedRows,
-}: EmployeeTableProps) {
-  const isSelected = (id: number) => selectedRows.includes(id);
-
+export default function EmployeeTable({ employees }: EmployeeTableProps) {
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-xl font-bold mb-4">Employee Table</h1>
+      <h1 className="text-xl font-bold mb-4 text-gray-800">All Employees</h1>
       <div className="overflow-hidden rounded-xl shadow-md">
         <table className="min-w-full bg-grary-400 border-none">
           <thead className="bg-gray-100 border-2 text-gray-600">
             <tr>
               <th className="p-3 text-left">
-                <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedRows(employees.map((employee) => employee.id));
-                    } else {
-                      setSelectedRows([]);
-                    }
-                  }}
-                  checked={selectedRows.length === employees.length}
-                />
+                <input type="checkbox" />
               </th>
               <th className="p-3 text-left">Profile</th>
               <th className="p-3 text-left">Email ID</th>
@@ -42,35 +24,22 @@ export default function EmployeeTable({
           </thead>
           <tbody>
             {employees.map((employee) => (
-              <tr
-                key={employee.id}
-                className={`${
-                  isSelected(employee.id) ? "bg-blue-100" : ""
-                } hover:bg-gray-50 bg-white border-2`}
-              >
+              <tr key={employee.employeeId} className="bg-white border-2">
                 <td className="p-3">
-                  <input
-                    type="checkbox"
-                    checked={isSelected(employee.id)}
-                    onChange={() => handleCheckboxChange(employee.id)}
-                  />
+                  <input type="checkbox" />
                 </td>
                 <td className="p-3">
-                  <div className="flex items-center">{employee.name}</div>
+                  <div className="flex items-center">
+                    {employee.employeeName}
+                  </div>
                 </td>
-                <td className="p-3">{employee.email}</td>
-                <td className="p-3">{employee.role}</td>
-                <td className="p-3">{employee.status}</td>
+                <td className="p-3">{employee.employeeEmail}</td>
+                <td className="p-3">{employee.employeeJobType}</td>
+                <td className="p-3">{employee.employeeStatus}</td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
-      <div className="mt-4">
-        <p className="text-sm">
-          Selected Rows:{" "}
-          {selectedRows.length > 0 ? selectedRows.join(", ") : "None"}
-        </p>
       </div>
     </div>
   );

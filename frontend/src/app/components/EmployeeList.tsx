@@ -5,15 +5,22 @@ import EmployeeTable from "@/app/components/EmployeeTable";
 import EmployeeStatistics from "./EmployeeStatistics";
 import EmployeeLine from "./EmployeeLine";
 import EmployeeStatus from "./EmployeeStatus";
+import axios from "axios";
+import { Employee } from "../types/dashboard";
 
 export default function EmployeeList() {
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
 
-  const handleCheckboxChange = (id: number) => {
-    setSelectedRows((prev) =>
-      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id],
-    );
-  };
+  React.useEffect(() => {
+    async function fetchEmployees() {
+      const response = await axios.get("http://localhost:8000/employees");
+      const data = await response.data;
+      console.log(data);
+      setEmployees(data);
+    }
+
+    fetchEmployees();
+  }, []);
 
   return (
     <div className="flex flex-col w-full h-full bg-gray-100">
@@ -49,11 +56,7 @@ export default function EmployeeList() {
           chartAlt="Half Pie Chart"
         />
       </div>
-      <EmployeeTable
-        selectedRows={selectedRows}
-        handleCheckboxChange={handleCheckboxChange}
-        setSelectedRows={setSelectedRows}
-      />
+      <EmployeeTable employees={employees} />
     </div>
   );
 }
