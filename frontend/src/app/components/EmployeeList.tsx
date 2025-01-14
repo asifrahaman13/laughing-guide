@@ -8,8 +8,11 @@ import axios from "axios";
 import { Employee } from "../types/dashboard";
 import { EmployeeData } from "../types/dashboard";
 import EmployeeStatus from "./EmployeeStatus";
+import { useDispatch } from "react-redux";
+import { openModal } from "@/lib/features/modalSlice";
 
 export default function EmployeeList() {
+  const dispath = useDispatch();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [employeeStats, setEmployeeStats] = useState<EmployeeData | null>(null);
 
@@ -40,7 +43,14 @@ export default function EmployeeList() {
         <div>
           <button className="bg-lime-green rounded-lg px-4 gap-2 items-center py-2 flex">
             <img src="/images/employees/person.svg" alt="" />
-            <div className="text-white">Add Employee</div>
+            <div
+              className="text-white"
+              onClick={() => {
+                dispath(openModal());
+              }}
+            >
+              Add Employee
+            </div>
           </button>
         </div>
       </div>

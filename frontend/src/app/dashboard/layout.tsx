@@ -1,26 +1,27 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from "react";
+import React from "react";
 import { ReactNode } from "react";
 import { MANAGE } from "@/constants/dashboard";
 import Link from "next/link";
+import { useDispatch } from "react-redux";
+import { closeModal } from "@/lib/features/modalSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
+  const dispath = useDispatch();
+  const modal = useSelector((state: RootState) => state.modal);
 
   return (
     <React.Fragment>
       <div
         className={`w-screen h-screen overflow-y-hidden flex ${
-          isModalOpen ? "overflow-hidden" : ""
+          modal.isOpen ? "overflow-hidden" : ""
         }`}
       >
         {/* Sidebar */}
@@ -103,14 +104,16 @@ export default function Layout({ children }: LayoutProps) {
         </div>
 
         {/* Modal */}
-        {isModalOpen && (
+        {modal.isOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white p-6 rounded-lg w-1/3">
               <h2 className="text-2xl font-bold mb-4">Bulk Employee</h2>
               <p className="mb-4">Here you can manage bulk employee uploads.</p>
               <button
                 className="bg-teal-500 text-white py-2 px-4 rounded-lg"
-                onClick={toggleModal}
+                onClick={() => {
+                  dispath(closeModal());
+                }}
               >
                 Close
               </button>

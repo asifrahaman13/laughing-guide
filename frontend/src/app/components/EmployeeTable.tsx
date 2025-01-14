@@ -12,7 +12,10 @@ interface StatusProps {
 }
 
 const StatusBadge: React.FC<StatusProps> = ({ status }) => {
-  const statusStyles: Record<string, { bg: string; text: string; icon: string }> = {
+  const statusStyles: Record<
+    string,
+    { bg: string; text: string; icon: string }
+  > = {
     Active: {
       bg: "bg-green-200",
       text: "text-lime-green",
@@ -37,7 +40,9 @@ const StatusBadge: React.FC<StatusProps> = ({ status }) => {
   };
 
   return (
-    <div className={`text-center flex py-2 items-center px-4 ${bg} rounded-2xl ${text}`}>
+    <div
+      className={`text-center flex py-2 items-center px-4 ${bg} rounded-2xl ${text}`}
+    >
       {icon && <img src={icon} alt={status} className="mr-2" />}
       {status}
     </div>

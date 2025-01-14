@@ -19,11 +19,11 @@ export default {
         "light-gray": "#f1f5f9",
         "back-purple": "#8318e7",
       },
-      textColor:{
+      textColor: {
         "lime-green": "#02b9b0",
         "light-purple": "#8318e7",
-        "status-gray": "#5f6969"
-      }
+        "status-gray": "#5f6969",
+      },
     },
   },
   plugins: [],

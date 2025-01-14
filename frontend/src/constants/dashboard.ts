@@ -21,6 +21,4 @@ const MANAGE = [
   },
 ];
 
-
-
 export { MANAGE };
