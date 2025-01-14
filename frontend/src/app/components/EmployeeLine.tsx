@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
+import { EmploymentType } from "../types/dashboard";
 
 interface EmployeeStatisticsProps {
   title: string;
@@ -7,6 +8,7 @@ interface EmployeeStatisticsProps {
   description: string;
   chartSrc: string;
   chartAlt: string;
+  employeeType: EmploymentType | null;
 }
 
 export default function EmployeeLine({
@@ -15,7 +17,9 @@ export default function EmployeeLine({
   description,
   chartSrc,
   chartAlt,
+  employeeType,
 }: EmployeeStatisticsProps) {
+  console.log(employeeType);
   return (
     <div className="bg-white p-4 py-2 rounded-xl h-full w-2/5 flex flex-col">
       <div className="h-2/3 flex justify-between">
@@ -32,19 +36,25 @@ export default function EmployeeLine({
         <div className="flex text-gray-600 items-center gap-4 flex-wrap p-4 rounded-md">
           <div className="flex items-center">
             <div className="w-1 h-6 bg-cyan-500 mr-2 rounded-full"></div>
-            <span className="font-medium">25 Full-Timer</span>
+            <span className="font-medium">
+              {employeeType?.FullTime} Full Timer
+            </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-yellow-500 mr-2 rounded-full"></div>
-            <span className="font-medium">10 Part-Timer</span>
+            <span className="font-medium">
+              {employeeType?.PartTime} Part Timer
+            </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-purple-500 mr-2 rounded-full"></div>
-            <span className="font-medium">5 Contract</span>
+            <span className="font-medium">
+              {employeeType?.Contract} Contract
+            </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-gray-300 mr-2 rounded-full"></div>
-            <span className="font-medium">6 Intern</span>
+            <span className="font-medium">{employeeType?.Intern} Intern</span>
           </div>
         </div>
       </div>

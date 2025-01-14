@@ -1,14 +1,39 @@
-
 export type Employee = {
-  employeeId: string; // Unique identifier for the employee
-  employeeProfile: string; // Profile description
-  employeeEmail: string; // Employee's email address
-  employeeName: string; // Employee's full name
-  employeeRole: string; // Employee's role in the organization
-  employeeStatus: string; // Employment status (e.g., Active, Inactive)
-  employeeSalary: number; // Employee's salary
-  employeeJobType: string; // Type of job (e.g., Full-time, Part-time)
-  employeeResident: string; // Residency status (e.g., Citizen, PR)
-  employeeAge: number; // Age of the employee
-  bonuses: number; // Bonus amount
+  employeeId: string;
+  employeeProfile: string;
+  employeeEmail: string;
+  employeeName: string;
+  employeeRole: string;
+  employeeStatus: string;
+  employeeSalary: number;
+  employeeJobType: string;
+  employeeResident: string;
+  employeeAge: number;
+  bonuses: number;
+};
+
+export type EmployeeStatusType = {
+  Active: number;
+  "Invite Sent": number;
+  "Payroll Only": number;
+};
+
+export type EmploymentType = {
+  Contract: number;
+  FullTime: number;
+  Intern: number;
+  PartTime: number;
+};
+
+export type Nationality = {
+  Foreigner: number;
+  Others: number;
+  PR: number;
+  Singaporean: number;
+};
+
+export type EmployeeData = {
+  EmployeeStatus: EmployeeStatusType;
+  EmploymentType: EmploymentType;
+  Nationality: Nationality;
 };

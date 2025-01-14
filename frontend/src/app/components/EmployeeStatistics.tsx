@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
+import { Nationality } from "../types/dashboard";
 
 interface EmployeeStatisticsProps {
   title: string;
@@ -7,6 +8,7 @@ interface EmployeeStatisticsProps {
   description: string;
   chartSrc: string;
   chartAlt: string;
+  nationality: Nationality | null;
 }
 
 export default function EmployeeStatistics({
@@ -15,6 +17,7 @@ export default function EmployeeStatistics({
   description,
   chartSrc,
   chartAlt,
+  nationality,
 }: EmployeeStatisticsProps) {
   return (
     <div className="bg-white p-4 py-6 rounded-xl h-full w-2/5 flex flex-col">
@@ -32,19 +35,23 @@ export default function EmployeeStatistics({
         <div className="flex text-gray-600 items-center gap-4 flex-wrap p-4 rounded-md">
           <div className="flex items-center">
             <div className="w-1 h-6 bg-cyan-500 mr-2 rounded-full"></div>
-            <span className="font-medium">25 Full-Timer</span>
+            <span className="font-medium">
+              {nationality?.Singaporean} Singaporean
+            </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-yellow-500 mr-2 rounded-full"></div>
-            <span className="font-medium">10 Part-Timer</span>
+            <span className="font-medium">{nationality?.PR} PR</span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-purple-500 mr-2 rounded-full"></div>
-            <span className="font-medium">5 Contract</span>
+            <span className="font-medium">
+              {nationality?.Foreigner} Foreigner
+            </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-gray-300 mr-2 rounded-full"></div>
-            <span className="font-medium">6 Intern</span>
+            <span className="font-medium">{nationality?.Others} Others</span>
           </div>
         </div>
       </div>

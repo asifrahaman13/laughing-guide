@@ -122,3 +122,76 @@ func GetEmployeesHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, employees)
 }
+
+func GetEmployeeStatisticsHandler(c *gin.Context) {
+	rows, err := database.Database.Query("SELECT employee_resident, employee_job_type, employee_status FROM employees")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve employee data"})
+		return
+	}
+	defer rows.Close()
+
+	nationalityCount := map[string]int{
+		"Singaporean": 0,
+		"PR":          0,
+		"Foreigner":   0,
+		"Others":      0,
+	}
+	employmentTypeCount := map[string]int{
+		"FullTime": 0,
+		"PartTime": 0,
+		"Intern":   0,
+		"Contract": 0,
+	}
+	employeeStatusCount := map[string]int{
+		"Active":       0,
+		"Invite Sent":  0,
+		"Payroll Only": 0,
+	}
+
+	for rows.Next() {
+		var resident, jobType, status string
+		err := rows.Scan(&resident, &jobType, &status)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not scan employee data"})
+			return
+		}
+
+		switch resident {
+		case "Citizen":
+			nationalityCount["Singaporean"]++
+		case "PR":
+			nationalityCount["PR"]++
+		case "Foreigner":
+			nationalityCount["Foreigner"]++
+		default:
+			nationalityCount["Others"]++
+		}
+
+		switch jobType {
+		case "Full-time":
+			employmentTypeCount["FullTime"]++
+		case "Part-time":
+			employmentTypeCount["PartTime"]++
+		case "Intern":
+			employmentTypeCount["Intern"]++
+		case "Contract":
+			employmentTypeCount["Contract"]++
+		}
+
+		switch status {
+		case "Active":
+			employeeStatusCount["Active"]++
+		case "Invite Sent":
+			employeeStatusCount["Invite Sent"]++
+		case "Payroll Only":
+			employeeStatusCount["Payroll Only"]++
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Nationality":    nationalityCount,
+		"EmploymentType": employmentTypeCount,
+		"EmployeeStatus": employeeStatusCount,
+	})
+}

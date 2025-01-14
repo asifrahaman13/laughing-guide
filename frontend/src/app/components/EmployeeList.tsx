@@ -4,22 +4,33 @@ import React, { useState } from "react";
 import EmployeeTable from "@/app/components/EmployeeTable";
 import EmployeeStatistics from "./EmployeeStatistics";
 import EmployeeLine from "./EmployeeLine";
-import EmployeeStatus from "./EmployeeStatus";
 import axios from "axios";
 import { Employee } from "../types/dashboard";
+import { EmployeeData } from "../types/dashboard";
+import EmployeeStatus from "./EmployeeStatus";
 
 export default function EmployeeList() {
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [employeeStats, setEmployeeStats] = useState<EmployeeData | null>(null);
 
   React.useEffect(() => {
-    async function fetchEmployees() {
-      const response = await axios.get("http://localhost:8000/employees");
-      const data = await response.data;
-      console.log(data);
-      setEmployees(data);
+    async function fetchData() {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+
+      try {
+        const [employeesResponse, statsResponse] = await Promise.all([
+          axios.get(`${backendUrl}/employees`),
+          axios.get(`${backendUrl}/aggregate`),
+        ]);
+
+        setEmployees(employeesResponse.data);
+        setEmployeeStats(statsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
 
-    fetchEmployees();
+    fetchData();
   }, []);
 
   return (
@@ -40,6 +51,7 @@ export default function EmployeeList() {
           description="Singaporeans"
           chartSrc="/images/charts/pie.svg"
           chartAlt="Pie Chart"
+          nationality={employeeStats?.Nationality || null}
         />
         <EmployeeLine
           title="Employment Type"
@@ -47,6 +59,7 @@ export default function EmployeeList() {
           description="Full timers"
           chartSrc="/images/charts/line.svg"
           chartAlt="Pie Chart"
+          employeeType={employeeStats?.EmploymentType || null}
         />
         <EmployeeStatus
           title="Employment Status"
@@ -54,6 +67,7 @@ export default function EmployeeList() {
           description="Active Employees"
           chartSrc="/images/charts/halfPie.svg"
           chartAlt="Half Pie Chart"
+          employmentStatus={employeeStats?.EmployeeStatus || null}
         />
       </div>
       <EmployeeTable employees={employees} />
