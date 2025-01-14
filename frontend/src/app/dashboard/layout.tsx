@@ -4,15 +4,13 @@ import React from "react";
 import { ReactNode } from "react";
 import { MANAGE } from "@/constants/dashboard";
 import Link from "next/link";
-
-interface LayoutProps {
-  children: ReactNode;
-}
-
 import Modal from "../components/modal";
 import { RootState } from "@/lib/store";
 import { useSelector } from "react-redux";
 
+interface LayoutProps {
+  children: ReactNode;
+}
 export default function Layout({ children }: LayoutProps) {
   const modal = useSelector((state: RootState) => state.modal);
 

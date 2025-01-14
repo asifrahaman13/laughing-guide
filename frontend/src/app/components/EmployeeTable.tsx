@@ -75,7 +75,7 @@ const EmployeeRow: React.FC<{ employee: Employee }> = ({ employee }) => (
 export default function EmployeeTable({ employees }: EmployeeTableProps) {
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-xl font-bold mb-4 text-gray-800">All Employees</h1>
+      <h1 className="text-xl font-bold mb-4 text-gray-00">All Employees</h1>
       <div className="overflow-hidden rounded-xl shadow-md">
         <table className="min-w-full bg-gray-400 border-none">
           <thead className="bg-gray-100 border-2 text-gray-600">

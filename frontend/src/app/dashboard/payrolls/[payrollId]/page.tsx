@@ -1,18 +1,13 @@
 "use client";
-import React, { useEffect } from "react";
+import { useParams } from "next/navigation";
+import React from "react";
 
-export default function Page({ params }: { params: { payrollId: string } }) {
-  const [payroll, setPayroll] = React.useState<string | null>(null);
-  useEffect(() => {
-    async function getParams() {
-      const { payrollId } = await params;
-      setPayroll(payrollId);
-    }
-    getParams();
-  }, [params]);
+export default function Page() {
+  const params = useParams<{ payrollid: string }>();
+
   return (
     <div>
-      <h1>{payroll}</h1>
+      <h1>{params.payrollid}</h1>
     </div>
   );
 }

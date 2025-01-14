@@ -2,20 +2,7 @@
 import axios from "axios";
 import Link from "next/link";
 import React from "react";
-
-type EmployeeSalaryDetails = {
-  bonuses: number;
-  cpfContributions: {
-    employeeContribution: number;
-    employerContribution: number;
-    totalContribution: number;
-  };
-  employeeId: string;
-  employeeName: string;
-  employeeSalary: number;
-  grossSalary: number;
-  netSalary: number;
-};
+import { EmployeeSalaryDetails } from "@/app/types/dashboard";
 
 const EmployeeRow: React.FC<{ employee: EmployeeSalaryDetails }> = ({
   employee,
