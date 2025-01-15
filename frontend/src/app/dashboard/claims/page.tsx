@@ -1,9 +1,10 @@
 import React from "react";
+import InProgress from "@/app/components/InProgress";
 
 export default function Page() {
   return (
     <div>
-      <h1>Claims</h1>
+      <InProgress />
     </div>
   );
 }

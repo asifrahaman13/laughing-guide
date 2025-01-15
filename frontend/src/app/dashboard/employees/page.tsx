@@ -24,7 +24,6 @@ export default function Page() {
   React.useEffect(() => {
     async function fetchData() {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-
       try {
         const [employeesResponse, statsResponse] = await Promise.all([
           axios.get(`${backendUrl}/employees`),
@@ -34,7 +33,6 @@ export default function Page() {
         if (employeesResponse.data === null || statsResponse.data === null) {
           return;
         }
-
         setEmployees(employeesResponse.data);
         setEmployeeStats(statsResponse.data);
       } catch (error) {
