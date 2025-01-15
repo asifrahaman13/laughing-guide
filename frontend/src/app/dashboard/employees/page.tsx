@@ -74,7 +74,7 @@ export default function Page() {
       <div className="flex flex-col w-full h-full">
         <div className="bg-white p-2 lg:p-4 h-16 flex justify-between items-center">
           <div className="font-medium text-xl">Employees</div>
-          <div>
+          <div className="flex gap-2">
             <button
               className="bg-lime-green rounded-lg px-4 gap-2 items-center py-2 flex"
               onClick={() => {
@@ -83,6 +83,15 @@ export default function Page() {
             >
               <img src="/images/employees/person.svg" alt="" />
               <div className="text-white">Add Employee</div>
+            </button>
+            <button
+              className="bg-lime-green rounded-lg px-4 gap-2 items-center py-2 flex"
+              onClick={() => {
+                dispath(openModal());
+              }}
+            >
+              <img src="/images/employees/person.svg" alt="" />
+              <div className="text-white">Generate Payroll</div>
             </button>
           </div>
         </div>

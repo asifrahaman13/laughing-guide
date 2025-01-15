@@ -7,6 +7,7 @@ import (
 
 	"github.com/asifrahaman13/laughing-guide/src/database"
 	"github.com/asifrahaman13/laughing-guide/src/domain"
+	"github.com/asifrahaman13/laughing-guide/src/helper"
 	"github.com/asifrahaman13/laughing-guide/src/service"
 	"github.com/gin-gonic/gin"
 )
@@ -64,6 +65,24 @@ func CalculatePayrollHandler(c *gin.Context) {
 	defer rows.Close()
 
 	var results []gin.H
+	tx, err := database.Database.Begin()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not start transaction"})
+		return
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		} else {
+			tx.Commit()
+		}
+	}()
+
+	var insertValues []interface{}
+	insertQuery := `
+        INSERT INTO payroll_data 
+        (employee_id, gross_salary, net_salary, employee_contribution, employer_contribution, total_contribution, bonuses) 
+        VALUES `
 
 	for rows.Next() {
 		var employee domain.Employee
@@ -76,8 +95,12 @@ func CalculatePayrollHandler(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not scan employee data"})
 			return
 		}
+
 		isCitizen := employee.EmployeeResident == "Citizen"
 		cpf := service.CalculateCPF(age, salary, isCitizen)
+
+		grossSalary := salary + bonuses
+		netSalary := grossSalary - cpf.TotalContribution
 
 		result := gin.H{
 			"employeeId":       employee.EmployeeID,
@@ -85,14 +108,94 @@ func CalculatePayrollHandler(c *gin.Context) {
 			"employeeSalary":   salary,
 			"bonuses":          bonuses,
 			"cpfContributions": cpf,
-			"grossSalary":      salary + bonuses,
-			"netSalary":        salary + bonuses - cpf.TotalContribution,
+			"grossSalary":      grossSalary,
+			"netSalary":        netSalary,
 		}
 
 		results = append(results, result)
+
+		insertQuery += "(?, ?, ?, ?, ?, ?, ?), "
+		insertValues = append(insertValues, employee.EmployeeID, grossSalary, netSalary, cpf.EmployeeContribution, cpf.EmployerContribution, cpf.TotalContribution, bonuses)
 	}
 
+	insertQuery = insertQuery[:len(insertQuery)-2]
+	_, err = tx.Exec(insertQuery+" ON CONFLICT (employee_id) DO UPDATE SET gross_salary = EXCLUDED.gross_salary, net_salary = EXCLUDED.net_salary, employee_contribution = EXCLUDED.employee_contribution, employer_contribution = EXCLUDED.employer_contribution, total_contribution = EXCLUDED.total_contribution, bonuses = EXCLUDED.bonuses", insertValues...)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not save payroll data"})
+		return
+	}
+
+	if err = rows.Err(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error iterating over employee data"})
+		return
+	}
 	c.JSON(http.StatusOK, results)
+}
+
+func FetchPayrollHandler(c *gin.Context) {
+	rows, err := database.Database.Query(`
+        SELECT 
+            p.employee_id, 
+            p.gross_salary, 
+            p.net_salary, 
+            p.employee_contribution, 
+            p.employer_contribution, 
+            p.total_contribution, 
+            p.bonuses, 
+            e.employee_salary,
+            e.employee_email,
+            e.employee_name
+        FROM payroll_data p
+        JOIN employees e ON p.employee_id = e.employee_id`)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve payroll data", "details": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	var payrollResults []gin.H
+
+	truncateToTwoDecimals := helper.TruncateToTwoDecimals
+
+	for rows.Next() {
+		var employeeID string
+		var grossSalary, netSalary, employeeContribution, employerContribution, totalContribution, bonuses, salary float64
+		var email, name string
+
+		err := rows.Scan(&employeeID, &grossSalary, &netSalary, &employeeContribution, &employerContribution, &totalContribution, &bonuses, &salary, &email, &name)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not scan payroll data", "details": err.Error()})
+			return
+		}
+		grossSalary = truncateToTwoDecimals(grossSalary)
+		netSalary = truncateToTwoDecimals(netSalary)
+		employeeContribution = truncateToTwoDecimals(employeeContribution)
+		employerContribution = truncateToTwoDecimals(employerContribution)
+		totalContribution = truncateToTwoDecimals(totalContribution)
+		bonuses = truncateToTwoDecimals(bonuses)
+		salary = truncateToTwoDecimals(salary)
+
+		payroll := gin.H{
+			"employeeId":           employeeID,
+			"grossSalary":          grossSalary,
+			"netSalary":            netSalary,
+			"employeeContribution": employeeContribution,
+			"employerContribution": employerContribution,
+			"totalContribution":    totalContribution,
+			"bonuses":              bonuses,
+			"salary":               salary,
+			"employeeEmail":        email,
+			"employeeName":         name,
+		}
+
+		payrollResults = append(payrollResults, payroll)
+	}
+	if err = rows.Err(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error during row iteration", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, payrollResults)
 }
 
 func GetEmployeesHandler(c *gin.Context) {

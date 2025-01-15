@@ -17,17 +17,17 @@ const EmployeeRow: React.FC<{ employee: EmployeeSalaryDetails }> = ({
           href={`/dashboard/payrolls/${employee?.employeeId}`}
           className="text-[#02b9b0] border-b-2 border-[#02b9b0]"
         >
-          {employee?.employeeName}
+          {employee?.employeeId}
         </Link>
       </div>
     </td>
+    <td className="p-3">{employee?.employeeName}</td>
+    <td className="p-3">{employee?.employeeEmail}</td>
+    <td className="p-3">{employee?.salary}</td>
     <td className="p-3">{employee?.bonuses}</td>
-    <td className="p-3">{employee?.employeeSalary}</td>
-    <td className="p-3 r">
-      {employee?.cpfContributions?.employeeContribution}
-    </td>
-    <td className="p-3 ">{employee?.cpfContributions?.employerContribution}</td>
-    <td className="p-3 ">{employee?.cpfContributions?.totalContribution}</td>
+    <td className="p-3 r">{employee?.employeeContribution}</td>
+    <td className="p-3 ">{employee?.employerContribution}</td>
+    <td className="p-3 ">{employee?.totalContribution}</td>
     <td className="p-3 ">{employee?.grossSalary}</td>
     <td className="p-3 ">{employee?.netSalary}</td>
   </tr>
@@ -42,7 +42,7 @@ export default function Page() {
     async function fetchPayrollId() {
       try {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-        const response = await axios.get(`${backendUrl}/calculate-payroll`);
+        const response = await axios.get(`${backendUrl}/payroll`);
         console.log("Payroll data:", response.data);
         if (response.data) {
           setPayrollData(response.data);
@@ -66,8 +66,10 @@ export default function Page() {
                 <input type="checkbox" />
               </th>
               <th className="p-3 font-medium text-left">Profile</th>
-              <th className="p-3 font-medium text-left">Bonuses</th>
+              <th className="p-3 font-medium text-left">Name</th>
+              <th className="p-3 font-medium text-left">Email</th>
               <th className="p-3 font-medium text-left">Salary</th>
+              <th className="p-3 font-medium text-left">Bonuses</th>
               <th className="p-3 font-medium text-left">
                 Employee Contribution
               </th>

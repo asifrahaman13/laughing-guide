@@ -40,14 +40,13 @@ export type EmployeeData = {
 
 export type EmployeeSalaryDetails = {
   bonuses: number;
-  cpfContributions: {
-    employeeContribution: number;
-    employerContribution: number;
-    totalContribution: number;
-  };
+  employeeContribution: number;
+  employerContribution: number;
+  totalContribution: number;
   employeeId: string;
   employeeName: string;
-  employeeSalary: number;
+  employeeEmail: string;
+  salary: number;
   grossSalary: number;
   netSalary: number;
 };
