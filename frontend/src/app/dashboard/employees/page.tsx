@@ -12,12 +12,14 @@ import EmployeeLine from "@/app/components/EmployeeLine";
 import EmployeeTable from "@/app/components/EmployeeTable";
 import { RootState } from "@/lib/store";
 import { useSelector } from "react-redux";
+import { ButtionSpinner } from "@/app/components/ui/Buttons";
 
 export default function Page() {
   const dispath = useDispatch();
   const [employees, setEmployees] = useState<Employee[] | null>(null);
   const [employeeStats, setEmployeeStats] = useState<EmployeeData | null>(null);
   const loading = useSelector((state: RootState) => state.spinner.isLoading);
+  const [buttonLoading, setLoading] = useState(false);
 
   React.useEffect(() => {
     async function fetchData() {
@@ -71,6 +73,7 @@ export default function Page() {
 
   async function generatePayroll() {
     try {
+      setLoading(true);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const response = await axios.get(`${backendUrl}/calculate-payroll`);
       if (response.status === 200) {
@@ -78,6 +81,8 @@ export default function Page() {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -97,13 +102,18 @@ export default function Page() {
               <div className="text-white">Add Employee</div>
             </button>
             <button
-              className="bg-lime-green rounded-lg px-4 gap-2 items-center py-2 flex"
-              onClick={() => {
-                generatePayroll();
-              }}
+              className="bg-lime-green rounded-lg gap-2 px-2 items-center  flex"
+              onClick={generatePayroll}
+              disabled={buttonLoading}
             >
-              <img src="/images/employees/person.svg" alt="" />
-              <div className="text-white">Generate Payroll</div>
+              {buttonLoading ? (
+                <ButtionSpinner />
+              ) : (
+                <>
+                  <img src="/images/employees/person.svg" alt="" />
+                  <div className="text-white">Generate Payroll</div>
+                </>
+              )}
             </button>
           </div>
         </div>
