@@ -54,7 +54,7 @@ const StatusBadge: React.FC<StatusProps> = ({ status }) => {
 const EmployeeRow: React.FC<{ employee: Employee }> = ({ employee }) => (
   <tr key={employee?.employeeId} className="bg-white border-2">
     <td className="p-3">
-      <input type="checkbox" />
+      <img src="/images/employees/square.svg" alt="" className="h-8 w-auto" />
     </td>
     <td className="p-3">
       <div className="flex items-center">
@@ -62,12 +62,16 @@ const EmployeeRow: React.FC<{ employee: Employee }> = ({ employee }) => (
           href={`/dashboard/payrolls/${employee?.employeeId}`}
           className="text-[#02b9b0] border-b-2 border-[#02b9b0]"
         >
-          {employee?.employeeName}
+          {employee?.employeeId}
         </Link>
       </div>
     </td>
+    <td className="p-3 flex items-center gap-2">
+      <img src="/images/employees/circle.svg" alt="" />
+      <div>{employee?.employeeProfile}</div>
+    </td>
     <td className="p-3">{employee?.employeeEmail}</td>
-    <td className="p-3">{employee?.employeeJobType}</td>
+    <td className="p-3">{employee?.employeeRole}</td>
     <td className="p-3 flex items-center">
       <StatusBadge status={employee?.employeeStatus} />
     </td>
@@ -92,10 +96,15 @@ export default function EmployeeTable({ employees }: EmployeeTableProps) {
           <thead className="bg-gray-100 border-2 text-gray-600">
             <tr className="font-medium">
               <th className="p-3 text-left">
-                <input type="checkbox" />
+                <img
+                  src="/images/employees/square.svg"
+                  alt=""
+                  className="h-8 w-auto"
+                />
               </th>
+              <th className="p-3 font-medium text-left">Employee ID</th>
               <th className="p-3 font-medium text-left">Profile</th>
-              <th className="p-3 font-medium text-left">Email ID</th>
+              <th className="p-3 font-medium text-left">Email</th>
               <th className="p-3 font-medium text-left">Role</th>
               <th className="p-3 font-medium text-left">Status</th>
             </tr>

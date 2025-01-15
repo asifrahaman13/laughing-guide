@@ -10,6 +10,12 @@ A blazing-fast HR payroll system designed to deal with simplicity as well as bla
 git clone https://github.com/asifrahaman13/laughing-guide.git
 ```
 
+Go to the root folder.
+
+```bash
+cd laughing-guide/
+```
+
 Create a .env file from the .env.example file.
 
 ```bash
