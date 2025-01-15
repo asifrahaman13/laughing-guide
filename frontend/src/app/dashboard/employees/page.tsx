@@ -69,6 +69,18 @@ export default function Page() {
     return <AddEmployee />;
   }
 
+  async function generatePayroll() {
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      const response = await axios.get(`${backendUrl}/calculate-payroll`);
+      if (response.status === 200) {
+        console.log(response.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <React.Fragment>
       <div className="flex flex-col w-full h-full">
@@ -87,7 +99,7 @@ export default function Page() {
             <button
               className="bg-lime-green rounded-lg px-4 gap-2 items-center py-2 flex"
               onClick={() => {
-                dispath(openModal());
+                generatePayroll();
               }}
             >
               <img src="/images/employees/person.svg" alt="" />
