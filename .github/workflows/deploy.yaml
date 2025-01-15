@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - asifr/devops 
 
 jobs:
   build-and-deploy:
