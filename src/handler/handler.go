@@ -343,3 +343,39 @@ func GetSampleCSVHandler(c *gin.Context) {
 		"presigned_url": presignedURL,
 	})
 }
+
+func FilterEmployees(c *gin.Context) {
+	employeeName := c.Query("employee_name")
+	employeeStatus := c.Query("employee_status")
+	employeeRole := c.Query("employee_role")
+
+	query := "SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees WHERE employee_name ILIKE $1 AND employee_status ILIKE $2 AND employee_role ILIKE $3"
+
+	var result []domain.Employee
+
+	rows, err := database.Database.Query(query, "%"+employeeName+"%", "%"+employeeStatus+"%", "%"+employeeRole+"%")
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve employee data"})
+		return
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var employee domain.Employee
+		err := rows.Scan(&employee.EmployeeID, &employee.EmployeeProfile, &employee.EmployeeEmail, &employee.EmployeeName, &employee.EmployeeRole, &employee.EmployeeStatus, &employee.EmployeeSalary, &employee.EmployeeJobType, &employee.EmployeeResident, &employee.EmployeeAge, &employee.Bonuses)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not scan employee data"})
+			return
+		}
+		result = append(result, employee)
+	}
+
+	if err = rows.Err(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error iterating over employee data"})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}

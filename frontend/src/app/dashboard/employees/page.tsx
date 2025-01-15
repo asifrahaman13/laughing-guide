@@ -26,7 +26,7 @@ export default function Page() {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       try {
         const [employeesResponse, statsResponse] = await Promise.all([
-          axios.get(`${backendUrl}/employees`),
+          axios.get(`${backendUrl}/filter-employees?employee_name=&employee_status=active&employee_role=manager`),
           axios.get(`${backendUrl}/aggregate`),
         ]);
 
