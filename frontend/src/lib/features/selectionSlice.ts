@@ -8,14 +8,23 @@ export const selectionSlice = createSlice({
     employeeRole: "",
   },
   reducers: {
-    select: (state, action) => {
-      state.employeeName = action.payload.employeeName;
-      state.employeeStatus = action.payload.employeeStatus;
-      state.employeeRole = action.payload.employeeRole;
+    selectEmployeeName: (state, action) => {
+      const { employeeName } = action.payload;
+      state.employeeName = employeeName;
+    },
+    selectEmployeeStatus: (state, action) => {
+      const { employeeStatus } = action.payload;
+      state.employeeStatus = employeeStatus;
+    },
+
+    setEmployeeRole: (state, action) => {
+      const { employeeRole } = action.payload;
+      state.employeeRole = employeeRole;
     },
   },
 });
 
-export const { select } = selectionSlice.actions;
+export const { selectEmployeeName, selectEmployeeStatus, setEmployeeRole } =
+  selectionSlice.actions;
 
 export default selectionSlice.reducer;

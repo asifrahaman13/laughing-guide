@@ -4,6 +4,7 @@ import { Employee } from "../types/dashboard";
 import Link from "next/link";
 import DropDownBox from "./ui/Dropdown";
 import SearchBox from "@/app/components/ui/SearchBox";
+import RolesDropDownBox from "./ui/RolesDropDown";
 
 type EmployeeTableProps = {
   employees: Employee[];
@@ -88,7 +89,7 @@ export default function EmployeeTable({ employees }: EmployeeTableProps) {
         <div className="flex gap-2">
           <SearchBox />
           <DropDownBox />
-          <DropDownBox />
+          <RolesDropDownBox />
         </div>
       </div>
       <div className="overflow-hidden rounded-xl shadow-md">
@@ -110,8 +111,11 @@ export default function EmployeeTable({ employees }: EmployeeTableProps) {
             </tr>
           </thead>
           <tbody>
-            {employees?.map((employee) => (
-              <EmployeeRow key={employee.employeeId} employee={employee} />
+            {employees?.map((employee, index) => (
+              <EmployeeRow
+                key={employee.employeeId + index}
+                employee={employee}
+              />
             ))}
           </tbody>
         </table>

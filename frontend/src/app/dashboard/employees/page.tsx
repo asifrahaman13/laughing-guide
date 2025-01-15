@@ -20,28 +20,42 @@ export default function Page() {
   const [employeeStats, setEmployeeStats] = useState<EmployeeData | null>(null);
   const loading = useSelector((state: RootState) => state.spinner.isLoading);
   const [buttonLoading, setLoading] = useState(false);
+  const selection = useSelector((state: RootState) => state.selection);
 
   React.useEffect(() => {
+    console.log(
+      "result",
+      selection.employeeName,
+      selection.employeeRole,
+      selection.employeeStatus,
+    );
     async function fetchData() {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       try {
         const [employeesResponse, statsResponse] = await Promise.all([
-          axios.get(`${backendUrl}/filter-employees?employee_name=&employee_status=active&employee_role=manager`),
+          axios.get(
+            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}`,
+          ),
           axios.get(`${backendUrl}/aggregate`),
         ]);
 
-        if (employeesResponse.data === null || statsResponse.data === null) {
-          return;
+        if (employeesResponse?.data === null || statsResponse?.data === null) {
+          console.log("Sorry something went wrong");
         }
-        setEmployees(employeesResponse.data);
-        setEmployeeStats(statsResponse.data);
+        setEmployees(employeesResponse?.data);
+        setEmployeeStats(statsResponse?.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
 
     fetchData();
-  }, [loading]);
+  }, [
+    loading,
+    selection.employeeName,
+    selection.employeeRole,
+    selection.employeeStatus,
+  ]);
 
   if (loading) {
     return (
@@ -61,11 +75,7 @@ export default function Page() {
     );
   }
 
-  if (
-    employees?.length === 0 ||
-    employees === null ||
-    employees === undefined
-  ) {
+  if (employees === null || employees === undefined) {
     return <AddEmployee />;
   }
 

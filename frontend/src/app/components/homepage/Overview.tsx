@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React from 'react';
+import React from "react";
 
 const Overview = () => {
   return (
@@ -12,7 +12,7 @@ const Overview = () => {
               <br className="hidden lg:inline-block" />
             </h1>
             <p className="mb-8 leading-relaxed text-medium text-black">
-              {' '}
+              {" "}
               Save your precious time in building your stuff rather than trying
               to serach the information. With our amazing tool you can find
               instant answers from your knowledgebase.

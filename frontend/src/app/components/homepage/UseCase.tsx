@@ -57,7 +57,6 @@ const posts = [
         "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
     },
   },
-  // More posts...
 ];
 const UseCase = () => {
   return (
@@ -67,7 +66,7 @@ const UseCase = () => {
           <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
             {posts.map((post) => (
               <article
-                key={post.id}
+                key={post?.id}
                 className="flex max-w-xl flex-col items-start justify-between"
               >
                 <div className="flex items-center gap-x-4 text-xs"></div>

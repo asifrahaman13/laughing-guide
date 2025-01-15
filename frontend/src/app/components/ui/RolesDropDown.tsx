@@ -1,10 +1,10 @@
 "use client";
-import { selectEmployeeStatus } from "@/lib/features/selectionSlice";
 import { Listbox } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/16/solid";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { SetStateAction, useState } from "react";
 import { useDispatch } from "react-redux";
+import { setEmployeeRole } from "@/lib/features/selectionSlice";
 
 const people = [
   {
@@ -13,19 +13,23 @@ const people = [
   },
   {
     id: 1,
-    name: "Active",
+    name: "Full Time",
   },
   {
     id: 2,
-    name: "Invite Sent",
+    name: "Contract",
   },
   {
     id: 3,
-    name: "Payrol Only",
+    name: "Part Time",
+  },
+  {
+    id: 4,
+    name: "Intern",
   },
 ];
 
-export default function DropDownBox() {
+export default function RolesDropDownBox() {
   const [selected, setSelected] = useState(people[2]);
   const dispatch = useDispatch();
 
@@ -33,7 +37,7 @@ export default function DropDownBox() {
     person: SetStateAction<{ id: number; name: string }>,
   ) => {
     setSelected(person);
-    dispatch(selectEmployeeStatus({ employeeStatus: person.name }));
+    dispatch(setEmployeeRole({ employeeRole: person.name }));
   };
 
   return (
