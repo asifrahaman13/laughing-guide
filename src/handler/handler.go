@@ -2,8 +2,10 @@ package handler
 
 import (
 	"encoding/csv"
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/asifrahaman13/laughing-guide/src/database"
 	"github.com/asifrahaman13/laughing-guide/src/domain"
@@ -35,6 +37,7 @@ func UploadHandler(c *gin.Context) {
 
 	var values []interface{}
 	query := `INSERT INTO employees (employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses) VALUES `
+	var placeholders []string
 	for i, row := range records {
 		if i == 0 {
 			continue
@@ -42,17 +45,16 @@ func UploadHandler(c *gin.Context) {
 		salary, _ := strconv.ParseFloat(row[6], 64)
 		age, _ := strconv.Atoi(row[9])
 		bonuses, _ := strconv.ParseFloat(row[10], 64)
-		query += `(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?),`
+		placeholder := `($` + strconv.Itoa(len(values)+1) + `, $` + strconv.Itoa(len(values)+2) + `, $` + strconv.Itoa(len(values)+3) + `, $` + strconv.Itoa(len(values)+4) + `, $` + strconv.Itoa(len(values)+5) + `, $` + strconv.Itoa(len(values)+6) + `, $` + strconv.Itoa(len(values)+7) + `, $` + strconv.Itoa(len(values)+8) + `, $` + strconv.Itoa(len(values)+9) + `, $` + strconv.Itoa(len(values)+10) + `, $` + strconv.Itoa(len(values)+11) + `)`
+		placeholders = append(placeholders, placeholder)
 		values = append(values, row[0], row[1], row[2], row[3], row[4], row[5], salary, row[7], row[8], age, bonuses)
 	}
-	query = query[:len(query)-1]
-
+	query += strings.Join(placeholders, ", ")
 	_, err = database.Database.Exec(query, values...)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not save employee data to database"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not save employee data to database", "details": err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{"message": "Employees uploaded successfully"})
 }
 
@@ -114,7 +116,7 @@ func CalculatePayrollHandler(c *gin.Context) {
 
 		results = append(results, result)
 
-		insertQuery += "(?, ?, ?, ?, ?, ?, ?), "
+		insertQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d), ", len(insertValues)+1, len(insertValues)+2, len(insertValues)+3, len(insertValues)+4, len(insertValues)+5, len(insertValues)+6, len(insertValues)+7)
 		insertValues = append(insertValues, employee.EmployeeID, grossSalary, netSalary, cpf.EmployeeContribution, cpf.EmployerContribution, cpf.TotalContribution, bonuses)
 	}
 
@@ -131,6 +133,7 @@ func CalculatePayrollHandler(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, results)
 }
+
 
 func FetchPayrollHandler(c *gin.Context) {
 	rows, err := database.Database.Query(`
@@ -154,7 +157,6 @@ func FetchPayrollHandler(c *gin.Context) {
 	defer rows.Close()
 
 	var payrollResults []gin.H
-
 	truncateToTwoDecimals := helper.TruncateToTwoDecimals
 
 	for rows.Next() {
@@ -198,6 +200,7 @@ func FetchPayrollHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, payrollResults)
 }
 
+
 func GetEmployeesHandler(c *gin.Context) {
 	rows, err := database.Database.Query("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees")
 	if err != nil {
@@ -225,6 +228,7 @@ func GetEmployeesHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, employees)
 }
+
 
 func GetEmployeeStatisticsHandler(c *gin.Context) {
 	rows, err := database.Database.Query("SELECT employee_resident, employee_job_type, employee_status FROM employees")
@@ -292,8 +296,13 @@ func GetEmployeeStatisticsHandler(c *gin.Context) {
 		}
 	}
 
+	if err = rows.Err(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error iterating over employee data"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"Nationality":    nationalityCount,
+		"Nationality":     nationalityCount,
 		"EmploymentType": employmentTypeCount,
 		"EmployeeStatus": employeeStatusCount,
 	})

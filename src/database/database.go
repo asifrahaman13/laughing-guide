@@ -2,15 +2,33 @@ package database
 
 import (
 	"database/sql"
-	_ "github.com/mattn/go-sqlite3"
+	"fmt"
 	"log"
+	"os"
+	"time"
+
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 var Database *sql.DB
 
 func InitDB() {
-	var err error
-	Database, err = sql.Open("sqlite3", "./employees.db")
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v\n", err)
+	}
+
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	sslmode := os.Getenv("DB_SSLMODE")
+
+	connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=%s",
+		user, password, dbname, host, port, sslmode)
+	Database, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,8 +56,7 @@ func InitDB() {
 		total_contribution FLOAT NOT NULL,
 		bonuses FLOAT NOT NULL,
 		PRIMARY KEY (employee_id)
-	);
-	`
+	);`
 
 	_, err = Database.Exec(createTableSQL)
 	if err != nil {
@@ -48,5 +65,15 @@ func InitDB() {
 	_, err = Database.Exec(createTableSQL2)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	Database.SetMaxOpenConns(25)
+	Database.SetMaxIdleConns(25)
+	Database.SetConnMaxLifetime(5 * time.Minute)
+
+	err = Database.Ping()
+	if err != nil {
+		log.Fatalf("Error connecting to the database: %v\n", err)
+		panic(err)
 	}
 }
