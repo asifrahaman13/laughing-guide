@@ -43,11 +43,11 @@ jobs:
     #     docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest -f ./frontend/Dockerfile ./frontend
     #     docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
 
-    - name: Deploy with Docker Compose
-      run: |
-        docker-compose down
-        docker-compose up -d
-      env:
-        POSTGRES_DB: mydata
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: password
+    # - name: Deploy with Docker Compose
+    #   run: |
+    #     docker compose down
+    #     docker compose up -d
+    #   env:
+    #     POSTGRES_DB: mydata
+    #     POSTGRES_USER: postgres
+    #     POSTGRES_PASSWORD: password
