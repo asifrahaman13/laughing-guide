@@ -1,73 +1,64 @@
-import Link from "next/link";
+/* eslint-disable @next/next/no-img-element */
+
 import React from "react";
+import HeroSection from "./components/homepage/HeroSection";
+import Banner from "./components/homepage/Banner";
+import Overview from "./components/homepage/Overview";
+import UseCase from "./components/homepage/UseCase";
+import FooterComponent from "./components/homepage/FooterComponent";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-2xl font-bold text-gray-800">My SaaS</div>
-          <nav>
-            <Link href="/dashboard">
-              <div className="text-gray-800 hover:text-gray-600 mx-4">Dashboard</div>
-            </Link>
-            <Link href="/about">
-              <div className="text-gray-800 hover:text-gray-600 mx-4">About</div>
-            </Link>
-            <Link href="/contact">
-              <div className="text-gray-800 hover:text-gray-600 mx-4">Contact</div>
-            </Link>
-          </nav>
-        </div>
-      </header>
+    <div className="bg-white min-h-screen">
+      <HeroSection />
 
-      {/* Hero Section */}
-      <section className="bg-white">
-        <div className="container mx-auto px-6 py-16 text-center">
-          <h1 className="text-4xl font-bold text-gray-800">Welcome to My SaaS</h1>
-          <p className="text-gray-600 mt-4">The best solution for your business needs.</p>
-          <Link href="/signup">
-            <div className="mt-8 inline-block bg-orange-600 text-white text-lg font-semibold px-6 py-3 rounded hover:bg-orange-500 transition duration-300">
-              Get Started
+      <div className="relative isolate px-6 pt-14 lg:px-8">
+        <div className="mx-auto max-w-6xl py-24 sm:py-48 lg:py-6">
+          <div className="text-center flex  flex-col items-center gap-8">
+            <div className="max-w-2xl  py-3 -rotate-3">
+              <h1 className="text-4xl font-bold rotate-3  text-Pri-Dark sm:text-6xl font-sans transform ">
+                Blazing fast HR payroll system.⚡⚡
+              </h1>
             </div>
-          </Link>
-        </div>
-      </section>
+            <div className="w-full bg-green-200">
+              <div className="bg-white p-12 w-full shadow-2xl">
+                <img src="/ss.png" alt="" className="w-3xl" />
+              </div>
+            </div>
 
-      {/* Features Section */}
-      <section className="bg-gray-100">
-        <div className="container mx-auto px-6 py-16">
-          <h2 className="text-3xl font-bold text-gray-800 text-center">Features</h2>
-          <div className="mt-8 flex flex-wrap">
-            <div className="w-full md:w-1/3 p-4">
-              <div className="bg-white p-6 rounded shadow">
-                <h3 className="text-xl font-semibold text-gray-800">Feature One</h3>
-                <p className="text-gray-600 mt-2">Description of feature one.</p>
-              </div>
-            </div>
-            <div className="w-full md:w-1/3 p-4">
-              <div className="bg-white p-6 rounded shadow">
-                <h3 className="text-xl font-semibold text-gray-800">Feature Two</h3>
-                <p className="text-gray-600 mt-2">Description of feature two.</p>
-              </div>
-            </div>
-            <div className="w-full md:w-1/3 p-4">
-              <div className="bg-white p-6 rounded shadow">
-                <h3 className="text-xl font-semibold text-gray-800">Feature Three</h3>
-                <p className="text-gray-600 mt-2">Description of feature three.</p>
-              </div>
+            <p className="max-w-xl mt-6 text-medium font-medium leading-8 text-black">
+              Out main objective is to make you 10x more productive. We are here
+              to help you to automate HR payroll system with ease.
+            </p>
+            <div className="mt-10 flex items-center justify-center gap-x-6">
+              <a
+                href="#"
+                className="rounded-md px-3.5 py-2.5 text-sm font-semibold  shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 0"
+              >
+                Get started
+              </a>
+              <a
+                href="#"
+                className="rounded-md  text-black px-3.5 py-2.5 text-sm font-semibold  shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Learn more <span aria-hidden="true">→</span>
+              </a>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-white shadow">
-        <div className="container mx-auto px-6 py-4 text-center">
-          <p className="text-gray-600">&copy; 2023 My SaaS. All rights reserved.</p>
-        </div>
-      </footer>
+      </div>
+      <div>
+        <Banner />
+      </div>
+      <div className="flex flex-col items-center">
+        <Overview />
+      </div>
+      <div>
+        <UseCase />
+      </div>
+      <div>
+        <FooterComponent />
+      </div>
     </div>
   );
 }
