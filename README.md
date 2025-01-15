@@ -2,7 +2,13 @@
 
 A blazing-fast HR payroll system designed to deal with simplicity as well as blazing-fast speed. The application is capable of handling thousands of files concurrently, making it extremely efficient for the HR payroll system.
 
-![Screenshot from 2025-01-15 01-37-53](https://github.com/user-attachments/assets/0a4e3475-55bc-45da-a62c-aa1dac7dc3c0)
+
+
+![Screenshot from 2025-01-16 01-29-49](https://github.com/user-attachments/assets/bc9b7379-8bec-4a15-9058-032965d83768)
+![Screenshot from 2025-01-16 01-28-32](https://github.com/user-attachments/assets/e9adb2d6-3696-4095-a5b6-361dbc09489d)
+![Screenshot from 2025-01-16 01-30-09](https://github.com/user-attachments/assets/3a86ee72-1188-4f41-ba60-c1c3893e4a90)
+![Screenshot from 2025-01-16 01-28-52](https://github.com/user-attachments/assets/317c44f0-116d-459f-8717-77898b3038a2)
+
 
 ## Backend
 
