@@ -30,7 +30,7 @@ const people = [
 ];
 
 export default function RolesDropDownBox() {
-  const [selected, setSelected] = useState(people[2]);
+  const [selected, setSelected] = useState(people[0]);
   const dispatch = useDispatch();
 
   const handleSelectionChange = (

@@ -26,7 +26,7 @@ const people = [
 ];
 
 export default function DropDownBox() {
-  const [selected, setSelected] = useState(people[2]);
+  const [selected, setSelected] = useState(people[0]);
   const dispatch = useDispatch();
 
   const handleSelectionChange = (
