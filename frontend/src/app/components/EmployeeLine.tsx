@@ -42,16 +42,15 @@ export default function EmployeeLine({
     employeeType.Contract +
     employeeType.Intern;
 
-  if (total === 0) {
-    return null;
-  }
-
   const portions = [
     employeeType.FullTime / total,
     employeeType.PartTime / total,
     employeeType.Contract / total,
     employeeType.Intern / total,
   ];
+  if (total === 0) {
+    portions.forEach(() => 0);
+  }
 
   return (
     <div className="bg-white border p-4 py-6 rounded-xl h-full w-2/5 flex flex-col">

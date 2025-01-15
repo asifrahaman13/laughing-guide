@@ -74,15 +74,15 @@ export default function EmployeeStatus({
     employmentStatus?.["Invite Sent"] +
     employmentStatus?.["Payroll Only"];
 
-  if (total === 0) {
-    return null;
-  }
-
   const portions = [
     employmentStatus?.Active / total,
     employmentStatus?.["Invite Sent"] / total,
     employmentStatus?.["Payroll Only"] / total,
   ];
+
+  if (total === 0) {
+    portions.forEach(() => 0);
+  }
 
   return (
     <div className="bg-white p-4 border py-6 rounded-xl h-full w-2/5 flex flex-col">

@@ -72,9 +72,6 @@ export default function EmployeeStatistics({
     nationality?.Others +
     nationality?.PR;
 
-  if (total === 0) {
-    return null;
-  }
   const portions = [
     nationality?.Singaporean / total,
     nationality?.PR / total,
@@ -82,7 +79,9 @@ export default function EmployeeStatistics({
     nationality?.Others / total,
   ];
 
-  console.log("The portions", portions);
+  if (total === 0) {
+    portions.forEach(() => 0);
+  }
 
   return (
     <div className="bg-white border p-4 py-6 rounded-xl h-full w-2/5 flex flex-col">
