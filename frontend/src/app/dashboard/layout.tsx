@@ -24,12 +24,12 @@ export default function Layout({ children }: LayoutProps) {
         {/* Sidebar */}
         <div className="w-1/6 lg:px-4 lg:text-lg h-full border-2 justify-between flex flex-col gap-4">
           <div className="flex flex-col items-start rounded-lg">
-            <div className="flex gap-2 items-center p-4 justify-center">
+            <Link href="/" className="flex gap-2 items-center p-4 justify-center">
               <div>
                 <img src="/images/dashboard/icon.svg" alt="" className="h-12" />
               </div>
-              <div className="font-normal text-xl">Kelick</div>
-            </div>
+              <div  className="font-normal text-xl">Kelick</div>
+            </Link>
             <div className="flex gap-4 items-center p-4 justify-center">
               <div>
                 <img src="/images/dashboard/home.svg" alt="" />
