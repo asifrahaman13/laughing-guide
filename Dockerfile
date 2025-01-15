@@ -19,9 +19,11 @@ RUN CGO_ENABLED=1 GOOS=linux go build -o /myapp -ldflags '-linkmode external -ex
 # Final Stage
 FROM debian:buster-slim
 
-
 # Copy the binary from the builder stage
 COPY --from=builder /myapp .
+
+# Copy the .env file into the container
+COPY .env .env
 
 # Expose the port the application runs on
 EXPOSE 8000

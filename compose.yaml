@@ -4,30 +4,48 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8000:8000"  
     networks:
       - laughing-network
     env_file:
-      - .env
+      - .env  
     volumes:
-      - .:/app
+      - .:/app  
     tty: true
+    depends_on:
+      - postgres 
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3000:3000"  
     networks:
       - laughing-network
     depends_on:
-      - backend
+      - backend 
     volumes:
-      - ./frontend:/app
-    command: bun run dev
+      - ./frontend:/app  
+    command: bun run dev 
     tty: true
+
+  postgres:
+    image: postgres:latest 
+    ports:
+      - "5433:5432"
+    networks:
+      - laughing-network
+    environment:
+      POSTGRES_DB: mydata  
+      POSTGRES_USER: postgres 
+      POSTGRES_PASSWORD: password 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
 
 networks:
   laughing-network:
     driver: bridge
+
+volumes:
+  postgres_data: 
