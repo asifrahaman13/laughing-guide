@@ -42,6 +42,10 @@ export default function EmployeeLine({
     employeeType.Contract +
     employeeType.Intern;
 
+  if(total === 0) {
+    return null;
+  }
+
   const portions = [
     employeeType.FullTime / total,
     employeeType.PartTime / total,

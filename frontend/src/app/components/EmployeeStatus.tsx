@@ -74,6 +74,10 @@ export default function EmployeeStatus({
     employmentStatus?.["Invite Sent"] +
     employmentStatus?.["Payroll Only"];
 
+  if (total === 0) {
+    return null;
+  }
+
   const portions = [
     employmentStatus?.Active / total,
     employmentStatus?.["Invite Sent"] / total,

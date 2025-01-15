@@ -1,7 +1,11 @@
+"use client";
 /* eslint-disable @next/next/no-img-element */
+import { openModal } from "@/lib/features/modalSlice";
 import React from "react";
+import { useDispatch } from "react-redux";
 
 export default function AddEmployee() {
+  const dispatch = useDispatch();
   return (
     <React.Fragment>
       <div className="flex flex-col w-full h-full bg-gray-100">
@@ -23,14 +27,24 @@ export default function AddEmployee() {
             </div>
             <div className="flex gap-4 py-4">
               <div>
-                <button className="bg-white border-2 rounded-lg px-4 gap-2 items-center py-2 flex">
+                <button
+                  className="bg-white border-2 rounded-lg px-4 gap-2 items-center py-2 flex"
+                  onClick={() => {
+                    dispatch(openModal());
+                  }}
+                >
                   <img src="/images/employees/bulk.svg" alt="" />
                   <div>Bulk upload</div>
                 </button>
               </div>
               <div>
                 <div>
-                  <button className="bg-lime-green rounded-lg px-4 gap-2 items-center py-2 flex">
+                  <button
+                    className="bg-lime-green rounded-lg px-4 gap-2 items-center py-2 flex"
+                    onClick={() => {
+                      dispatch(openModal());
+                    }}
+                  >
                     <img src="/images/employees/person.svg" alt="" />
                     <div className="text-white">Bulk Employee</div>
                   </button>

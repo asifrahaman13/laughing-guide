@@ -72,7 +72,9 @@ export default function EmployeeStatistics({
     nationality?.Others +
     nationality?.PR;
 
-  console.log(nationality);
+  if (total === 0) {
+    return null;
+  }
   const portions = [
     nationality?.Singaporean / total,
     nationality?.PR / total,

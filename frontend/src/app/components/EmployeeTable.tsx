@@ -90,7 +90,7 @@ export default function EmployeeTable({ employees }: EmployeeTableProps) {
             </tr>
           </thead>
           <tbody>
-            {employees.map((employee) => (
+            {employees?.map((employee) => (
               <EmployeeRow key={employee.employeeId} employee={employee} />
             ))}
           </tbody>
