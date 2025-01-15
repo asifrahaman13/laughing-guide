@@ -100,7 +100,7 @@ export default function Page() {
               <div className="text-white">Add Employee</div>
             </button>
             <button
-              className="bg-lime-green rounded-lg gap-2 px-2 items-center  flex"
+              className="bg-lime-green rounded-lg gap-2 px-4 items-center  flex"
               onClick={generatePayroll}
               disabled={buttonLoading}
             >
