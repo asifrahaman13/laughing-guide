@@ -105,7 +105,7 @@ export default function Page() {
               disabled={buttonLoading}
             >
               {buttonLoading ? (
-                <ButtionSpinner />
+                <ButtionSpinner buttonType="primary" />
               ) : (
                 <>
                   <img src="/images/employees/person.svg" alt="" />

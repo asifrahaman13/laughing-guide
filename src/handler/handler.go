@@ -4,13 +4,18 @@ import (
 	"encoding/csv"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/asifrahaman13/laughing-guide/src/database"
 	"github.com/asifrahaman13/laughing-guide/src/domain"
 	"github.com/asifrahaman13/laughing-guide/src/helper"
 	"github.com/asifrahaman13/laughing-guide/src/service"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/gin-gonic/gin"
 )
 
@@ -134,7 +139,6 @@ func CalculatePayrollHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, results)
 }
 
-
 func FetchPayrollHandler(c *gin.Context) {
 	rows, err := database.Database.Query(`
         SELECT 
@@ -200,7 +204,6 @@ func FetchPayrollHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, payrollResults)
 }
 
-
 func GetEmployeesHandler(c *gin.Context) {
 	rows, err := database.Database.Query("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees")
 	if err != nil {
@@ -228,7 +231,6 @@ func GetEmployeesHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, employees)
 }
-
 
 func GetEmployeeStatisticsHandler(c *gin.Context) {
 	rows, err := database.Database.Query("SELECT employee_resident, employee_job_type, employee_status FROM employees")
@@ -302,8 +304,42 @@ func GetEmployeeStatisticsHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"Nationality":     nationalityCount,
+		"Nationality":    nationalityCount,
 		"EmploymentType": employmentTypeCount,
 		"EmployeeStatus": employeeStatusCount,
+	})
+}
+
+func GetSampleCSVHandler(c *gin.Context) {
+
+	key := "sample.csv"
+	bucket := os.Getenv("AWS_BUCKET_NAME")
+	region := os.Getenv("AWS_REGION")
+
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(region),
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to create AWS session",
+		})
+		return
+	}
+
+	svc := s3.New(sess)
+	req, _ := svc.GetObjectRequest(&s3.GetObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(key),
+	})
+
+	presignedURL, err := req.Presign(15 * time.Minute)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to generate presigned URL",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"presigned_url": presignedURL,
 	})
 }

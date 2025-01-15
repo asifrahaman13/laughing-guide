@@ -5,11 +5,13 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { startLoading, stopLoading } from "@/lib/features/spinnerSlice";
+import { ButtionSpinner } from "./ui/Buttons";
 
 export default function Modal() {
   const dispath = useDispatch();
   const modal = useSelector((state: RootState) => state.modal);
   const [file, setFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const uploadFile = async (file: File) => {
     const formData = new FormData();
@@ -54,6 +56,32 @@ export default function Modal() {
       }
     }
   };
+
+  async function DownloadSampleCsv() {
+    try {
+      setLoading(true);
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      const response = await axios.get(`${backendUrl}/sample-csv`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status === 200) {
+        const presignedUrl = response.data.presigned_url;
+        const link = document.createElement("a");
+        link.href = presignedUrl;
+        link.download = "sample.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <>
       {modal.isOpen && (
@@ -107,10 +135,18 @@ export default function Modal() {
                     starting point for your own file.
                   </p>
                 </div>
-                <button className="bg-gray-100 border-2 flex  gap-2 items-center text-gray-800 font-medium py-2 px-4 rounded-xl mt-2">
-                  <img src="/images/dashboard/download.svg" alt="" />
-                  <div> Download XLSX</div>
-                </button>
+
+                {loading ? (
+                  <ButtionSpinner buttonType="secondary" />
+                ) : (
+                  <button
+                    className="bg-gray-100 border-2 flex  gap-2 items-center text-gray-800 font-medium py-2 px-4 rounded-xl mt-2"
+                    onClick={() => DownloadSampleCsv()}
+                  >
+                    <img src="/images/dashboard/download.svg" alt="" />
+                    <div> Download XLSX</div>
+                  </button>
+                )}
               </div>
               <div className="mt-6  flex justify-end">
                 <button

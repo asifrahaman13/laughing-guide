@@ -22,6 +22,7 @@ func InitRoutes() *gin.Engine {
 	r.GET("/payroll", handler.FetchPayrollHandler)
 	r.GET("/employees", handler.GetEmployeesHandler)
 	r.GET("/aggregate", handler.GetEmployeeStatisticsHandler)
+	r.GET("/sample-csv", handler.GetSampleCSVHandler)
 
 	return r
 }
