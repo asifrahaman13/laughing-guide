@@ -2,14 +2,16 @@
 import React from "react";
 import { Employee } from "../types/dashboard";
 import Link from "next/link";
+import DropDownBox from "./ui/Dropdown";
+import SearchBox from "@/app/components/ui/SearchBox";
 
-interface EmployeeTableProps {
+type EmployeeTableProps = {
   employees: Employee[];
-}
+};
 
-interface StatusProps {
+type StatusProps = {
   status: string;
-}
+};
 
 const StatusBadge: React.FC<StatusProps> = ({ status }) => {
   const statusStyles: Record<
@@ -75,7 +77,16 @@ const EmployeeRow: React.FC<{ employee: Employee }> = ({ employee }) => (
 export default function EmployeeTable({ employees }: EmployeeTableProps) {
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-xl font-bold mb-4 text-gray-00">All Employees</h1>
+      <div className="flex items-center justify-between py-4">
+        <div className="text-xl font-bold  text-gray-700 h-full  flex items-center ">
+          All Employees
+        </div>
+        <div className="flex gap-2">
+          <SearchBox />
+          <DropDownBox />
+          <DropDownBox />
+        </div>
+      </div>
       <div className="overflow-hidden rounded-xl shadow-md">
         <table className="min-w-full bg-gray-400 border-none">
           <thead className="bg-gray-100 border-2 text-gray-600">
