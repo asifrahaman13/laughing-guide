@@ -39,9 +39,13 @@ export default function Page() {
 
     fetchData();
   }, []);
-  console.log(employees)
+  console.log(employees);
 
-  if (employees?.length === 0 || employees===null || employeeStats === undefined) {
+  if (
+    employees?.length === 0 ||
+    employees === null ||
+    employeeStats === undefined
+  ) {
     return <AddEmployee />;
   }
 

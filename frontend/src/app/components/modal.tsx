@@ -16,7 +16,9 @@ export const uploadFile = async (file: File) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    return response.data;
+    if (response.status === 200) {
+      return response.data;
+    }
   } catch (error) {
     console.error("Error uploading file:", error);
     throw error;
@@ -36,6 +38,9 @@ export default function Modal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (file === null) {
+      alert("No file selected");
+    }
     if (file) {
       try {
         const response = await uploadFile(file);
@@ -52,7 +57,7 @@ export default function Modal() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-gray-100 p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-4">Upload File</h2>
-            <form onSubmit={handleSubmit}>
+            <div>
               <div className="flex flex-col items-center border-2 border-dashed bg-lime-gray border-gray-300 rounded-lg py-10 px-8 text-center">
                 <img
                   src="/images/dashboard/upload.svg"
@@ -90,7 +95,7 @@ export default function Modal() {
                   <img src="/images/employees/excel.svg" alt="" />
                 </div>
                 <div className="flex flex-col ">
-                  <h3 className="text-lg font-semibold">Table Example</h3>
+                  <h3 className="text-lg font-semibold text-gray-800">Table Example</h3>
                   <p className="text-sm text-gray-500">
                     You can download the attached example and use them as a
                     <br />
@@ -115,11 +120,14 @@ export default function Modal() {
                 <button
                   type="submit"
                   className="bg-lime-green text-white font-semibold py-2 px-4 rounded-xl"
+                  onClick={(e) => {
+                    handleSubmit(e);
+                  }}
                 >
                   Continue
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       )}
