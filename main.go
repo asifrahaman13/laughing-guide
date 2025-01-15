@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/asifrahaman13/laughing-guide/src/database"
-	"github.com/asifrahaman13/laughing-guide/src/handler"
+	"github.com/asifrahaman13/laughing-guide/src/routers"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -46,10 +46,10 @@ func main() {
 		})
 	})
 
-	r.POST("/upload", handler.UploadHandler)
-	r.GET("/calculate-payroll", handler.CalculatePayrollHandler)
-	r.GET("/employees", handler.GetEmployeesHandler)
-	r.GET("/aggregate", handler.GetEmployeeStatisticsHandler)
+
+
+	// Initialize the routes
+	r = routers.InitRoutes()
 
 	port := os.Getenv("PORT")
 	if port == "" {
