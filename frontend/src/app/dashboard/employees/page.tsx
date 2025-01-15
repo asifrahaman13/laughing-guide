@@ -10,11 +10,14 @@ import EmployeeStatistics from "@/app/components/EmployeeStatistics";
 import EmployeeStatus from "@/app/components/EmployeeStatus";
 import EmployeeLine from "@/app/components/EmployeeLine";
 import EmployeeTable from "@/app/components/EmployeeTable";
+import { RootState } from "@/lib/store";
+import { useSelector } from "react-redux";
 
 export default function Page() {
   const dispath = useDispatch();
-  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [employees, setEmployees] = useState<Employee[] | null>(null);
   const [employeeStats, setEmployeeStats] = useState<EmployeeData | null>(null);
+  const loading = useSelector((state: RootState) => state.spinner.isLoading);
 
   React.useEffect(() => {
     async function fetchData() {
@@ -38,13 +41,30 @@ export default function Page() {
     }
 
     fetchData();
-  }, []);
-  console.log(employees);
+  }, [loading]);
+
+  if (loading) {
+    return (
+      <>
+        <div className="flex items-center justify-center h-screen">
+          <div
+            className="h-16 w-16 animate-spin rounded-full border-4 border-transparent"
+            style={{
+              borderTopColor: "rgba(173,216,230,1)",
+              borderRightColor: "rgba(173,216,230,0.7)",
+              borderBottomColor: "rgba(173,216,230,0.5)",
+              borderLeftColor: "rgba(173,216,230,0.3)",
+            }}
+          ></div>
+        </div>
+      </>
+    );
+  }
 
   if (
     employees?.length === 0 ||
     employees === null ||
-    employeeStats === undefined
+    employees === undefined
   ) {
     return <AddEmployee />;
   }

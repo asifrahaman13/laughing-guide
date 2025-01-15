@@ -4,31 +4,33 @@ import { RootState } from "@/lib/store";
 import axios from "axios";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-export const uploadFile = async (file: File) => {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  try {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-    const response = await axios.post(`${backendUrl}/upload`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    if (response.status === 200) {
-      return response.data;
-    }
-  } catch (error) {
-    console.error("Error uploading file:", error);
-    throw error;
-  }
-};
+import { startLoading, stopLoading } from "@/lib/features/spinnerSlice";
 
 export default function Modal() {
   const dispath = useDispatch();
   const modal = useSelector((state: RootState) => state.modal);
   const [file, setFile] = useState<File | null>(null);
+
+  const uploadFile = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      const response = await axios.post(`${backendUrl}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response.status === 200) {
+        dispath(stopLoading());
+        return response.data;
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      throw error;
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -43,9 +45,10 @@ export default function Modal() {
     }
     if (file) {
       try {
+        dispath(closeModal());
+        dispath(startLoading());
         const response = await uploadFile(file);
         console.log("File uploaded successfully:", response);
-        dispath(closeModal());
       } catch (error) {
         console.error("Error uploading file:", error);
       }
@@ -95,7 +98,9 @@ export default function Modal() {
                   <img src="/images/employees/excel.svg" alt="" />
                 </div>
                 <div className="flex flex-col ">
-                  <h3 className="text-lg font-semibold text-gray-800">Table Example</h3>
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Table Example
+                  </h3>
                   <p className="text-sm text-gray-500">
                     You can download the attached example and use them as a
                     <br />
