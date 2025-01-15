@@ -16,20 +16,11 @@ Create a .env file from the .env.example file.
 mv .env.example .env
 ```
 
-Next, enter your AWS credentials. Ensure you enter the correct access keys as well as the regions.
+Next, enter your AWS credentials. Ensure you enter the correct access keys as well as the regions.Now, you should be able to run the application.
 
-Now, you should be able to run the application.
-
-```bash
-export AWS_ACCESS_KEY_ID=
-export AWS_SECRET_ACCESS_KEY=
-export AWS_SESSION_TOKEN=
-```
-
-Now, you can run the main script scripts/main.py to check the functions.
 
 ```bash
-go run main.go
+go build -o myapp && ./myapp
 ```
 
 ## Front end
