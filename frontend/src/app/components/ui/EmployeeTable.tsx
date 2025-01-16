@@ -10,6 +10,7 @@ import StatusBadge from "./StatusBadge";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
+import Spinner from "./Spinner";
 
 export default function EmployeeTable() {
   const selection = useSelector((state: RootState) => state.selection);
@@ -22,7 +23,7 @@ export default function EmployeeTable() {
       try {
         const [employeesResponse] = await Promise.all([
           axios.get(
-            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}`,
+            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}`
           ),
         ]);
 
@@ -98,22 +99,7 @@ export default function EmployeeTable() {
         </div>
       </div>
 
-      {pageLoading && (
-        <>
-          {" "}
-          <div className="flex items-center justify-center h-screen">
-            <div
-              className="h-16 w-16 animate-spin rounded-full border-4 border-transparent"
-              style={{
-                borderTopColor: "rgba(173,216,230,1)",
-                borderRightColor: "rgba(173,216,230,0.7)",
-                borderBottomColor: "rgba(173,216,230,0.5)",
-                borderLeftColor: "rgba(173,216,230,0.3)",
-              }}
-            ></div>
-          </div>
-        </>
-      )}
+      {pageLoading && <Spinner />}
       <div className="overflow-hidden rounded-xl shadow-md">
         <div className="bg-gray-400 border-none">
           <div className="bg-gray-100 border-2 text-gray-600 flex">

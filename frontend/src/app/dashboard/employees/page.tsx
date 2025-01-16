@@ -13,6 +13,7 @@ import EmployeeTable from "@/app/components/ui/EmployeeTable";
 import { ButtionSpinner } from "@/app/components/ui/Buttons";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/lib/store";
+import Spinner from "@/app/components/ui/Spinner";
 
 export default function Page() {
   const dispath = useDispatch();
@@ -50,21 +51,7 @@ export default function Page() {
   }, [loading]);
 
   if (loading || pageLoading) {
-    return (
-      <>
-        <div className="flex items-center justify-center h-screen">
-          <div
-            className="h-16 w-16 animate-spin rounded-full border-4 border-transparent"
-            style={{
-              borderTopColor: "rgba(173,216,230,1)",
-              borderRightColor: "rgba(173,216,230,0.7)",
-              borderBottomColor: "rgba(173,216,230,0.5)",
-              borderLeftColor: "rgba(173,216,230,0.3)",
-            }}
-          ></div>
-        </div>
-      </>
-    );
+    return <Spinner />;
   } else {
     if (employees === null || employees === undefined) {
       return <AddEmployee />;
