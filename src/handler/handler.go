@@ -4,303 +4,73 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/asifrahaman13/laughing-guide/src/database"
-	"github.com/asifrahaman13/laughing-guide/src/domain"
-	"github.com/asifrahaman13/laughing-guide/src/helper"
-	"github.com/asifrahaman13/laughing-guide/src/service"
-
+	"github.com/asifrahaman13/laughing-guide/src/core/service"
 	"github.com/gin-gonic/gin"
 )
 
-func CalculatePayrollHandler(c *gin.Context) {
-	rows, err := database.Database.Query("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees")
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve employee data"})
-		return
-	}
-	defer rows.Close()
-
-	var results []gin.H
-	tx, err := database.Database.Begin()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not start transaction"})
-		return
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		} else {
-			tx.Commit()
-		}
-	}()
-
-	var insertValues []interface{}
-	insertQuery := `
-        INSERT INTO payroll_data 
-        (employee_id, gross_salary, net_salary, employee_contribution, employer_contribution, total_contribution, bonuses) 
-        VALUES `
-
-	for rows.Next() {
-		var employee domain.Employee
-		var salary float64
-		var age int
-		var bonuses float64
-
-		err := rows.Scan(&employee.EmployeeID, &employee.EmployeeProfile, &employee.EmployeeEmail, &employee.EmployeeName, &employee.EmployeeRole, &employee.EmployeeStatus, &salary, &employee.EmployeeJobType, &employee.EmployeeResident, &age, &bonuses)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not scan employee data"})
-			return
-		}
-
-		isCitizen := employee.EmployeeResident == "Citizen"
-		cpf := service.CalculateCPF(age, salary, isCitizen)
-
-		grossSalary := salary + bonuses
-		netSalary := grossSalary - cpf.TotalContribution
-
-		result := gin.H{
-			"employeeId":       employee.EmployeeID,
-			"employeeName":     employee.EmployeeName,
-			"employeeSalary":   salary,
-			"bonuses":          bonuses,
-			"cpfContributions": cpf,
-			"grossSalary":      grossSalary,
-			"netSalary":        netSalary,
-		}
-
-		results = append(results, result)
-
-		insertQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d), ", len(insertValues)+1, len(insertValues)+2, len(insertValues)+3, len(insertValues)+4, len(insertValues)+5, len(insertValues)+6, len(insertValues)+7)
-		insertValues = append(insertValues, employee.EmployeeID, grossSalary, netSalary, cpf.EmployeeContribution, cpf.EmployerContribution, cpf.TotalContribution, bonuses)
-	}
-
-	insertQuery = insertQuery[:len(insertQuery)-2]
-	_, err = tx.Exec(insertQuery+" ON CONFLICT (employee_id) DO UPDATE SET gross_salary = EXCLUDED.gross_salary, net_salary = EXCLUDED.net_salary, employee_contribution = EXCLUDED.employee_contribution, employer_contribution = EXCLUDED.employer_contribution, total_contribution = EXCLUDED.total_contribution, bonuses = EXCLUDED.bonuses", insertValues...)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not save payroll data"})
-		return
-	}
-
-	if err = rows.Err(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error iterating over employee data"})
-		return
-	}
-	c.JSON(http.StatusOK, results)
+type EmployeeHandler struct {
+	service service.EmployeeService
 }
 
-func FetchPayrollHandler(c *gin.Context) {
-	rows, err := database.Database.Query(`
-        SELECT 
-            p.employee_id, 
-            p.gross_salary, 
-            p.net_salary, 
-            p.employee_contribution, 
-            p.employer_contribution, 
-            p.total_contribution, 
-            p.bonuses, 
-            e.employee_salary,
-            e.employee_email,
-            e.employee_name
-        FROM payroll_data p
-        JOIN employees e ON p.employee_id = e.employee_id`)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve payroll data", "details": err.Error()})
-		return
-	}
-	defer rows.Close()
-
-	var payrollResults []gin.H
-	truncateToTwoDecimals := helper.TruncateToTwoDecimals
-
-	for rows.Next() {
-		var employeeID string
-		var grossSalary, netSalary, employeeContribution, employerContribution, totalContribution, bonuses, salary float64
-		var email, name string
-
-		err := rows.Scan(&employeeID, &grossSalary, &netSalary, &employeeContribution, &employerContribution, &totalContribution, &bonuses, &salary, &email, &name)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not scan payroll data", "details": err.Error()})
-			return
-		}
-		grossSalary = truncateToTwoDecimals(grossSalary)
-		netSalary = truncateToTwoDecimals(netSalary)
-		employeeContribution = truncateToTwoDecimals(employeeContribution)
-		employerContribution = truncateToTwoDecimals(employerContribution)
-		totalContribution = truncateToTwoDecimals(totalContribution)
-		bonuses = truncateToTwoDecimals(bonuses)
-		salary = truncateToTwoDecimals(salary)
-
-		payroll := gin.H{
-			"employeeId":           employeeID,
-			"grossSalary":          grossSalary,
-			"netSalary":            netSalary,
-			"employeeContribution": employeeContribution,
-			"employerContribution": employerContribution,
-			"totalContribution":    totalContribution,
-			"bonuses":              bonuses,
-			"salary":               salary,
-			"employeeEmail":        email,
-			"employeeName":         name,
-		}
-
-		payrollResults = append(payrollResults, payroll)
-	}
-	if err = rows.Err(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error during row iteration", "details": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, payrollResults)
+func NewEmployeeHandler(service service.EmployeeService) *EmployeeHandler {
+	return &EmployeeHandler{service}
 }
 
-func GetEmployeesHandler(c *gin.Context) {
-	rows, err := database.Database.Query("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees")
+func (h *EmployeeHandler) CalculatePayrollHandler(c *gin.Context) {
+	result, err := h.service.CalculatePayroll()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve employee data"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	defer rows.Close()
-
-	var employees []domain.Employee
-
-	for rows.Next() {
-		var employee domain.Employee
-		err := rows.Scan(&employee.EmployeeID, &employee.EmployeeProfile, &employee.EmployeeEmail, &employee.EmployeeName, &employee.EmployeeRole, &employee.EmployeeStatus, &employee.EmployeeSalary, &employee.EmployeeJobType, &employee.EmployeeResident, &employee.EmployeeAge, &employee.Bonuses)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not scan employee data"})
-			return
-		}
-		employees = append(employees, employee)
-	}
-
-	if err = rows.Err(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error iterating over employee data"})
-		return
-	}
-
-	c.JSON(http.StatusOK, employees)
+	c.JSON(http.StatusOK, result)
 }
 
-func GetEmployeeStatisticsHandler(c *gin.Context) {
-	rows, err := database.Database.Query("SELECT employee_resident, employee_job_type, employee_status FROM employees")
+func (h *EmployeeHandler) FetchPayrollHandler(c *gin.Context) {
+	result, err := h.service.AllPayroll()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve employee data"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	defer rows.Close()
-
-	nationalityCount := map[string]int{
-		"Singaporean": 0,
-		"PR":          0,
-		"Foreigner":   0,
-		"Others":      0,
-	}
-	employmentTypeCount := map[string]int{
-		"FullTime": 0,
-		"PartTime": 0,
-		"Intern":   0,
-		"Contract": 0,
-	}
-	employeeStatusCount := map[string]int{
-		"Active":       0,
-		"Invite Sent":  0,
-		"Payroll Only": 0,
-	}
-
-	for rows.Next() {
-		var resident, jobType, status string
-		err := rows.Scan(&resident, &jobType, &status)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not scan employee data"})
-			return
-		}
-
-		switch resident {
-		case "Citizen":
-			nationalityCount["Singaporean"]++
-		case "PR":
-			nationalityCount["PR"]++
-		case "Foreigner":
-			nationalityCount["Foreigner"]++
-		default:
-			nationalityCount["Others"]++
-		}
-
-		switch jobType {
-		case "Full-time":
-			employmentTypeCount["FullTime"]++
-		case "Part-time":
-			employmentTypeCount["PartTime"]++
-		case "Intern":
-			employmentTypeCount["Intern"]++
-		case "Contract":
-			employmentTypeCount["Contract"]++
-		}
-
-		switch status {
-		case "Active":
-			employeeStatusCount["Active"]++
-		case "Invite Sent":
-			employeeStatusCount["Invite Sent"]++
-		case "Payroll Only":
-			employeeStatusCount["Payroll Only"]++
-		}
-	}
-
-	if err = rows.Err(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error iterating over employee data"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"Nationality":    nationalityCount,
-		"EmploymentType": employmentTypeCount,
-		"EmployeeStatus": employeeStatusCount,
-	})
+	c.JSON(http.StatusOK, result)
 }
 
-func FilterEmployees(c *gin.Context) {
+func (h *EmployeeHandler) GetEmployeesHandler(c *gin.Context) {
+	result, err := h.service.AllEmployees()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
+func (h *EmployeeHandler) GetEmployeeStatisticsHandler(c *gin.Context) {
+	result, err := h.service.EmployeeStatistics()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
+func (h *EmployeeHandler) FilterEmployees(c *gin.Context) {
 	employeeName := c.Query("employee_name")
 	employeeStatus := c.Query("employee_status")
-	employeeJobType := c.Query("employee_role")
-
-	query := `
-		SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, 
-		       employee_status, employee_salary, employee_job_type, employee_resident, 
-		       employee_age, bonuses 
-		FROM employees 
-		WHERE employee_name ILIKE $1 AND employee_status ILIKE $2 AND employee_job_type ILIKE $3
-	`
-
-	result := make([]domain.Employee, 0)
-
-	rows, err := database.Database.Query(query, "%"+employeeName+"%", "%"+employeeStatus+"%", "%"+employeeJobType+"%")
+	employeeRole := c.Query("employee_role")
+	fmt.Println(employeeName, employeeStatus, employeeRole)
+	result, err := h.service.FilterEmployees(employeeName, employeeStatus, employeeRole)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve employee data"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	defer rows.Close()
+	c.JSON(http.StatusOK, result)
+}
 
-	for rows.Next() {
-		var employee domain.Employee
-		err := rows.Scan(
-			&employee.EmployeeID, &employee.EmployeeProfile, &employee.EmployeeEmail,
-			&employee.EmployeeName, &employee.EmployeeRole, &employee.EmployeeStatus,
-			&employee.EmployeeSalary, &employee.EmployeeJobType, &employee.EmployeeResident,
-			&employee.EmployeeAge, &employee.Bonuses,
-		)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not scan employee data"})
-			return
-		}
-		result = append(result, employee)
-	}
-
-	if err = rows.Err(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error iterating over employee data"})
+func (h *EmployeeHandler) FetchPayrollHandlerc(c *gin.Context) {
+	result, err := h.service.AllPayroll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
-	}
 
-	// Return the result slice, which will be an empty list if no rows were found
+	}
 	c.JSON(http.StatusOK, result)
 }

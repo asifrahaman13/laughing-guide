@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,7 +11,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/asifrahaman13/laughing-guide/src/database"
+	"github.com/asifrahaman13/laughing-guide/src/core/service"
+
+	"github.com/asifrahaman13/laughing-guide/src/handler"
+	"github.com/asifrahaman13/laughing-guide/src/repository"
 	"github.com/asifrahaman13/laughing-guide/src/routers"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -34,7 +38,36 @@ func main() {
 		gin.SetMode(gin.DebugMode)
 	}
 
-	database.InitDB()
+	// database.InitDB()
+
+	// if err := godotenv.Load(); err != nil {
+	// 	log.Println("No .env file found, using default environment variables")
+	// }
+
+	// db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using default environment variables")
+	}
+
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbSSLMode := os.Getenv("DB_SSLMODE")
+
+	databaseURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", dbUser, dbPassword, dbHost, dbPort, dbName, dbSSLMode)
+
+	db, err := sql.Open("postgres", databaseURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	employeeRepo := repository.NewEmployeeRepository(db)
+	employeeService := service.NewEmployeeService(employeeRepo)
+	employeeHandler := handler.NewEmployeeHandler(employeeService)
 
 	r := gin.Default()
 
@@ -46,10 +79,8 @@ func main() {
 		})
 	})
 
-
-
 	// Initialize the routes
-	r = routers.InitRoutes()
+	r = routers.InitRoutes(employeeHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {

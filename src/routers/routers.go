@@ -6,24 +6,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitRoutes() *gin.Engine {
+func InitRoutes(employeeHandler *handler.EmployeeHandler) *gin.Engine {
 	r := gin.Default()
-
 	r.Use(cors.Default())
-
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "ok",
 		})
 	})
-
-	r.POST("/upload", handler.UploadHandler)
-	r.GET("/calculate-payroll", handler.CalculatePayrollHandler)
-	r.GET("/payroll", handler.FetchPayrollHandler)
-	r.GET("/employees", handler.GetEmployeesHandler)
-	r.GET("/aggregate", handler.GetEmployeeStatisticsHandler)
-	r.GET("/sample-csv", handler.GetSampleCSVHandler)
-	r.GET("/filter-employees", handler.FilterEmployees)
-
+	// r.POST("/upload", employeeHandler.UploadHandler)
+	r.GET("/calculate-payroll", employeeHandler.CalculatePayrollHandler)
+	r.GET("/payroll", employeeHandler.FetchPayrollHandler)
+	r.GET("/employees", employeeHandler.GetEmployeesHandler)
+	r.GET("/aggregate", employeeHandler.GetEmployeeStatisticsHandler)
+	// r.GET("/sample-csv", employeeHandler.GetSampleCSVHandler)
+	r.GET("/filter-employees", employeeHandler.FilterEmployees)
 	return r
 }
