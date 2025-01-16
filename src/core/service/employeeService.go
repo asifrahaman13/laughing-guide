@@ -5,24 +5,16 @@ import (
 	"strings"
 
 	"github.com/asifrahaman13/laughing-guide/src/core/domain"
+	"github.com/asifrahaman13/laughing-guide/src/core/ports"
 	"github.com/asifrahaman13/laughing-guide/src/helper"
 	"github.com/asifrahaman13/laughing-guide/src/repository"
 )
-
-type EmployeeService interface {
-	CalculatePayroll() (any, error)
-	AllPayroll() (any, error)
-	AllEmployees() (any, error)
-	EmployeeStatistics() (any, error)
-	FilterEmployees(employeeName string, employeeStatus string, employeeRole string) (any, error)
-	DeleteEmployees(employeeIds []string) ([]domain.Employee, error)
-}
 
 type employeeService struct {
 	employeeRepository repository.EmployeeRepository
 }
 
-func NewEmployeeService(employeeRepository repository.EmployeeRepository) EmployeeService {
+func NewEmployeeService(employeeRepository repository.EmployeeRepository) ports.EmployeeService {
 	return &employeeService{employeeRepository}
 }
 
@@ -299,43 +291,43 @@ func (s *employeeService) FilterEmployees(employeeName string, employeeStatus st
 }
 
 func (s *employeeService) DeleteEmployees(employeeIds []string) ([]domain.Employee, error) {
-    ids := "'" + strings.Join(employeeIds, "','") + "'"
-    query := fmt.Sprintf("DELETE FROM employees WHERE employee_id IN (%s)", ids)
-    
-    _, err := s.employeeRepository.Execute(query)
-    if err != nil {
-        return nil, err
-    }
-    updatedQuery := `
+	ids := "'" + strings.Join(employeeIds, "','") + "'"
+	query := fmt.Sprintf("DELETE FROM employees WHERE employee_id IN (%s)", ids)
+
+	_, err := s.employeeRepository.Execute(query)
+	if err != nil {
+		return nil, err
+	}
+	updatedQuery := `
         SELECT employee_id, employee_profile, employee_email, employee_name, employee_role,
                employee_status, employee_salary, employee_job_type, employee_resident,
                employee_age, bonuses
         FROM employees
     `
-    rows, err := s.employeeRepository.Execute(updatedQuery)
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close()
+	rows, err := s.employeeRepository.Execute(updatedQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-    var updatedEmployees []domain.Employee
-    for rows.Next() {
-        var employee domain.Employee
-        err := rows.Scan(
-            &employee.EmployeeID, &employee.EmployeeProfile, &employee.EmployeeEmail,
-            &employee.EmployeeName, &employee.EmployeeRole, &employee.EmployeeStatus,
-            &employee.EmployeeSalary, &employee.EmployeeJobType, &employee.EmployeeResident,
-            &employee.EmployeeAge, &employee.Bonuses,
-        )
-        if err != nil {
-            return nil, err
-        }
-        updatedEmployees = append(updatedEmployees, employee)
-    }
+	var updatedEmployees []domain.Employee
+	for rows.Next() {
+		var employee domain.Employee
+		err := rows.Scan(
+			&employee.EmployeeID, &employee.EmployeeProfile, &employee.EmployeeEmail,
+			&employee.EmployeeName, &employee.EmployeeRole, &employee.EmployeeStatus,
+			&employee.EmployeeSalary, &employee.EmployeeJobType, &employee.EmployeeResident,
+			&employee.EmployeeAge, &employee.Bonuses,
+		)
+		if err != nil {
+			return nil, err
+		}
+		updatedEmployees = append(updatedEmployees, employee)
+	}
 
-    if err = rows.Err(); err != nil {
-        return nil, err
-    }
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 
-    return updatedEmployees, nil
+	return updatedEmployees, nil
 }

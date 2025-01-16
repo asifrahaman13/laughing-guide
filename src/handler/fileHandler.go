@@ -3,15 +3,15 @@ package handler
 import (
 	"net/http"
 
-	"github.com/asifrahaman13/laughing-guide/src/core/service"
+	"github.com/asifrahaman13/laughing-guide/src/core/ports"
 	"github.com/gin-gonic/gin"
 )
 
 type FileHandler struct {
-	fileService service.FileService
+	fileService ports.FileService
 }
 
-func NewFileHandler(fileService service.FileService) *FileHandler {
+func NewFileHandler(fileService ports.FileService) *FileHandler {
 	return &FileHandler{fileService}
 }
 func (h *FileHandler) UploadHandler(c *gin.Context) {

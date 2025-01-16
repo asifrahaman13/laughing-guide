@@ -5,15 +5,15 @@ import (
 	"net/http"
 
 	"github.com/asifrahaman13/laughing-guide/src/core/domain"
-	"github.com/asifrahaman13/laughing-guide/src/core/service"
+	"github.com/asifrahaman13/laughing-guide/src/core/ports"
 	"github.com/gin-gonic/gin"
 )
 
 type EmployeeHandler struct {
-	service service.EmployeeService
+	service ports.EmployeeService
 }
 
-func NewEmployeeHandler(service service.EmployeeService) *EmployeeHandler {
+func NewEmployeeHandler(service ports.EmployeeService) *EmployeeHandler {
 	return &EmployeeHandler{service}
 }
 

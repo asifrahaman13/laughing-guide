@@ -8,22 +8,18 @@ import (
 	"strings"
 	"time"
 
+	"github.com/asifrahaman13/laughing-guide/src/core/ports"
 	"github.com/asifrahaman13/laughing-guide/src/repository"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-type FileService interface {
-	UploadCSVFile(file *multipart.FileHeader) (any, error)
-	GetSampleFile() (any, error)
-}
-
 type fileService struct {
 	employeeRepository repository.EmployeeRepository
 }
 
-func NewFileService(employeeRepository repository.EmployeeRepository) FileService {
+func NewFileService(employeeRepository repository.EmployeeRepository) ports.FileService {
 	return &fileService{employeeRepository}
 }
 
