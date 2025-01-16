@@ -50,7 +50,9 @@ export default function Modal() {
         dispath(closeModal());
         dispath(startLoading());
         const response = await uploadFile(file);
-        console.log("File uploaded successfully:", response);
+        if (response === true) {
+          console.log("File uploaded successfully:", response);
+        }
       } catch (error) {
         console.error("Error uploading file:", error);
       }

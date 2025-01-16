@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/asifrahaman13/laughing-guide/src/core/service"
+	"github.com/asifrahaman13/laughing-guide/src/database"
 
 	"github.com/asifrahaman13/laughing-guide/src/handler"
 	"github.com/asifrahaman13/laughing-guide/src/repository"
@@ -19,9 +20,12 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 func main() {
+
+	database.InitDB()
 
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, using default environment variables")
@@ -37,17 +41,6 @@ func main() {
 	} else {
 		gin.SetMode(gin.DebugMode)
 	}
-
-	// database.InitDB()
-
-	// if err := godotenv.Load(); err != nil {
-	// 	log.Println("No .env file found, using default environment variables")
-	// }
-
-	// db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, using default environment variables")
 	}
@@ -69,6 +62,9 @@ func main() {
 	employeeService := service.NewEmployeeService(employeeRepo)
 	employeeHandler := handler.NewEmployeeHandler(employeeService)
 
+	fileService := service.NewFileService(employeeRepo)
+	fileHandler := handler.NewFileHandler(fileService)
+
 	r := gin.Default()
 
 	r.Use(cors.Default())
@@ -79,9 +75,7 @@ func main() {
 		})
 	})
 
-	// Initialize the routes
-	r = routers.InitRoutes(employeeHandler)
-
+	r = routers.InitRoutes(employeeHandler, fileHandler)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"
