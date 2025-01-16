@@ -18,6 +18,7 @@ export default {
         "lime-gray": "#f9fcfc",
         "light-gray": "#f1f5f9",
         "back-purple": "#8318e7",
+        "light-gray-row": "#f9fcfc",
       },
       textColor: {
         "lime-green": "#02b9b0",

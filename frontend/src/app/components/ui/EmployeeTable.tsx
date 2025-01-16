@@ -35,7 +35,6 @@ export default function EmployeeTable() {
         console.error("Error fetching data:", error);
       } finally {
         setPageLoading(false);
-        // console.log(pageLoading);
       }
     }
 
@@ -101,8 +100,8 @@ export default function EmployeeTable() {
 
       {pageLoading && <Spinner />}
       <div className="overflow-hidden rounded-xl shadow-md">
-        <div className="bg-gray-400 border-none">
-          <div className="bg-gray-100 border-2 text-gray-600 flex">
+        <div className="bg-light-gray-row border-none">
+          <div className="bg-light-gray-row border text-gray-600 flex">
             <button
               className="p-3 text-left"
               onClick={() => selectedRow("all")}
@@ -112,18 +111,20 @@ export default function EmployeeTable() {
                   selectedRows?.length === employees?.length
                     ? "bg-lime-green border-none"
                     : ""
-                } rounded-lg h-7 w-7 border-2 border-gray-400`}
+                } rounded-lg h-7 w-7 border border-gray-400`}
               ></div>
             </button>
-            <div className="p-3 font-medium text-left flex-1">Employee ID</div>
-            <div className="p-3 font-medium text-left flex-1">Profile</div>
-            <div className="p-3 font-medium text-left flex-1">Email</div>
-            <div className="p-3 font-medium text-left flex-1">Role</div>
-            <div className="p-3 font-medium text-left flex-1">Status</div>
+            <div className="p-3 font-normal text-left flex-1">Employee ID</div>
+            <div className="p-3 font-normal text-left flex-1">Profile</div>
+            <div className="p-3 font-normal text-left flex-1">Email</div>
+            <div className="p-3 font-normal text-left flex-1">Role</div>
+            <div className="p-3 font-normal text-left flex-1">Status</div>
           </div>
           {employees?.map((employee, index) => (
             <React.Fragment key={employee?.employeeId + index}>
-              <div className="bg-white border-2 flex">
+              <div
+                className={`${selectedRows.includes(employee?.employeeId) ? "bg-light-gray-row" : "bg-white"}  border flex`}
+              >
                 <button
                   className="p-3"
                   onClick={() => selectedRow(employee?.employeeId)}
@@ -133,14 +134,14 @@ export default function EmployeeTable() {
                       selectedRows.includes(employee?.employeeId)
                         ? "bg-lime-green border-none"
                         : ""
-                    } rounded-lg h-7 w-7 border-2 border-gray-400`}
+                    } rounded-lg h-7 w-7 border border-gray-400`}
                   ></div>
                 </button>
                 <div className="p-3 flex-1">
                   <div className="flex items-center">
                     <Link
                       href={`/dashboard/payrolls/${employee?.employeeId}`}
-                      className="text-[#02b9b0] border-b-2 border-[#02b9b0]"
+                      className="text-[#02b9b0] border-b border-[#02b9b0]"
                     >
                       {employee?.employeeId}
                     </Link>

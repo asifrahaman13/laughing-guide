@@ -51,12 +51,11 @@ export default function EmployeeLine({
   if (total === 0) {
     portions.forEach(() => 0);
   }
-
-  return (
+return (
     <div className="bg-white border p-4 py-6 rounded-xl h-full w-2/5 flex flex-col">
       <div className="h-2/3 flex justify-between">
         <div className="flex flex-col gap-2">
-          <div className="text-sm">{title}</div>
+          <div className="text-sm text-status-gray">{title}</div>
           <div className="font-medium text-2xl">{employeeType?.FullTime}</div>
           <div>{description}</div>
         </div>
@@ -68,25 +67,31 @@ export default function EmployeeLine({
         <div className="flex text-gray-600 items-center gap-4 flex-wrap p-4 rounded-md">
           <div className="flex items-center">
             <div className="w-1 h-6 bg-cyan-500 mr-2 rounded-full"></div>
-            <span className="font-medium">
-              {employeeType.FullTime} Full Timer
+            <span className="flex items-center gap-1">
+              <div className="font-medium text-gray-800">{employeeType?.FullTime}</div>
+              <div>Full Timer</div>
             </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-yellow-500 mr-2 rounded-full"></div>
-            <span className="font-medium">
-              {employeeType.PartTime} Part Timer
+            <span className="flex items-center gap-1">
+              <div className="font-medium text-gray-800">{employeeType?.PartTime}</div>
+              <div>Part Timer</div>
             </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-purple-500 mr-2 rounded-full"></div>
-            <span className="font-medium">
-              {employeeType.Contract} Contract
+            <span className="flex items-center gap-1">
+              <div className="font-medium text-gray-800">{employeeType?.Contract}</div>
+              <div>Contract</div>
             </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-gray-300 mr-2 rounded-full"></div>
-            <span className="font-medium">{employeeType.Intern} Intern</span>
+            <span className="flex items-center gap-1">
+              <div className="font-medium text-gray-800">{employeeType?.Intern}</div>
+              <div>Intern</div>
+            </span>
           </div>
         </div>
       </div>

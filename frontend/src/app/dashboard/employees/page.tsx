@@ -77,7 +77,7 @@ export default function Page() {
   return (
     <React.Fragment>
       <div className="flex flex-col w-full h-full">
-        <div className="bg-white p-2 lg:p-4 h-16 flex justify-between items-center">
+        <div className="bg-white border p-2 lg:p-4 h-16 flex justify-between items-center">
           <div className="font-medium text-xl">Employees</div>
           <div className="flex gap-2">
             <button
