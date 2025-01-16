@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
+import React, { useState } from "react";
 import { ReactNode } from "react";
 import { MANAGE } from "@/constants/dashboard";
 import Link from "next/link";
@@ -13,6 +13,13 @@ interface LayoutProps {
 }
 export default function Layout({ children }: LayoutProps) {
   const modal = useSelector((state: RootState) => state.modal);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const organizations = ["Kelick", "Organization 2", "Organization 3"];
 
   return (
     <React.Fragment>
@@ -38,6 +45,55 @@ export default function Layout({ children }: LayoutProps) {
                 <img src="/images/dashboard/home.svg" alt="" />
               </div>
               <div>Dashboard</div>
+            </div>
+            <div>
+              <div className="relative   text-left">
+                {/* Dropdown Button */}
+                <button
+                  onClick={toggleDropdown}
+                  className="flex border-none items-center gap-2 px-4 py-2 text-gray-800 "
+                >
+                  <span>ORGANIZATION</span>
+                  <svg
+                    className={`w-4 h-4 transform transition-transform ${
+                      isOpen ? "rotate-180" : "rotate-0"
+                    }`}
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+
+                {/* Dropdown Menu */}
+                {isOpen && (
+                  <div className=" left-0 z-10 w-56 mt-2 bg-white   rounded-md ">
+                    {organizations.map((org, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          console.log(`${org} selected`);
+                          setIsOpen(false);
+                        }}
+                        className="flex items-center  px-6"
+                      >
+                        <img src="/images/dashboard/organization.svg" alt="" />
+                        <div className=" px-4 py-2 text-left text-lack text-md font-md hover:bg-gray-100">
+                          {" "}
+                          {org}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <div>
               <div className="text-gray-600 px-4">Manage</div>
