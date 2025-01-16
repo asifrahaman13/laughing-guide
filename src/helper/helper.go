@@ -1,18 +1,16 @@
 package helper
 
-import "math"
+import (
+	"math"
 
-type CPFContribution struct {
-	EmployeeContribution float64 `json:"employeeContribution"`
-	EmployerContribution float64 `json:"employerContribution"`
-	TotalContribution    float64 `json:"totalContribution"`
-}
+	"github.com/asifrahaman13/laughing-guide/src/core/domain"
+)
 
 func TruncateToTwoDecimals(value float64) float64 {
 	return math.Trunc(value*100) / 100
 }
 
-func CalculateCPF(age int, salary float64, isCitizen bool) CPFContribution {
+func CalculateCPF(age int, salary float64, isCitizen bool) domain.CPFContribution {
 	var employeeRate, employerRate float64
 	switch {
 	case age < 55:
@@ -34,7 +32,7 @@ func CalculateCPF(age int, salary float64, isCitizen bool) CPFContribution {
 	employerContribution := salary * employerRate
 	totalContribution := employeeContribution + employerContribution
 
-	return CPFContribution{
+	return domain.CPFContribution{
 		EmployeeContribution: employeeContribution,
 		EmployerContribution: employerContribution,
 		TotalContribution:    totalContribution,

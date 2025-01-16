@@ -299,7 +299,6 @@ func (s *employeeService) FilterEmployees(employeeName string, employeeStatus st
 }
 
 func (s *employeeService) DeleteEmployees(employeeIds []string) ([]domain.Employee, error) {
-    // Convert the slice of employee IDs to a comma-separated string
     ids := "'" + strings.Join(employeeIds, "','") + "'"
     query := fmt.Sprintf("DELETE FROM employees WHERE employee_id IN (%s)", ids)
     
@@ -307,8 +306,6 @@ func (s *employeeService) DeleteEmployees(employeeIds []string) ([]domain.Employ
     if err != nil {
         return nil, err
     }
-
-    // Fetch the updated list of employees
     updatedQuery := `
         SELECT employee_id, employee_profile, employee_email, employee_name, employee_role,
                employee_status, employee_salary, employee_job_type, employee_resident,

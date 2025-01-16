@@ -13,3 +13,13 @@ type Employee struct {
 	EmployeeAge      int     `json:"employeeAge"`
 	Bonuses          float64 `json:"bonuses"`
 }
+
+type EmployeeRequest struct {
+	EmployeeIds []string `json:"employeeIds"`
+}
+
+type CPFContribution struct {
+	EmployeeContribution float64 `json:"employeeContribution"`
+	EmployerContribution float64 `json:"employerContribution"`
+	TotalContribution    float64 `json:"totalContribution"`
+}
