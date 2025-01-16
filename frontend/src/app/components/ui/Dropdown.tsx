@@ -21,7 +21,7 @@ const people = [
   },
   {
     id: 3,
-    name: "Payrol Only",
+    name: "Payroll Only",
   },
 ];
 

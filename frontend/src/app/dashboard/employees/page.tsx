@@ -13,6 +13,7 @@ import EmployeeTable from "@/app/components/ui/EmployeeTable";
 import { RootState } from "@/lib/store";
 import { useSelector } from "react-redux";
 import { ButtionSpinner } from "@/app/components/ui/Buttons";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const dispath = useDispatch();
@@ -21,6 +22,7 @@ export default function Page() {
   const loading = useSelector((state: RootState) => state.spinner.isLoading);
   const [buttonLoading, setLoading] = useState(false);
   const selection = useSelector((state: RootState) => state.selection);
+  const router = useRouter();
 
   React.useEffect(() => {
     async function fetchData() {
@@ -28,7 +30,7 @@ export default function Page() {
       try {
         const [employeesResponse] = await Promise.all([
           axios.get(
-            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}`
+            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}`,
           ),
         ]);
 
@@ -99,6 +101,7 @@ export default function Page() {
       const response = await axios.get(`${backendUrl}/calculate-payroll`);
       if (response.status === 200) {
         console.log(response.data);
+        router.push("/dashboard/payrolls");
       }
     } catch (err) {
       console.log(err);
