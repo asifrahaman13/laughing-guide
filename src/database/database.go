@@ -4,30 +4,22 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
-	"github.com/joho/godotenv"
+	"github.com/asifrahaman13/laughing-guide/src/config"
 	_ "github.com/lib/pq"
 )
 
 var Database *sql.DB
 
 func InitDB() {
-	err := godotenv.Load(".env")
+	cfg, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("Error loading .env file: %v\n", err)
+		log.Fatalf("Error loading config: %v", err)
 	}
 
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbname := os.Getenv("DB_NAME")
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	sslmode := os.Getenv("DB_SSLMODE")
-
 	connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=%s",
-		user, password, dbname, host, port, sslmode)
+		cfg.DBUser, cfg.DBPassword, cfg.DBName, cfg.DBHost, cfg.DBPort, cfg.DBSSLMode)
 	Database, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
