@@ -74,3 +74,24 @@ func (h *EmployeeHandler) FetchPayrollHandlerc(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, result)
 }
+
+type EmployeeRequest struct {
+	EmployeeIds []string `json:"employeeIds"`
+}
+
+func (h *EmployeeHandler) DeleteEmployeeHandler(c *gin.Context) {
+	var request EmployeeRequest
+	err := c.BindJSON(&request)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result, err := h.service.DeleteEmployees(request.EmployeeIds)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}

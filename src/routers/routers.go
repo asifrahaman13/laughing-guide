@@ -21,5 +21,7 @@ func InitRoutes(employeeHandler *handler.EmployeeHandler, fileHandler *handler.F
 	r.GET("/aggregate", employeeHandler.GetEmployeeStatisticsHandler)
 	r.GET("/sample-csv", fileHandler.GetSampleCSVHandler)
 	r.GET("/filter-employees", employeeHandler.FilterEmployees)
+	r.POST("/delete-employees", employeeHandler.DeleteEmployeeHandler)
+
 	return r
 }

@@ -6,6 +6,7 @@ import DropDownBox from "./Dropdown";
 import SearchBox from "@/app/components/ui/SearchBox";
 import RolesDropDownBox from "./RolesDropDown";
 import StatusBadge from "./StatusBadge";
+import axios from "axios";
 
 type EmployeeTableProps = {
   employees: Employee[];
@@ -31,6 +32,20 @@ export default function EmployeeTable({ employees }: EmployeeTableProps) {
       }
     }
     console.log(selectedRows);
+  }
+
+  async function deleteSelectedRows() {
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      const response = await axios.post(`${backendUrl}/delete-employees`, {
+        employeeIds: selectedRows,
+      });
+      if (response.status === 200) {
+        console.log("Rows deleted successfully:", response);
+      }
+    } catch (error) {
+      console.error("Error deleting rows:", error);
+    }
   }
 
   return (
@@ -105,6 +120,18 @@ export default function EmployeeTable({ employees }: EmployeeTableProps) {
           ))}
         </div>
       </div>
+
+      {selectedRows.length !== 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-md flex justify-between items-center">
+          <div>{selectedRows.length} rows selected</div>
+          <button
+            className="bg-red-400 text-white px-4 py-2 rounded"
+            onClick={deleteSelectedRows}
+          >
+            Delete
+          </button>
+        </div>
+      )}
     </div>
   );
 }

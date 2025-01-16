@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/asifrahaman13/laughing-guide/src/core/domain"
 	"github.com/asifrahaman13/laughing-guide/src/helper"
@@ -14,6 +15,7 @@ type EmployeeService interface {
 	AllEmployees() (any, error)
 	EmployeeStatistics() (any, error)
 	FilterEmployees(employeeName string, employeeStatus string, employeeRole string) (any, error)
+	DeleteEmployees(employeeIds []string) (bool, error)
 }
 
 type employeeService struct {
@@ -97,7 +99,7 @@ func (s *employeeService) CalculatePayroll() (any, error) {
 }
 
 func (s *employeeService) AllPayroll() (any, error) {
-    rows, err := s.employeeRepository.Execute(`
+	rows, err := s.employeeRepository.Execute(`
         SELECT
             p.employee_id,
             p.gross_salary,
@@ -111,51 +113,51 @@ func (s *employeeService) AllPayroll() (any, error) {
             e.employee_name
         FROM payroll_data p
         JOIN employees e ON p.employee_id = e.employee_id`)
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close()
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-    var payrollResults []map[string]interface{}
-    truncateToTwoDecimals := helper.TruncateToTwoDecimals
+	var payrollResults []map[string]interface{}
+	truncateToTwoDecimals := helper.TruncateToTwoDecimals
 
-    for rows.Next() {
-        var employeeID string
-        var grossSalary, netSalary, employeeContribution, employerContribution, totalContribution, bonuses, salary float64
-        var email, name string
+	for rows.Next() {
+		var employeeID string
+		var grossSalary, netSalary, employeeContribution, employerContribution, totalContribution, bonuses, salary float64
+		var email, name string
 
-        err := rows.Scan(&employeeID, &grossSalary, &netSalary, &employeeContribution, &employerContribution, &totalContribution, &bonuses, &salary, &email, &name)
-        if err != nil {
-            return nil, err
-        }
-        grossSalary = truncateToTwoDecimals(grossSalary)
-        netSalary = truncateToTwoDecimals(netSalary)
-        employeeContribution = truncateToTwoDecimals(employeeContribution)
-        employerContribution = truncateToTwoDecimals(employerContribution)
-        totalContribution = truncateToTwoDecimals(totalContribution)
-        bonuses = truncateToTwoDecimals(bonuses)
-        salary = truncateToTwoDecimals(salary)
+		err := rows.Scan(&employeeID, &grossSalary, &netSalary, &employeeContribution, &employerContribution, &totalContribution, &bonuses, &salary, &email, &name)
+		if err != nil {
+			return nil, err
+		}
+		grossSalary = truncateToTwoDecimals(grossSalary)
+		netSalary = truncateToTwoDecimals(netSalary)
+		employeeContribution = truncateToTwoDecimals(employeeContribution)
+		employerContribution = truncateToTwoDecimals(employerContribution)
+		totalContribution = truncateToTwoDecimals(totalContribution)
+		bonuses = truncateToTwoDecimals(bonuses)
+		salary = truncateToTwoDecimals(salary)
 
-        payroll := map[string]interface{}{
-            "employeeId":           employeeID,
-            "grossSalary":          grossSalary,
-            "netSalary":            netSalary,
-            "employeeContribution": employeeContribution,
-            "employerContribution": employerContribution,
-            "totalContribution":    totalContribution,
-            "bonuses":              bonuses,
-            "salary":               salary,
-            "employeeEmail":        email,
-            "employeeName":         name,
-        }
+		payroll := map[string]interface{}{
+			"employeeId":           employeeID,
+			"grossSalary":          grossSalary,
+			"netSalary":            netSalary,
+			"employeeContribution": employeeContribution,
+			"employerContribution": employerContribution,
+			"totalContribution":    totalContribution,
+			"bonuses":              bonuses,
+			"salary":               salary,
+			"employeeEmail":        email,
+			"employeeName":         name,
+		}
 
-        payrollResults = append(payrollResults, payroll)
-    }
-    if err = rows.Err(); err != nil {
-        return nil, err
-    }
+		payrollResults = append(payrollResults, payroll)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 
-    return payrollResults, nil
+	return payrollResults, nil
 }
 
 func (s *employeeService) AllEmployees() (any, error) {
@@ -294,4 +296,16 @@ func (s *employeeService) FilterEmployees(employeeName string, employeeStatus st
 	}
 
 	return result, nil
+}
+
+func (s *employeeService) DeleteEmployees(employeeIds []string) (bool, error) {
+    // Convert the slice of employee IDs to a comma-separated string
+    ids := "'" + strings.Join(employeeIds, "','") + "'"
+    query := fmt.Sprintf("DELETE FROM employees WHERE employee_id IN (%s)", ids)
+    
+    _, err := s.employeeRepository.Execute(query)
+    if err != nil {
+        return false, err
+    }
+    return true, nil
 }
