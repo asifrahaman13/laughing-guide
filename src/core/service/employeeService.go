@@ -293,8 +293,14 @@ func (s *employeeService) FilterEmployees(employeeName string, employeeStatus st
 func (s *employeeService) DeleteEmployees(employeeIds []string) ([]domain.Employee, error) {
 	ids := "'" + strings.Join(employeeIds, "','") + "'"
 	query := fmt.Sprintf("DELETE FROM employees WHERE employee_id IN (%s)", ids)
-
 	_, err := s.employeeRepository.Execute(query)
+	if err != nil {
+		return nil, err
+	}
+
+	deletePayroll := fmt.Sprintf("DELETE FROM payroll_data WHERE employee_id IN (%s)", ids)
+	_, err = s.employeeRepository.Execute(deletePayroll)
+
 	if err != nil {
 		return nil, err
 	}
