@@ -26,10 +26,35 @@ export default function Page() {
     async function fetchData() {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       try {
-        const [employeesResponse, statsResponse] = await Promise.all([
+        const [employeesResponse] = await Promise.all([
           axios.get(
             `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}`
           ),
+        ]);
+
+        if (employeesResponse?.data === null) {
+          console.log("Sorry something went wrong");
+        }
+        setEmployees(employeesResponse?.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
+  }, [
+    loading,
+    selection.employeeName,
+    selection.employeeRole,
+    selection.employeeStatus,
+  ]);
+
+  React.useEffect(() => {
+    async function fetchData() {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      try {
+        const [employeesResponse, statsResponse] = await Promise.all([
+          axios.get(`${backendUrl}/employees`),
           axios.get(`${backendUrl}/aggregate`),
         ]);
 
@@ -44,14 +69,8 @@ export default function Page() {
     }
 
     fetchData();
-  }, [
-    loading,
-    selection.employeeName,
-    selection.employeeRole,
-    selection.employeeStatus,
-  ]);
-
-  if (employees === null || employees === undefined || employees.length === 0) {
+  }, [loading]);
+  if (employees === null || employees === undefined) {
     return <AddEmployee />;
   }
 

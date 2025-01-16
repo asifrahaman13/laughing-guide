@@ -12,7 +12,9 @@ type EmployeeTableProps = {
   employees: Employee[];
 };
 
-export default function EmployeeTable({ employees: initialEmployees }: EmployeeTableProps) {
+export default function EmployeeTable({
+  employees: initialEmployees,
+}: EmployeeTableProps) {
   const [employees, setEmployees] = useState(initialEmployees);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
@@ -128,7 +130,10 @@ export default function EmployeeTable({ employees: initialEmployees }: EmployeeT
 
       {selectedRows.length !== 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-md flex justify-between items-center">
-          <div>{selectedRows.length} rows selected</div>
+          <div className="flex gap-1">
+            <div>{selectedRows?.length}</div>
+            <div> {selectedRows?.length === 1 ? "row" : "rows"} selected</div>
+          </div>
           <button
             className="bg-red-400 text-white px-4 py-2 rounded"
             onClick={deleteSelectedRows}
