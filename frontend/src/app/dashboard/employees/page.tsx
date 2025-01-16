@@ -23,18 +23,12 @@ export default function Page() {
   const selection = useSelector((state: RootState) => state.selection);
 
   React.useEffect(() => {
-    console.log(
-      "result",
-      selection.employeeName,
-      selection.employeeRole,
-      selection.employeeStatus,
-    );
     async function fetchData() {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       try {
         const [employeesResponse, statsResponse] = await Promise.all([
           axios.get(
-            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}`,
+            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}`
           ),
           axios.get(`${backendUrl}/aggregate`),
         ]);
@@ -57,6 +51,10 @@ export default function Page() {
     selection.employeeStatus,
   ]);
 
+  if (employees === null || employees === undefined || employees.length === 0) {
+    return <AddEmployee />;
+  }
+
   if (loading) {
     return (
       <>
@@ -73,10 +71,6 @@ export default function Page() {
         </div>
       </>
     );
-  }
-
-  if (employees === null || employees === undefined) {
-    return <AddEmployee />;
   }
 
   async function generatePayroll() {

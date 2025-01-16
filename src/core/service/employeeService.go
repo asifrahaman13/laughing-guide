@@ -15,7 +15,7 @@ type EmployeeService interface {
 	AllEmployees() (any, error)
 	EmployeeStatistics() (any, error)
 	FilterEmployees(employeeName string, employeeStatus string, employeeRole string) (any, error)
-	DeleteEmployees(employeeIds []string) (bool, error)
+	DeleteEmployees(employeeIds []string) ([]domain.Employee, error)
 }
 
 type employeeService struct {
@@ -298,14 +298,47 @@ func (s *employeeService) FilterEmployees(employeeName string, employeeStatus st
 	return result, nil
 }
 
-func (s *employeeService) DeleteEmployees(employeeIds []string) (bool, error) {
+func (s *employeeService) DeleteEmployees(employeeIds []string) ([]domain.Employee, error) {
     // Convert the slice of employee IDs to a comma-separated string
     ids := "'" + strings.Join(employeeIds, "','") + "'"
     query := fmt.Sprintf("DELETE FROM employees WHERE employee_id IN (%s)", ids)
     
     _, err := s.employeeRepository.Execute(query)
     if err != nil {
-        return false, err
+        return nil, err
     }
-    return true, nil
+
+    // Fetch the updated list of employees
+    updatedQuery := `
+        SELECT employee_id, employee_profile, employee_email, employee_name, employee_role,
+               employee_status, employee_salary, employee_job_type, employee_resident,
+               employee_age, bonuses
+        FROM employees
+    `
+    rows, err := s.employeeRepository.Execute(updatedQuery)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var updatedEmployees []domain.Employee
+    for rows.Next() {
+        var employee domain.Employee
+        err := rows.Scan(
+            &employee.EmployeeID, &employee.EmployeeProfile, &employee.EmployeeEmail,
+            &employee.EmployeeName, &employee.EmployeeRole, &employee.EmployeeStatus,
+            &employee.EmployeeSalary, &employee.EmployeeJobType, &employee.EmployeeResident,
+            &employee.EmployeeAge, &employee.Bonuses,
+        )
+        if err != nil {
+            return nil, err
+        }
+        updatedEmployees = append(updatedEmployees, employee)
+    }
+
+    if err = rows.Err(); err != nil {
+        return nil, err
+    }
+
+    return updatedEmployees, nil
 }

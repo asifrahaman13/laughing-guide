@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Employee } from "../../types/dashboard";
 import Link from "next/link";
 import DropDownBox from "./Dropdown";
@@ -12,12 +12,15 @@ type EmployeeTableProps = {
   employees: Employee[];
 };
 
-export default function EmployeeTable({ employees }: EmployeeTableProps) {
-  const [selectedRows, setSelectedRows] = React.useState<string[]>([]);
+export default function EmployeeTable({ employees: initialEmployees }: EmployeeTableProps) {
+  const [employees, setEmployees] = useState(initialEmployees);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+  useEffect(() => {
+    setEmployees(initialEmployees);
+  }, [initialEmployees]);
 
   function selectedRow(employee: string) {
-    console.log(employee);
-
     if (employee === "all") {
       if (selectedRows.length === employees.length) {
         setSelectedRows([]);
@@ -31,7 +34,6 @@ export default function EmployeeTable({ employees }: EmployeeTableProps) {
         setSelectedRows([...selectedRows, employee]);
       }
     }
-    console.log(selectedRows);
   }
 
   async function deleteSelectedRows() {
@@ -42,6 +44,9 @@ export default function EmployeeTable({ employees }: EmployeeTableProps) {
       });
       if (response.status === 200) {
         console.log("Rows deleted successfully:", response);
+        const updatedEmployees = await axios.get(`${backendUrl}/employees`);
+        setEmployees(updatedEmployees.data);
+        setSelectedRows([]);
       }
     } catch (error) {
       console.error("Error deleting rows:", error);
@@ -69,7 +74,7 @@ export default function EmployeeTable({ employees }: EmployeeTableProps) {
             >
               <div
                 className={`${
-                  selectedRows.length === employees.length
+                  selectedRows?.length === employees?.length
                     ? "bg-lime-green border-none"
                     : ""
                 } rounded-lg h-7 w-7 border-2 border-gray-400`}
