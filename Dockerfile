@@ -24,6 +24,7 @@ COPY --from=builder /myapp .
 
 # Copy the .env file into the container
 COPY .env .env
+COPY config.yaml config.yaml
 
 # Expose the port the application runs on
 EXPOSE 8000

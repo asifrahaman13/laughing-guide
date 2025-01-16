@@ -6,12 +6,14 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { startLoading, stopLoading } from "@/lib/features/spinnerSlice";
 import { ButtionSpinner } from "./Buttons";
+import { useRouter } from "next/navigation";
 
 export default function Modal() {
   const dispath = useDispatch();
   const modal = useSelector((state: RootState) => state.modal);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   const uploadFile = async (file: File) => {
     const formData = new FormData();
@@ -25,7 +27,6 @@ export default function Modal() {
         },
       });
       if (response.status === 200) {
-        dispath(stopLoading());
         return response.data;
       }
     } catch (error) {
@@ -52,6 +53,8 @@ export default function Modal() {
         const response = await uploadFile(file);
         if (response === true) {
           console.log("File uploaded successfully:", response);
+          dispath(stopLoading());
+          router.push("/dashboard/employees");
         }
       } catch (error) {
         console.error("Error uploading file:", error);

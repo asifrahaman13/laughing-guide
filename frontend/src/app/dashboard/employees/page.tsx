@@ -2,7 +2,7 @@
 "use client";
 import React, { useState } from "react";
 import AddEmployee from "@/app/components/ui/AddEmployee";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Employee, EmployeeData } from "@/app/types/dashboard";
 import axios from "axios";
 import { openModal } from "@/lib/features/modalSlice";
@@ -10,48 +10,22 @@ import EmployeeStatistics from "@/app/components/charts/EmployeeStatistics";
 import EmployeeStatus from "@/app/components/charts/EmployeeStatus";
 import EmployeeLine from "@/app/components/charts/EmployeeLine";
 import EmployeeTable from "@/app/components/ui/EmployeeTable";
-import { RootState } from "@/lib/store";
-import { useSelector } from "react-redux";
 import { ButtionSpinner } from "@/app/components/ui/Buttons";
 import { useRouter } from "next/navigation";
+import { RootState } from "@/lib/store";
 
 export default function Page() {
   const dispath = useDispatch();
   const [employees, setEmployees] = useState<Employee[] | null>(null);
   const [employeeStats, setEmployeeStats] = useState<EmployeeData | null>(null);
-  const loading = useSelector((state: RootState) => state.spinner.isLoading);
+
   const [buttonLoading, setLoading] = useState(false);
-  const selection = useSelector((state: RootState) => state.selection);
+  const [pageLoading, setPageLoading] = useState(false);
+  const loading = useSelector((state: RootState) => state.spinner.isLoading);
   const router = useRouter();
 
   React.useEffect(() => {
-    async function fetchData() {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      try {
-        const [employeesResponse] = await Promise.all([
-          axios.get(
-            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}`,
-          ),
-        ]);
-
-        if (employeesResponse?.data === null) {
-          console.log("Sorry something went wrong");
-        }
-        setEmployees(employeesResponse?.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
-
-    fetchData();
-  }, [
-    loading,
-    selection.employeeName,
-    selection.employeeRole,
-    selection.employeeStatus,
-  ]);
-
-  React.useEffect(() => {
+    setPageLoading(true);
     async function fetchData() {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       try {
@@ -67,16 +41,15 @@ export default function Page() {
         setEmployeeStats(statsResponse?.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setPageLoading(false);
       }
     }
 
     fetchData();
   }, [loading]);
-  if (employees === null || employees === undefined) {
-    return <AddEmployee />;
-  }
 
-  if (loading) {
+  if (loading || pageLoading) {
     return (
       <>
         <div className="flex items-center justify-center h-screen">
@@ -92,6 +65,10 @@ export default function Page() {
         </div>
       </>
     );
+  } else {
+    if (employees === null || employees === undefined) {
+      return <AddEmployee />;
+    }
   }
 
   async function generatePayroll() {
@@ -158,7 +135,7 @@ export default function Page() {
             employmentStatus={employeeStats?.EmployeeStatus || null}
           />
         </div>
-        <EmployeeTable employees={employees} />
+        <EmployeeTable />
       </div>
     </React.Fragment>
   );

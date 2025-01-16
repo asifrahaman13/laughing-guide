@@ -1,3 +1,4 @@
+"use client";
 /* eslint-disable @next/next/no-img-element */
 import React, { useState, useEffect } from "react";
 import { Employee } from "../../types/dashboard";
@@ -7,14 +8,43 @@ import SearchBox from "@/app/components/ui/SearchBox";
 import RolesDropDownBox from "./RolesDropDown";
 import StatusBadge from "./StatusBadge";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
 
-type EmployeeTableProps = {
-  employees: Employee[];
-};
+export default function EmployeeTable() {
+  const selection = useSelector((state: RootState) => state.selection);
+  const [pageLoading, setPageLoading] = useState(false);
+  const [initialEmployees, setInitialEmployees] = useState<Employee[]>([]);
+  React.useEffect(() => {
+    setPageLoading(true);
+    async function fetchData() {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      try {
+        const [employeesResponse] = await Promise.all([
+          axios.get(
+            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}`,
+          ),
+        ]);
 
-export default function EmployeeTable({
-  employees: initialEmployees,
-}: EmployeeTableProps) {
+        if (employeesResponse?.data === null) {
+          console.log("Sorry something went wrong");
+        }
+        setInitialEmployees(employeesResponse?.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setPageLoading(false);
+        // console.log(pageLoading);
+      }
+    }
+
+    fetchData();
+  }, [
+    selection.employeeName,
+    selection.employeeRole,
+    selection.employeeStatus,
+  ]);
+
   const [employees, setEmployees] = useState(initialEmployees);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
@@ -67,6 +97,23 @@ export default function EmployeeTable({
           <RolesDropDownBox />
         </div>
       </div>
+
+      {pageLoading && (
+        <>
+          {" "}
+          <div className="flex items-center justify-center h-screen">
+            <div
+              className="h-16 w-16 animate-spin rounded-full border-4 border-transparent"
+              style={{
+                borderTopColor: "rgba(173,216,230,1)",
+                borderRightColor: "rgba(173,216,230,0.7)",
+                borderBottomColor: "rgba(173,216,230,0.5)",
+                borderLeftColor: "rgba(173,216,230,0.3)",
+              }}
+            ></div>
+          </div>
+        </>
+      )}
       <div className="overflow-hidden rounded-xl shadow-md">
         <div className="bg-gray-400 border-none">
           <div className="bg-gray-100 border-2 text-gray-600 flex">
