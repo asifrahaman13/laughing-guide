@@ -61,6 +61,21 @@ Next, run the server in the local environment.
 bun run dev
 ```
 
+## Formatter
+
+The golang files can be formatted using the following command:
+
+```bash
+go fmt src/
+```
+
+The frontend can be formatte by the following:
+
+```bash
+cd frontend/
+bun run format
+```
+
 ## Docker
 
 To run the application in docker, use the following script after making sure you have the .env credentials for both front end and backend:
