@@ -6,7 +6,6 @@ import (
 	"github.com/asifrahaman13/laughing-guide/src/core/domain"
 	"github.com/asifrahaman13/laughing-guide/src/helper"
 	"github.com/asifrahaman13/laughing-guide/src/repository"
-	"github.com/asifrahaman13/laughing-guide/src/service"
 )
 
 type EmployeeService interface {
@@ -63,7 +62,7 @@ func (s *employeeService) CalculatePayroll() (any, error) {
 		}
 
 		isCitizen := employee.EmployeeResident == "Citizen"
-		cpf := service.CalculateCPF(age, salary, isCitizen)
+		cpf := helper.CalculateCPF(age, salary, isCitizen)
 
 		grossSalary := salary + bonuses
 		netSalary := grossSalary - cpf.TotalContribution
