@@ -4,7 +4,7 @@ import React from "react";
 import { ReactNode } from "react";
 import { MANAGE } from "@/constants/dashboard";
 import Link from "next/link";
-import Modal from "../components/modal";
+import Modal from "../components/ui/modal";
 import { RootState } from "@/lib/store";
 import { useSelector } from "react-redux";
 

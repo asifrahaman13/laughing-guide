@@ -1,5 +1,5 @@
 import React from "react";
-import InProgress from "./components/InProgress";
+import InProgress from "./components/ui/InProgress";
 
 export default function Custom404() {
   return (

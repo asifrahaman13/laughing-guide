@@ -5,7 +5,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { startLoading, stopLoading } from "@/lib/features/spinnerSlice";
-import { ButtionSpinner } from "./ui/Buttons";
+import { ButtionSpinner } from "./Buttons";
 
 export default function Modal() {
   const dispath = useDispatch();

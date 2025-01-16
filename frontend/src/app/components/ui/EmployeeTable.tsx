@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
-import { Employee } from "../types/dashboard";
+import { Employee } from "../../types/dashboard";
 import Link from "next/link";
-import DropDownBox from "./ui/Dropdown";
+import DropDownBox from "./Dropdown";
 import SearchBox from "@/app/components/ui/SearchBox";
-import RolesDropDownBox from "./ui/RolesDropDown";
+import RolesDropDownBox from "./RolesDropDown";
 
 type EmployeeTableProps = {
   employees: Employee[];

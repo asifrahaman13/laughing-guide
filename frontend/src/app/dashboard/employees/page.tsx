@@ -1,15 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useState } from "react";
-import AddEmployee from "@/app/components/AddEmployee";
+import AddEmployee from "@/app/components/ui/AddEmployee";
 import { useDispatch } from "react-redux";
 import { Employee, EmployeeData } from "@/app/types/dashboard";
 import axios from "axios";
 import { openModal } from "@/lib/features/modalSlice";
-import EmployeeStatistics from "@/app/components/EmployeeStatistics";
-import EmployeeStatus from "@/app/components/EmployeeStatus";
-import EmployeeLine from "@/app/components/EmployeeLine";
-import EmployeeTable from "@/app/components/EmployeeTable";
+import EmployeeStatistics from "@/app/components/charts/EmployeeStatistics";
+import EmployeeStatus from "@/app/components/charts/EmployeeStatus";
+import EmployeeLine from "@/app/components/charts/EmployeeLine";
+import EmployeeTable from "@/app/components/ui/EmployeeTable";
 import { RootState } from "@/lib/store";
 import { useSelector } from "react-redux";
 import { ButtionSpinner } from "@/app/components/ui/Buttons";

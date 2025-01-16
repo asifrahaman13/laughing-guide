@@ -1,5 +1,5 @@
 import React from "react";
-import { EmployeeStatusType } from "../types/dashboard";
+import { EmployeeStatusType } from "../../types/dashboard";
 
 interface EmployeeStatisticsProps {
   title: string;
