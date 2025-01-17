@@ -18,7 +18,7 @@ import { Toast } from "../toasts/Toast";
 export default function EmployeeTable() {
   const pathname = usePathname();
   const selection = useSelector((state: RootState) => state.selection);
-  const [pageLoading, setPageLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [initialEmployees, setInitialEmployees] = useState<Employee[]>([]);
   const { toast, showToast } = useToast();
   React.useEffect(() => {
