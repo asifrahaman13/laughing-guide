@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ReactNode } from "react";
 import { MANAGE } from "@/constants/dashboard";
 import Link from "next/link";
@@ -8,12 +8,18 @@ import Modal from "../../components/ui/modal";
 import { RootState } from "@/lib/store";
 import { useSelector } from "react-redux";
 import { useParams, useRouter } from "next/navigation";
+import axios from "axios";
 
 interface LayoutProps {
   children: ReactNode;
 }
+
+type UserAgent = {
+  email: string;
+  name: string;
+};
 export default function Layout({ children }: LayoutProps) {
-  const {organizationId} = useParams<{ organizationId: string }>();
+  const { organizationId } = useParams<{ organizationId: string }>();
   const modal = useSelector((state: RootState) => state.modal);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
@@ -23,6 +29,37 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   const organizations = ["myorg", "Organization1", "Organization3"];
+
+  const [userAgent, setUserAgent] = useState<UserAgent>({
+    email: "",
+    name: "",
+  });
+
+  useEffect(() => {
+    async function ValidateToken() {
+      const access_token = localStorage.getItem("access_token");
+      console.log(access_token);
+      if (access_token) {
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+        try {
+          const response = await axios.get(
+            `${backendUrl}/api/auth/login?token=${access_token}`
+          );
+          if (response.status === 200) {
+            console.log("Token is valid");
+            console.log(response.data);
+            setUserAgent({
+              email: response.data.email,
+              name: response.data.name,
+            });
+          }
+        } catch (error) {
+          console.error("Error validating token:", error);
+        }
+      }
+    }
+    ValidateToken();
+  }, []);
 
   return (
     <React.Fragment>
@@ -141,11 +178,15 @@ export default function Layout({ children }: LayoutProps) {
                 </div>
                 <div className="h-2 w-2 bg-red-500 rounded-full"></div>
               </div>
-              <div className="flex items-center">
-                <div className="h-10 w-10 bg-gray-200 rounded-full mr-3"></div>
+              <div className="flex items-center gap-2">
+                <img
+                  src="/images/employees/circle.svg"
+                  alt=""
+                  className="h-8 w-8"
+                />
                 <div>
-                  <p className="text-sm text-gray-800">John Doe</p>
-                  <p className="text-sm text-gray-500">johndoe@asure.pro</p>
+                  <p className="text-sm text-gray-800">{userAgent?.name}</p>
+                  <p className="text-sm text-gray-500">{userAgent?.email}</p>
                 </div>
               </div>
             </div>

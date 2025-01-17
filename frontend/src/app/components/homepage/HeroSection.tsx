@@ -9,11 +9,10 @@ import axios from "axios";
 export default function HeroSection() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [email, setEmail]=useState<string>("");
+  const [email, setEmail] = useState<string>("");
 
   useEffect(() => {
     async function ValidateToken() {
-      console.log("Validating token");
       const access_token = localStorage.getItem("access_token");
       console.log(access_token);
       if (access_token) {
@@ -24,13 +23,12 @@ export default function HeroSection() {
           );
           if (response.status === 200) {
             console.log("Token is valid");
-            console.log(response.data)
+            console.log(response.data);
             setEmail(response.data.email);
             setIsSignedIn(true);
           }
         } catch (error) {
           console.error("Error validating token:", error);
-          // Optionally handle error cases here, e.g., setIsSignedIn(false);
         }
       }
     }

@@ -3,7 +3,6 @@ package handler
 import (
 	"fmt"
 	"net/http"
-	// "strings"
 	"time"
 
 	"github.com/asifrahaman13/laughing-guide/src/config"
@@ -119,9 +118,13 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 		return
 	}
 
+	fmt.Println(payload.Claims)
+
 	email := payload.Claims["email"].(string)
+	userName := payload.Claims["name"].(string)
 	claims := jwt.MapClaims{
 		"email": email,
+		"name":  userName,
 		"exp":   time.Now().Add(1500 * time.Minute).Unix(),
 	}
 	accessToken, err := generateJWT("access", claims)
@@ -131,6 +134,7 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 	}
 	refreshClaims := jwt.MapClaims{
 		"email": email,
+		"name":  userName,
 		"exp":   time.Now().Add(240 * time.Hour).Unix(),
 	}
 	refreshToken, err := generateJWT("refresh", refreshClaims)
@@ -146,29 +150,29 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 }
 
 func generateJWT(tokenType string, claims jwt.MapClaims) (string, error) {
+	fmt.Println(tokenType)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte("YOUR_JWT_SECRET"))
 }
 
 func (h *EmployeeHandler) ValidateTokenHandler(c *gin.Context) {
 	token := c.Query("token")
-	fmt.Println(token)
-
-	fmt.Println(token)
-
 	claims, err := validateJWT(token)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 		return
 	}
-
 	email, ok := claims["email"].(string)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"email": email})
+	userName, ok := claims["name"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"email": email, "name": userName})
 }
 
 func validateJWT(token string) (jwt.MapClaims, error) {
