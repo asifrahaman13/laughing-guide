@@ -4,22 +4,25 @@ import React, { useState } from "react";
 import { ReactNode } from "react";
 import { MANAGE } from "@/constants/dashboard";
 import Link from "next/link";
-import Modal from "../components/ui/modal";
+import Modal from "../../components/ui/modal";
 import { RootState } from "@/lib/store";
 import { useSelector } from "react-redux";
+import { useParams, useRouter } from "next/navigation";
 
 interface LayoutProps {
   children: ReactNode;
 }
 export default function Layout({ children }: LayoutProps) {
+  const {organizationId} = useParams<{ organizationId: string }>();
   const modal = useSelector((state: RootState) => state.modal);
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  const organizations = ["Kelick", "Organization 2", "Organization 3"];
+  const organizations = ["Kelick", "Organization1", "Organization3"];
 
   return (
     <React.Fragment>
@@ -81,6 +84,7 @@ export default function Layout({ children }: LayoutProps) {
                         onClick={() => {
                           console.log(`${org} selected`);
                           setIsOpen(false);
+                          router.push(`/dashboard/${org}/employees`);
                         }}
                         className="flex items-center  px-6"
                       >
@@ -99,7 +103,7 @@ export default function Layout({ children }: LayoutProps) {
               <div className="text-gray-600 px-4">MANAGE</div>
               {MANAGE.map((item) => (
                 <Link
-                  href={`/dashboard/${item.link}`}
+                  href={`/dashboard/${organizationId}/${item.link}`}
                   className="flex gap-4 justify-start items-center p-4"
                   key={item.title}
                 >
