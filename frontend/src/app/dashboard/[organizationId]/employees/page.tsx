@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AddEmployee from "@/app/components/ui/AddEmployee";
 import { useDispatch, useSelector } from "react-redux";
 import { Employee, EmployeeData } from "@/app/types/dashboard";
@@ -18,9 +18,8 @@ import { useToast } from "@/app/hooks/useToast";
 import { Toast } from "@/app/components/toasts/Toast";
 
 export default function Page() {
-
   const pathname = usePathname();
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
   const [employees, setEmployees] = useState<Employee[] | null>(null);
   const [employeeStats, setEmployeeStats] = useState<EmployeeData | null>(null);
   const [buttonLoading, setLoading] = useState(false);
@@ -28,7 +27,7 @@ export default function Page() {
   const loading = useSelector((state: RootState) => state.spinner.isLoading);
   const { toast, showToast } = useToast();
 
-  React.useEffect(() => {
+  useEffect(() => {
     setPageLoading(true);
     async function fetchData() {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
@@ -59,10 +58,10 @@ export default function Page() {
 
   if (loading || pageLoading) {
     return <Spinner />;
-  } else {
-    if (employees === null || employees === undefined) {
-      return <AddEmployee />;
-    }
+  }
+
+  if (employees === null || employees === undefined) {
+    return <AddEmployee />;
   }
 
   async function generatePayroll() {
@@ -73,7 +72,6 @@ export default function Page() {
         `${backendUrl}/calculate-payroll?organizationId=${pathname.split("/")[2]}`
       );
       if (response.status === 200) {
-        console.log(response.data);
         showToast("Payroll generated successfully", "success");
       }
     } catch (err) {
@@ -93,14 +91,14 @@ export default function Page() {
             <button
               className="bg-lime-green rounded-lg px-4 gap-2 items-center py-2 flex"
               onClick={() => {
-                dispath(openModal());
+                dispatch(openModal());
               }}
             >
               <img src="/images/employees/person.svg" alt="" />
               <div className="text-white">Add Employee</div>
             </button>
             <button
-              className="bg-lime-green rounded-lg gap-2 px-4 items-center  flex"
+              className="bg-lime-green rounded-lg gap-2 px-4 items-center flex"
               onClick={generatePayroll}
               disabled={buttonLoading}
             >
