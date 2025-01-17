@@ -85,7 +85,7 @@ export default function Layout({ children }: LayoutProps) {
                         className="flex items-center  px-6"
                       >
                         <img src="/images/dashboard/organization.svg" alt="" />
-                        <div className=" px-4 py-2 text-left text-lack text-md font-md hover:bg-gray-100">
+                        <div className=" px-4 py-2 text-left text-lack text-base font-md ">
                           {" "}
                           {org}
                         </div>
@@ -96,7 +96,7 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             </div>
             <div>
-              <div className="text-gray-600 px-4">Manage</div>
+              <div className="text-gray-600 px-4">MANAGE</div>
               {MANAGE.map((item) => (
                 <Link
                   href={`/dashboard/${item.link}`}
