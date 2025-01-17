@@ -68,7 +68,7 @@ export default function HeroSection() {
           <div></div>
 
           <div className="inline-flex outline-none items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90">
-            <Link href="#">About</Link>
+            <Link href="#about-section">About</Link>
           </div>
           <div className="inline-flex outline-none items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90">
             <Link href="/dashboard/myorg/employees">Dashboard</Link>
@@ -93,6 +93,7 @@ export default function HeroSection() {
             Star us on github 🌟
           </Link>
         </div>
+
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {isSignedIn === true ? (
             <div className="text-lg font-medium">{email}</div>

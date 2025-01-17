@@ -6,6 +6,7 @@ import Banner from "./components/homepage/Banner";
 import Overview from "./components/homepage/Overview";
 import UseCase from "./components/homepage/UseCase";
 import FooterComponent from "./components/homepage/FooterComponent";
+import About from "./components/homepage/About";
 
 export default function Home() {
   return (
@@ -19,17 +20,11 @@ export default function Home() {
               <h1 className="text-4xl font-bold rotate-3  text-Pri-Dark sm:text-6xl font-sans transform ">
                 Blazing fast HR payroll system.⚡⚡
               </h1>
+              <p className="max-w-xl  bg-lime-green mt-6 text-medium font-medium leading-8 text-white">
+                Our main objective is to make you 10x more productive. We are
+                here to help you to automate HR payroll system with ease.
+              </p>
             </div>
-            <div className="w-full bg-green-200">
-              <div className="bg-white p-12 w-full shadow-2xl">
-                <img src="/ss.png" alt="" className="w-3xl" />
-              </div>
-            </div>
-
-            <p className="max-w-xl mt-6 text-medium font-medium leading-8 text-black">
-              Out main objective is to make you 10x more productive. We are here
-              to help you to automate HR payroll system with ease.
-            </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
                 href="#"
@@ -44,6 +39,12 @@ export default function Home() {
                 Learn more <span aria-hidden="true">→</span>
               </a>
             </div>
+            <div className="w-full bg-green-200">
+              <div className="bg-white p-12 w-full shadow-2xl">
+                <img src="/ss.png" alt="" className="w-3xl" />
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -52,6 +53,9 @@ export default function Home() {
       </div>
       <div className="flex flex-col items-center">
         <Overview />
+        <div id="about-section">
+          <About />
+        </div>
       </div>
       <div>
         <UseCase />
