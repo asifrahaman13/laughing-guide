@@ -28,7 +28,7 @@ Create a .env file from the .env.example file.
 mv .env.example .env
 ```
 
-Next, enter your AWS credentials. Ensure you enter the correct access keys as well as the regions.Now, you should be able to run the application.
+Next, enter your credentials. Ensure you enter the correct access keys as well as the regions.Now, you should be able to run the application.
 
 
 ```bash
