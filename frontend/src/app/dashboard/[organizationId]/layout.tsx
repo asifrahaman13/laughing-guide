@@ -7,7 +7,7 @@ import Link from "next/link";
 import Modal from "../../components/ui/modal";
 import { RootState } from "@/lib/store";
 import { useSelector } from "react-redux";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import axios from "axios";
 
 interface LayoutProps {
@@ -23,6 +23,7 @@ export default function Layout({ children }: LayoutProps) {
   const modal = useSelector((state: RootState) => state.modal);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -136,20 +137,22 @@ export default function Layout({ children }: LayoutProps) {
                 )}
               </div>
             </div>
-            <div>
+            <div className="w-full">
               <div className="text-gray-600 px-4">MANAGE</div>
-              {MANAGE.map((item) => (
-                <Link
-                  href={`/dashboard/${organizationId}/${item.link}`}
-                  className="flex gap-4 justify-start items-center p-4"
-                  key={item.title}
-                >
-                  <div>
-                    <img src={item.icon} alt="" className="h-8 w-auto" />
-                  </div>
-                  <div>{item.title}</div>
-                </Link>
-              ))}
+              <div className="flex flex-col gap-2 w-full ">
+                {MANAGE?.map((item) => (
+                  <Link
+                    href={`/dashboard/${organizationId}/${item.link}`}
+                    className={`${pathname.split("/").at(-1) === item.link ? " bg-light-gray rounded-2xl border border-gray-800" : ""} w-full flex gap-4 justify-start items-center py-2 px-4`}
+                    key={item.title}
+                  >
+                    <div>
+                      <img src={item.icon} alt="" className="h-8 w-auto" />
+                    </div>
+                    <div>{item.title}</div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
 
