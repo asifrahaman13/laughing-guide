@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"gopkg.in/yaml.v2"
 )
 
@@ -50,4 +52,23 @@ func LoadConfig() (*Config, error) {
 		config.Port = "8000"
 	}
 	return config, nil
+}
+
+func LoadGoogleConfig() *oauth2.Config {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using default environment variables")
+	}
+	var (
+		Oauth2Config = &oauth2.Config{
+			ClientID:     os.Getenv("GOOGE_CLIENT_ID"),
+			ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+			RedirectURL:  "http://localhost:8000/api/auth/google/callback",
+			Scopes: []string{
+				"https://www.googleapis.com/auth/userinfo.email",
+				"https://www.googleapis.com/auth/userinfo.profile",
+			},
+			Endpoint: google.Endpoint,
+		}
+	)
+	return Oauth2Config
 }

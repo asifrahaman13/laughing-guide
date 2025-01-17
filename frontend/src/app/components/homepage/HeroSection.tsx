@@ -4,16 +4,37 @@ import { useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import axios from "axios";
 
 export default function HeroSection() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [email, setEmail]=useState<string>("");
 
   useEffect(() => {
-    const access_token = localStorage.getItem("accessToken");
-    if (access_token) {
-      setIsSignedIn(true);
+    async function ValidateToken() {
+      console.log("Validating token");
+      const access_token = localStorage.getItem("access_token");
+      console.log(access_token);
+      if (access_token) {
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+        try {
+          const response = await axios.get(
+            `${backendUrl}/api/auth/login?token=${access_token}`
+          );
+          if (response.status === 200) {
+            console.log("Token is valid");
+            console.log(response.data)
+            setEmail(response.data.email);
+            setIsSignedIn(true);
+          }
+        } catch (error) {
+          console.error("Error validating token:", error);
+          // Optionally handle error cases here, e.g., setIsSignedIn(false);
+        }
+      }
     }
+    ValidateToken();
   }, []);
 
   return (
@@ -76,10 +97,10 @@ export default function HeroSection() {
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {isSignedIn === true ? (
-            <div className="text-lg font-medium">Signed In</div>
+            <div className="text-lg font-medium">{email}</div>
           ) : (
             <Link
-              href="/auth/signup"
+              href="/callback"
               className="bg-Lime-Green p-2 rounded-md font-medium text-gray-800"
             >
               Signup{" "}

@@ -24,3 +24,8 @@ type CPFContribution struct {
 	EmployerContribution float64 `json:"employerContribution"`
 	TotalContribution    float64 `json:"totalContribution"`
 }
+
+type AuthResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}

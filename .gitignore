@@ -15,3 +15,5 @@ wheels/
 employees.db
 misc/
 myapp
+
+google-service.json

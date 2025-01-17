@@ -55,6 +55,7 @@ func main() {
 
 	r := gin.Default()
 
+	
 	r.Use(cors.Default())
 
 	r.GET("/health", func(c *gin.Context) {

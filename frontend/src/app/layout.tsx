@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/app/StoreProvider";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export const metadata: Metadata = {
   title: "kelick",
@@ -15,10 +16,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+  console.log(googleClientId)
   return (
     <html lang="en">
       <body className={``}>
-        <Providers>{children}</Providers>
+        <GoogleOAuthProvider clientId={googleClientId}>
+          <Providers>{children}</Providers>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );
