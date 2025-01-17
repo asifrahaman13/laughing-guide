@@ -8,7 +8,7 @@ type InProgressProps = {
 
 export default function InProgress({ title, message }: InProgressProps) {
   return (
-    <>
+    <React.Fragment>
       <div className="flex   flex-col items-center justify-center h-screen bg-gray-100 text-center">
         <img
           src="/images/dashboard/search.svg"
@@ -23,6 +23,6 @@ export default function InProgress({ title, message }: InProgressProps) {
             "This page is under development. Please check back later."}
         </p>
       </div>
-    </>
+    </React.Fragment>
   );
 }
