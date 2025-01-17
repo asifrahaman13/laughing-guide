@@ -11,20 +11,22 @@ import EmployeeStatus from "@/app/components/charts/EmployeeStatus";
 import EmployeeLine from "@/app/components/charts/EmployeeLine";
 import EmployeeTable from "@/app/components/ui/EmployeeTable";
 import { ButtionSpinner } from "@/app/components/ui/Buttons";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { RootState } from "@/lib/store";
 import Spinner from "@/app/components/ui/Spinner";
+import { useToast } from "@/app/hooks/useToast";
+import { Toast } from "@/app/components/toasts/Toast";
 
 export default function Page() {
+
   const pathname = usePathname();
   const dispath = useDispatch();
   const [employees, setEmployees] = useState<Employee[] | null>(null);
   const [employeeStats, setEmployeeStats] = useState<EmployeeData | null>(null);
-
   const [buttonLoading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
   const loading = useSelector((state: RootState) => state.spinner.isLoading);
-  const router = useRouter();
+  const { toast, showToast } = useToast();
 
   React.useEffect(() => {
     setPageLoading(true);
@@ -35,7 +37,9 @@ export default function Page() {
           axios.get(
             `${backendUrl}/employees?organizationId=${pathname.split("/")[2]}`
           ),
-          axios.get(`${backendUrl}/aggregate?organizationId=${pathname.split("/")[2]}`),
+          axios.get(
+            `${backendUrl}/aggregate?organizationId=${pathname.split("/")[2]}`
+          ),
         ]);
 
         if (employeesResponse?.data === null || statsResponse?.data === null) {
@@ -65,10 +69,12 @@ export default function Page() {
     try {
       setLoading(true);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const response = await axios.get(`${backendUrl}/calculate-payroll?organizationId=${pathname.split("/")[2]}`);
+      const response = await axios.get(
+        `${backendUrl}/calculate-payroll?organizationId=${pathname.split("/")[2]}`
+      );
       if (response.status === 200) {
         console.log(response.data);
-        router.push(`/dashboard/${pathname.split("/")[2]}/payrolls`);
+        showToast("Payroll generated successfully", "success");
       }
     } catch (err) {
       console.log(err);
@@ -80,6 +86,7 @@ export default function Page() {
   return (
     <React.Fragment>
       <div className="flex flex-col w-full h-full">
+        {toast && <Toast message={toast.message} type={toast.type} />}
         <div className="bg-white border p-2 lg:p-4 h-16 flex justify-between items-center">
           <div className="font-medium text-xl">Employees</div>
           <div className="flex gap-2">

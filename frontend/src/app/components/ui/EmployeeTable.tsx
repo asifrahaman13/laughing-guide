@@ -12,12 +12,15 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import Spinner from "./Spinner";
 import { usePathname } from "next/navigation";
+import { useToast } from "@/app/hooks/useToast";
+import { Toast } from "../toasts/Toast";
 
 export default function EmployeeTable() {
   const pathname = usePathname();
   const selection = useSelector((state: RootState) => state.selection);
   const [pageLoading, setPageLoading] = useState(false);
   const [initialEmployees, setInitialEmployees] = useState<Employee[]>([]);
+  const { toast, showToast } = useToast();
   React.useEffect(() => {
     setPageLoading(true);
     async function fetchData() {
@@ -41,7 +44,12 @@ export default function EmployeeTable() {
     }
 
     fetchData();
-  }, [pathname, selection.employeeName, selection.employeeRole, selection.employeeStatus]);
+  }, [
+    pathname,
+    selection.employeeName,
+    selection.employeeRole,
+    selection.employeeStatus,
+  ]);
 
   const [employees, setEmployees] = useState(initialEmployees);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -69,12 +77,14 @@ export default function EmployeeTable() {
   async function deleteSelectedRows() {
     try {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      console.log(selectedRows)
-      const response = await axios.post(`${backendUrl}/delete-employees?organizationId=${pathname.split("/")[2]}`, {
-        employeeIds: selectedRows,
-      });
+      const response = await axios.post(
+        `${backendUrl}/delete-employees?organizationId=${pathname.split("/")[2]}`,
+        {
+          employeeIds: selectedRows,
+        }
+      );
       if (response.status === 200) {
-        console.log("Rows deleted successfully:", response);
+        showToast("Employees successfully deleted", "success");
         const updatedEmployees = await axios.get(
           `${backendUrl}/employees?organizationId=${pathname.split("/")[2]}`
         );
@@ -88,6 +98,7 @@ export default function EmployeeTable() {
 
   return (
     <div className="container mx-auto p-4">
+      {toast && <Toast message={toast.message} type={toast.type} />}
       <div className="flex items-center justify-between py-4">
         <div className="text-xl font-bold text-gray-700 h-full flex items-center">
           All Employees
