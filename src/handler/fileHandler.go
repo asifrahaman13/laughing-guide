@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/asifrahaman13/laughing-guide/src/core/ports"
@@ -16,12 +17,15 @@ func NewFileHandler(fileService ports.FileService) *FileHandler {
 }
 func (h *FileHandler) UploadHandler(c *gin.Context) {
 	file, err := c.FormFile("file")
+
+	organizationId:=c.PostForm("organizationId")
+	fmt.Println(organizationId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "File is required"})
 		return
 	}
 
-	result, err := h.fileService.UploadCSVFile(file)
+	result, err := h.fileService.UploadCSVFile(file, organizationId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

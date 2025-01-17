@@ -5,10 +5,10 @@ import (
 )
 
 type EmployeeService interface {
-	CalculatePayroll() (any, error)
-	AllPayroll() (any, error)
-	AllEmployees() (any, error)
-	EmployeeStatistics() (any, error)
-	FilterEmployees(employeeName string, employeeStatus string, employeeRole string) (any, error)
-	DeleteEmployees(employeeIds []string) ([]domain.Employee, error)
+	CalculatePayroll(organizationId string) (any, error)
+	AllPayroll(organizationId string) (any, error)
+	AllEmployees(organationId string) (any, error)
+	EmployeeStatistics(organizationId string) (any, error)
+	FilterEmployees(employeeName string, employeeStatus string, employeeRole string, organizationId string) (any, error)
+	DeleteEmployees(employeeIds []string, organizationId string) ([]domain.Employee, error)
 }

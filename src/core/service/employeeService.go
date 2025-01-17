@@ -18,8 +18,8 @@ func NewEmployeeService(employeeRepository repository.EmployeeRepository) ports.
 	return &employeeService{employeeRepository}
 }
 
-func (s *employeeService) CalculatePayroll() (any, error) {
-	rows, err := s.employeeRepository.Execute("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees")
+func (s *employeeService) CalculatePayroll(organizationId string) (any, error) {
+	rows, err := s.employeeRepository.Execute("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees WHERE organization_id = $1", organizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ func (s *employeeService) CalculatePayroll() (any, error) {
 	return results, nil
 }
 
-func (s *employeeService) AllPayroll() (any, error) {
+func (s *employeeService) AllPayroll(organizationId string) (any, error) {
 	rows, err := s.employeeRepository.Execute(`
         SELECT
             p.employee_id,
@@ -104,7 +104,9 @@ func (s *employeeService) AllPayroll() (any, error) {
             e.employee_email,
             e.employee_name
         FROM payroll_data p
-        JOIN employees e ON p.employee_id = e.employee_id`)
+        JOIN employees e ON p.employee_id = e.employee_id
+		AND e.organization_id = $1
+		`, organizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -152,8 +154,10 @@ func (s *employeeService) AllPayroll() (any, error) {
 	return payrollResults, nil
 }
 
-func (s *employeeService) AllEmployees() (any, error) {
-	rows, err := s.employeeRepository.Execute("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees")
+func (s *employeeService) AllEmployees(organizationId string) (any, error) {
+	fmt.Println(organizationId)
+
+	rows, err := s.employeeRepository.Execute("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees WHERE organization_id = $1", organizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -177,8 +181,8 @@ func (s *employeeService) AllEmployees() (any, error) {
 	return employees, nil
 }
 
-func (s *employeeService) EmployeeStatistics() (any, error) {
-	rows, err := s.employeeRepository.Execute("SELECT employee_resident, employee_job_type, employee_status FROM employees")
+func (s *employeeService) EmployeeStatistics(organizationId string) (any, error) {
+	rows, err := s.employeeRepository.Execute("SELECT employee_resident, employee_job_type, employee_status FROM employees WHERE organization_id = $1", organizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -252,18 +256,19 @@ func (s *employeeService) EmployeeStatistics() (any, error) {
 	}, nil
 }
 
-func (s *employeeService) FilterEmployees(employeeName string, employeeStatus string, employeeJobType string) (any, error) {
+func (s *employeeService) FilterEmployees(employeeName string, employeeStatus string, employeeJobType string, organizationId string) (any, error) {
 	query := `
         SELECT employee_id, employee_profile, employee_email, employee_name, employee_role,
                employee_status, employee_salary, employee_job_type, employee_resident,
                employee_age, bonuses
         FROM employees
         WHERE employee_name ILIKE $1 AND employee_status ILIKE $2 AND employee_job_type ILIKE $3
+		AND organization_id = $4
     `
 
 	result := make([]domain.Employee, 0)
 
-	rows, err := s.employeeRepository.Execute(query, "%"+employeeName+"%", "%"+employeeStatus+"%", "%"+employeeJobType+"%")
+	rows, err := s.employeeRepository.Execute(query, "%"+employeeName+"%", "%"+employeeStatus+"%", "%"+employeeJobType+"%", organizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -290,9 +295,11 @@ func (s *employeeService) FilterEmployees(employeeName string, employeeStatus st
 	return result, nil
 }
 
-func (s *employeeService) DeleteEmployees(employeeIds []string) ([]domain.Employee, error) {
+func (s *employeeService) DeleteEmployees(employeeIds []string, organizationId string) ([]domain.Employee, error) {
+	fmt.Println(organizationId)
+	fmt.Println(employeeIds)
 	ids := "'" + strings.Join(employeeIds, "','") + "'"
-	query := fmt.Sprintf("DELETE FROM employees WHERE employee_id IN (%s)", ids)
+	query := fmt.Sprintf("DELETE FROM employees WHERE employee_id IN (%s) AND organization_id='%s'", ids, organizationId)
 	_, err := s.employeeRepository.Execute(query)
 	if err != nil {
 		return nil, err

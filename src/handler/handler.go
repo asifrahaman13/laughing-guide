@@ -18,7 +18,8 @@ func NewEmployeeHandler(service ports.EmployeeService) *EmployeeHandler {
 }
 
 func (h *EmployeeHandler) CalculatePayrollHandler(c *gin.Context) {
-	result, err := h.service.CalculatePayroll()
+	organizationId:=c.Query("organizationId")
+	result, err := h.service.CalculatePayroll(organizationId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -27,7 +28,8 @@ func (h *EmployeeHandler) CalculatePayrollHandler(c *gin.Context) {
 }
 
 func (h *EmployeeHandler) FetchPayrollHandler(c *gin.Context) {
-	result, err := h.service.AllPayroll()
+	organizationId:=c.Query("organizationId")
+	result, err := h.service.AllPayroll(organizationId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -36,7 +38,8 @@ func (h *EmployeeHandler) FetchPayrollHandler(c *gin.Context) {
 }
 
 func (h *EmployeeHandler) GetEmployeesHandler(c *gin.Context) {
-	result, err := h.service.AllEmployees()
+	organizationId:=c.Query("organizationId")
+	result, err := h.service.AllEmployees(organizationId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -45,7 +48,8 @@ func (h *EmployeeHandler) GetEmployeesHandler(c *gin.Context) {
 }
 
 func (h *EmployeeHandler) GetEmployeeStatisticsHandler(c *gin.Context) {
-	result, err := h.service.EmployeeStatistics()
+	organizationId:=c.Query("organizationId")
+	result, err := h.service.EmployeeStatistics(organizationId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -54,11 +58,12 @@ func (h *EmployeeHandler) GetEmployeeStatisticsHandler(c *gin.Context) {
 }
 
 func (h *EmployeeHandler) FilterEmployees(c *gin.Context) {
+	organizationId:=c.Query("organizationId")
 	employeeName := c.Query("employee_name")
 	employeeStatus := c.Query("employee_status")
 	employeeRole := c.Query("employee_role")
 	fmt.Println(employeeName, employeeStatus, employeeRole)
-	result, err := h.service.FilterEmployees(employeeName, employeeStatus, employeeRole)
+	result, err := h.service.FilterEmployees(employeeName, employeeStatus, employeeRole, organizationId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -67,7 +72,8 @@ func (h *EmployeeHandler) FilterEmployees(c *gin.Context) {
 }
 
 func (h *EmployeeHandler) FetchPayrollHandlerc(c *gin.Context) {
-	result, err := h.service.AllPayroll()
+	organizationId:=c.Query("organizationId")
+	result, err := h.service.AllPayroll(organizationId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -77,6 +83,7 @@ func (h *EmployeeHandler) FetchPayrollHandlerc(c *gin.Context) {
 }
 
 func (h *EmployeeHandler) DeleteEmployeeHandler(c *gin.Context) {
+	organizationId:=c.Query("organizationId")
 	var request domain.EmployeeRequest
 	err := c.BindJSON(&request)
 	if err != nil {
@@ -84,7 +91,7 @@ func (h *EmployeeHandler) DeleteEmployeeHandler(c *gin.Context) {
 		return
 	}
 
-	result, err := h.service.DeleteEmployees(request.EmployeeIds)
+	result, err := h.service.DeleteEmployees(request.EmployeeIds , organizationId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

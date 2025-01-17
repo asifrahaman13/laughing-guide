@@ -26,6 +26,7 @@ func InitDB() {
 	}
 
 	createTableSQL := `CREATE TABLE IF NOT EXISTS employees (
+	    organization_id VARCHAR(50) NOT NULL,
 		employee_id TEXT PRIMARY KEY,
 		employee_profile TEXT,
 		employee_email TEXT,
@@ -50,11 +51,21 @@ func InitDB() {
 		PRIMARY KEY (employee_id)
 	);`
 
+	createOrganizations := `CREATE TABLE IF NOT EXISTS organizations (
+		organization_id VARCHAR(50) PRIMARY KEY,
+		organization_name VARCHAR(255) NOT NULL
+	);`
+
 	_, err = Database.Exec(createTableSQL)
 	if err != nil {
 		log.Fatal(err)
 	}
 	_, err = Database.Exec(createTableSQL2)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = Database.Exec(createOrganizations)
 	if err != nil {
 		log.Fatal(err)
 	}

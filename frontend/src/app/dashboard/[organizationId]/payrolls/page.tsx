@@ -3,6 +3,7 @@ import axios from "axios";
 import Link from "next/link";
 import React from "react";
 import { EmployeeSalaryDetails } from "@/app/types/dashboard";
+import { usePathname } from "next/navigation";
 
 const EmployeeRow: React.FC<{ employee: EmployeeSalaryDetails }> = ({
   employee,
@@ -34,6 +35,7 @@ const EmployeeRow: React.FC<{ employee: EmployeeSalaryDetails }> = ({
 );
 
 export default function Page() {
+  const pathname= usePathname()
   const [payrollData, setPayrollData] = React.useState<
     EmployeeSalaryDetails[] | null
   >(null);
@@ -42,7 +44,7 @@ export default function Page() {
     async function fetchPayrollId() {
       try {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-        const response = await axios.get(`${backendUrl}/payroll`);
+        const response = await axios.get(`${backendUrl}/payroll?organizationId=${pathname.split("/")[2]}`);
         console.log("Payroll data:", response.data);
         if (response.data) {
           setPayrollData(response.data);

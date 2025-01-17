@@ -14,12 +14,14 @@ func InitRoutes(employeeHandler *handler.EmployeeHandler, fileHandler *handler.F
 			"message": "ok",
 		})
 	})
+
 	r.POST("/upload", fileHandler.UploadHandler)
+	r.GET("/sample-csv", fileHandler.GetSampleCSVHandler)
+
 	r.GET("/calculate-payroll", employeeHandler.CalculatePayrollHandler)
 	r.GET("/payroll", employeeHandler.FetchPayrollHandler)
 	r.GET("/employees", employeeHandler.GetEmployeesHandler)
 	r.GET("/aggregate", employeeHandler.GetEmployeeStatisticsHandler)
-	r.GET("/sample-csv", fileHandler.GetSampleCSVHandler)
 	r.GET("/filter-employees", employeeHandler.FilterEmployees)
 	r.POST("/delete-employees", employeeHandler.DeleteEmployeeHandler)
 

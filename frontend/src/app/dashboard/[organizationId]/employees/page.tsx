@@ -11,11 +11,12 @@ import EmployeeStatus from "@/app/components/charts/EmployeeStatus";
 import EmployeeLine from "@/app/components/charts/EmployeeLine";
 import EmployeeTable from "@/app/components/ui/EmployeeTable";
 import { ButtionSpinner } from "@/app/components/ui/Buttons";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { RootState } from "@/lib/store";
 import Spinner from "@/app/components/ui/Spinner";
 
 export default function Page() {
+  const pathname = usePathname();
   const dispath = useDispatch();
   const [employees, setEmployees] = useState<Employee[] | null>(null);
   const [employeeStats, setEmployeeStats] = useState<EmployeeData | null>(null);
@@ -31,8 +32,10 @@ export default function Page() {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       try {
         const [employeesResponse, statsResponse] = await Promise.all([
-          axios.get(`${backendUrl}/employees`),
-          axios.get(`${backendUrl}/aggregate`),
+          axios.get(
+            `${backendUrl}/employees?organizationId=${pathname.split("/")[2]}`
+          ),
+          axios.get(`${backendUrl}/aggregate?organizationId=${pathname.split("/")[2]}`),
         ]);
 
         if (employeesResponse?.data === null || statsResponse?.data === null) {
@@ -48,7 +51,7 @@ export default function Page() {
     }
 
     fetchData();
-  }, [loading]);
+  }, [loading, pathname]);
 
   if (loading || pageLoading) {
     return <Spinner />;
@@ -62,10 +65,10 @@ export default function Page() {
     try {
       setLoading(true);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const response = await axios.get(`${backendUrl}/calculate-payroll`);
+      const response = await axios.get(`${backendUrl}/calculate-payroll?organizationId=${pathname.split("/")[2]}`);
       if (response.status === 200) {
         console.log(response.data);
-        router.push("/dashboard/payrolls");
+        router.push(`/dashboard/${pathname.split("/")[2]}/payrolls`);
       }
     } catch (err) {
       console.log(err);

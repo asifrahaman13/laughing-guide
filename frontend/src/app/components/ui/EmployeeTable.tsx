@@ -11,8 +11,10 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import Spinner from "./Spinner";
+import { usePathname } from "next/navigation";
 
 export default function EmployeeTable() {
+  const pathname = usePathname();
   const selection = useSelector((state: RootState) => state.selection);
   const [pageLoading, setPageLoading] = useState(false);
   const [initialEmployees, setInitialEmployees] = useState<Employee[]>([]);
@@ -23,7 +25,7 @@ export default function EmployeeTable() {
       try {
         const [employeesResponse] = await Promise.all([
           axios.get(
-            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}`
+            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}&organizationId=${pathname.split("/")[2]}`
           ),
         ]);
 
@@ -39,11 +41,7 @@ export default function EmployeeTable() {
     }
 
     fetchData();
-  }, [
-    selection.employeeName,
-    selection.employeeRole,
-    selection.employeeStatus,
-  ]);
+  }, [pathname, selection.employeeName, selection.employeeRole, selection.employeeStatus]);
 
   const [employees, setEmployees] = useState(initialEmployees);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -71,12 +69,15 @@ export default function EmployeeTable() {
   async function deleteSelectedRows() {
     try {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const response = await axios.post(`${backendUrl}/delete-employees`, {
+      console.log(selectedRows)
+      const response = await axios.post(`${backendUrl}/delete-employees?organizationId=${pathname.split("/")[2]}`, {
         employeeIds: selectedRows,
       });
       if (response.status === 200) {
         console.log("Rows deleted successfully:", response);
-        const updatedEmployees = await axios.get(`${backendUrl}/employees`);
+        const updatedEmployees = await axios.get(
+          `${backendUrl}/employees?organizationId=${pathname.split("/")[2]}`
+        );
         setEmployees(updatedEmployees.data);
         setSelectedRows([]);
       }

@@ -7,9 +7,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { startLoading, stopLoading } from "@/lib/features/spinnerSlice";
 import { ButtionSpinner } from "./Buttons";
 import { useRouter } from "next/navigation";
+import { usePathname } from 'next/navigation'
 
 export default function Modal() {
   const dispath = useDispatch();
+  const pathname=usePathname();
   const modal = useSelector((state: RootState) => state.modal);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -18,6 +20,7 @@ export default function Modal() {
   const uploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("organizationId", pathname.split("/")[2]);
 
     try {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
@@ -53,11 +56,13 @@ export default function Modal() {
         const response = await uploadFile(file);
         if (response === true) {
           console.log("File uploaded successfully:", response);
-          dispath(stopLoading());
-          router.push("/dashboard/employees");
+          router.push(`/dashboard/${pathname.split("/")[2]}/employees`);
         }
       } catch (error) {
         console.error("Error uploading file:", error);
+      }
+      finally{
+        dispath(stopLoading());
       }
     }
   };

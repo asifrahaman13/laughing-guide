@@ -1,6 +1,7 @@
 package domain
 
 type Employee struct {
+	OrganizationID   string  `json:"organizationId"`
 	EmployeeID       string  `json:"employeeId"`
 	EmployeeProfile  string  `json:"employeeProfile"`
 	EmployeeEmail    string  `json:"employeeEmail"`
