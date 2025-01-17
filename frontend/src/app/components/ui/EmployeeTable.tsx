@@ -175,7 +175,7 @@ export default function EmployeeTable() {
       </div>
 
       {selectedRows.length !== 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-md flex justify-between items-center">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-md flex justify-between items-center">
           <div className="flex gap-1">
             <div>{selectedRows?.length}</div>
             <div> {selectedRows?.length === 1 ? "row" : "rows"} selected</div>

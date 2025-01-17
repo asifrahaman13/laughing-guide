@@ -22,7 +22,7 @@ export default function Layout({ children }: LayoutProps) {
     setIsOpen(!isOpen);
   };
 
-  const organizations = ["Kelick", "Organization1", "Organization3"];
+  const organizations = ["myorg", "Organization1", "Organization3"];
 
   return (
     <React.Fragment>

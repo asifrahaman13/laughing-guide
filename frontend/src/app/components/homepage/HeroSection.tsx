@@ -52,7 +52,7 @@ export default function HeroSection() {
             <Link href="#">About</Link>
           </div>
           <div className="inline-flex outline-none items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90">
-            <Link href="/dashboard/employees">Dashboard</Link>
+            <Link href="/dashboard/myorg/employees">Dashboard</Link>
           </div>
           <Link
             className="bg-black rounded-md font-semibold text-sm gap-2 text-white py-2 px-4 flex items-center"
