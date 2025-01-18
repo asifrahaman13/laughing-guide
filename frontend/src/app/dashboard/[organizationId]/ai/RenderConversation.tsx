@@ -1,24 +1,25 @@
-import React, { useState } from 'react';
-import ButtonStatus from '@/app/components/ButtonStatus';
-import Skeleton from '@/app/components/Skeleton';
-import { useDispatch, useSelector } from 'react-redux';
-import { setQuery, setHistory } from '@/lib/features/conversationSlice';
-import { RootState } from '@/lib/store';
+/* eslint-disable @next/next/no-img-element */
+import React, { useState } from "react";
+import ButtonStatus from "@/app/components/ButtonStatus";
+import Skeleton from "@/app/components/Skeleton";
+import { useDispatch, useSelector } from "react-redux";
+import { setQuery, setHistory } from "@/lib/features/conversationSlice";
+import { RootState } from "@/lib/store";
 import {
   HistoryItem,
   IconComponentsProps,
   ICONS,
   RenderConversationProps,
-} from '@/constants/types/type.dashboard';
-import TableView from './TableView';
-import SqlRender from '@/app/components/SqlRender';
-import ErrorAlert from '@/app/components/ErrorAlert';
+} from "@/constants/types/type.dashboard";
+import TableView from "./TableView";
+import SqlRender from "@/app/components/SqlRender";
+import ErrorAlert from "@/app/components/ErrorAlert";
 
 const IconComponents: React.FC<IconComponentsProps> = ({ props }) => {
   const IconComponent = ICONS[props.slug];
 
   if (!IconComponent) {
-    console.error(`Icon component not found for slug: ${props.slug}`);
+    console.log(`Icon component not found for slug: ${props.slug}`);
   }
 
   return (
@@ -42,8 +43,8 @@ const RenderConversation = ({
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    if (conversationSlice.query === null || conversationSlice.query === '') {
-      console.log('sorry not possible');
+    if (conversationSlice.query === null || conversationSlice.query === "") {
+      console.log("sorry not possible");
       setAlert(true);
       setTimeout(() => {
         setAlert(false);
@@ -55,12 +56,12 @@ const RenderConversation = ({
       const queryJson = JSON.stringify({ query: conversationSlice.query });
 
       websocketRef.current.send(queryJson);
-      dispatch(setQuery({ query: '' }));
+      dispatch(setQuery({ query: "" }));
       dispatch(
         setHistory({
           message: conversationSlice.query,
-          sql_query: '',
-          messageFrom: 'user',
+          sql_query: "",
+          messageFrom: "user",
           answer_type: null,
         })
       );
@@ -78,20 +79,30 @@ const RenderConversation = ({
             <>
               {conversationSlice.history.map((item: HistoryItem, index) => (
                 <div key={index}>
-                  {item?.messageFrom === 'chatbot' && (
-                    <>
-                      {item?.answer_type === 'table_response' && (
+                  {item?.messageFrom === "chatbot" && (
+                    <div className="flex flex-col gap-2">
+                      <div className="">
+                        <img
+                          src="/images/dashboard/icon.svg"
+                          alt=""
+                          className="h-12"
+                        />
+                      </div>
+                      {item?.answer_type === "table_response" && (
                         <TableView tableData={JSON.parse(item?.message)} />
                       )}
 
-                      {item?.answer_type === 'sql_query' && (
+                      {item?.answer_type === "sql_query" && (
                         <SqlRender sqlQuery={item?.sql_query} />
                       )}
-                    </>
+                    </div>
                   )}
 
-                  {item?.messageFrom === 'user' && (
-                    <div className=" w-3/4 max-w-3/4  ml-auto flex justify-end ">
+                  {item?.messageFrom === "user" && (
+                    <div className=" w-3/4 max-w-3/4  ml-auto flex flex-col items-end ">
+                    <div>
+                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSppkoKsaYMuIoNLDH7O8ePOacLPG1mKXtEng&s" alt="" className="h-12 w-"/>
+                    </div>
                       <p className="bg-lime-green text-white rounded-md p-2">
                         {item.message}
                       </p>

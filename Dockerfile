@@ -4,6 +4,8 @@ FROM golang:1.23 AS builder
 # Set the working directory inside the container
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
+
 # Copy the Go modules files first for better caching
 COPY go.mod go.sum ./
 

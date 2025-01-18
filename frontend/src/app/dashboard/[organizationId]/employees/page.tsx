@@ -48,7 +48,7 @@ export default function Page() {
         setEmployees(employeesResponse?.data);
         setEmployeeStats(statsResponse?.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.log("Error fetching data:", error);
       } finally {
         setPageLoading(false);
       }

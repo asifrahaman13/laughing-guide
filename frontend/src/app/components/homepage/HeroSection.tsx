@@ -28,7 +28,7 @@ export default function HeroSection() {
             setIsSignedIn(true);
           }
         } catch (error) {
-          console.error("Error validating token:", error);
+          console.log("Error validating token:", error);
         }
       }
     }

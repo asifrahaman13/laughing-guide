@@ -105,20 +105,15 @@ func (h *EmployeeHandler) DeleteEmployeeHandler(c *gin.Context) {
 }
 
 func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
-	var request struct {
-		Token string `json:"token" binding:"required"`
-	}
-	fmt.Println("Google Auth Handler...........", request)
-	fmt.Println(request.Token)
+	token := c.Query("token")
+	fmt.Println("Google Auth Handler...........", token)
+	fmt.Println(token)
 	fmt.Println("token is printed.....")
 	
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-		return
-	}
-	payload, err := idtoken.Validate(c.Request.Context(), request.Token, config.LoadGoogleConfig().ClientID)
+
+	payload, err := idtoken.Validate(c.Request.Context(), token, config.LoadGoogleConfig().ClientID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -146,6 +141,7 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate refresh token"})
 		return
 	}
+	
 
 	_, err = h.service.CreateOrganization(email, "MyOrg")
 	if err != nil {

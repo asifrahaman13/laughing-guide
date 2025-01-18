@@ -54,7 +54,7 @@ export default function Layout({ children }: LayoutProps) {
           setOrganizations(response.data);
         }
       } catch (error) {
-        console.error("Error fetching organizations:", error);
+        console.log("Error fetching organizations:", error);
         showToast("Error fetching organizations", "error");
       }
     }
@@ -83,7 +83,7 @@ export default function Layout({ children }: LayoutProps) {
             });
           }
         } catch (error) {
-          console.error("Error validating token:", error);
+          console.log("Error validating token:", error);
         }
       }
     }
@@ -215,7 +215,7 @@ export default function Layout({ children }: LayoutProps) {
                 {MANAGE?.map((item) => (
                   <Link
                     href={`/dashboard/${organizationId}/${item.link}`}
-                    className={`${pathname.split("/").at(-1) === item.link ? " bg-light-gray rounded-2xl border border-gray-800" : ""} w-full flex gap-4 justify-start items-center py-2 px-4`}
+                    className={`${pathname.split("/").at(-1) === item.link ? " bg-light-gray rounded-2xl border border-gray-800" : ""} hover:bg-slate-100 w-full flex gap-4 justify-start items-center py-2 px-4`}
                     key={item.title}
                   >
                     <div>

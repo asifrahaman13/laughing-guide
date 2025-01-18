@@ -13,16 +13,8 @@ export default function SignIn() {
       console.log("Credential Response", credentialResponse);
       console.log("Token", token);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const response = await axios.post(
-        `${backendUrl}/api/auth/google`,
-        {
-          token,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
+      const response = await axios.get(
+        `${backendUrl}/api/auth/google?token=${token}`
       );
 
       console.log(response);
@@ -31,10 +23,10 @@ export default function SignIn() {
         localStorage.setItem("access_token", response.data.access_token);
         router.push("/");
       } else {
-        console.error("Login failed with status:", response.status);
+        console.log("Login failed with status:", response.status);
       }
     } catch (error) {
-      console.error("An error occurred during login:", error);
+      console.log("An error occurred during login:", error);
     }
   };
 

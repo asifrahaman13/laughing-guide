@@ -36,7 +36,7 @@ export default function Modal() {
         return response.data;
       }
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.log("Error uploading file:", error);
       throw error;
     }
   };
