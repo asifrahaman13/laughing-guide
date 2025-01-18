@@ -188,14 +188,14 @@ export default function Layout({ children }: LayoutProps) {
               </div>
               {isOpen && (
                 <div className=" left-0 z-10 w-56 mt-2 bg-white   rounded-md ">
-                  {organizations.map((org, index) => (
+                  {organizations?.map((org, index) => (
                     <button
                       key={index}
                       onClick={() => {
-                        console.log(`${org.organizationName} selected`);
+                        console.log(`${org?.organizationId} selected`);
                         setIsOpen(false);
                         router.push(
-                          `/dashboard/${org.organizationName}/employees`
+                          `/dashboard/${org?.organizationId}/employees`
                         );
                       }}
                       className="flex items-center  px-6"

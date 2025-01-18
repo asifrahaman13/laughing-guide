@@ -37,6 +37,7 @@ export default function AddEmployee() {
       }
     } catch (err) {
       console.log(err);
+      showToast("Error deleting organization", "error");
     }
   }
 

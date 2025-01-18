@@ -402,7 +402,12 @@ func (s *employeeService) CreateOrganization(organizationEmail string, organizat
 }
 
 func (s *employeeService) DeleteOrganization(organizationId string) (domain.Organizations, error) {
-	rows, err := s.employeeRepository.Execute("DELETE FROM organizations WHERE organization_name = $1 RETURNING organization_id, organization_name, organization_email", organizationId)
+	rows, err := s.employeeRepository.Execute("DELETE FROM organizations WHERE organization_id = $1 RETURNING organization_id, organization_name, organization_email", organizationId)
+	if err != nil {
+		return domain.Organizations{}, err
+	}
+
+	_, err = s.employeeRepository.Execute("DELETE FROM employees WHERE organization_id = $1", organizationId)
 	if err != nil {
 		return domain.Organizations{}, err
 	}

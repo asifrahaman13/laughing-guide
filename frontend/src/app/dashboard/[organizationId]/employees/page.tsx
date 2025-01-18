@@ -100,10 +100,11 @@ export default function Page() {
       );
       if (response.status === 200) {
         showToast("Organization deleted successfully", "success");
-          router.push("/dashboard/MyOrg/employees");
+        router.push("/dashboard/MyOrg/employees");
       }
     } catch (err) {
       console.log(err);
+      showToast("Error deleting organization", "error");
     }
   }
 

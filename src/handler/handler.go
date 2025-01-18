@@ -265,20 +265,6 @@ func (h *EmployeeHandler) DeleteOrganizationHandler(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
-
-	// token := authorizationToken[7:]
-	// claims, err := validateJWT(token)
-
-	// if err != nil {
-	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-	// 	return
-	// }
-	// organizationEmail, ok := claims["email"].(string)
-
-	// if !ok {
-	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
-	// 	return
-	// }
 	err := c.BindJSON(&request)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
