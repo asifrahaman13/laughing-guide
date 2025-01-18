@@ -1,4 +1,4 @@
-# Blazing fast HR payroll system.⚡⚡
+# AI based Blazing fast HR payroll system.⚡⚡
 
 A blazing-fast HR payroll system designed to deal with simplicity as well as blazing-fast speed. The application is capable of handling thousands of files concurrently, making it extremely efficient for the HR payroll system.
 

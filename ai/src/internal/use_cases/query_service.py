@@ -28,6 +28,7 @@ class QueryService(QueryInterface):
             message="Querying the database", answer_type="status", status=True
         )
         await asyncio.sleep(0)
+        logging.info(f"Querying the database with the query: {query}")
 
         cache_key = self.redis_repository.get_cached_key(query)
         cached_result = self.redis_repository.get_cached_data(cache_key)
@@ -41,6 +42,7 @@ class QueryService(QueryInterface):
                 )
             )
             sql_query = cached_sql_query.decode("utf-8")
+            logging.info("Results found in cache.")
             await asyncio.sleep(0)
             yield QueryResponse(
                 sql_query=sql_query, answer_type="sql_query", status=False

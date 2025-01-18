@@ -1,5 +1,8 @@
 import json
 import psycopg2
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 class SqliteQueryRepository:
@@ -18,13 +21,11 @@ class SqliteQueryRepository:
                 else []
             )
             data = [dict(zip(headers, row)) for row in results]
-            # Convert the list of dictionaries to JSON
             json_data = json.dumps(data)
-            print(json_data)
             return json_data, headers
 
         except Exception as e:
-            print(f"Error connecting to database: {e}")
+            logging.error(f"Error: {e}")
             return
         finally:
             cursor.close()
