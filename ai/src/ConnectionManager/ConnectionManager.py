@@ -11,7 +11,6 @@ the connections.
 
 class ConnectionManager:
     def __init__(self, redis_host, redis_port):
-
         # Initialize the Redis client
         self.redis_client = redis.Redis(host=redis_host, port=redis_port)
         self.active_connections = {}
@@ -22,7 +21,6 @@ class ConnectionManager:
         connection_id: str,
         connection_type: str = "active_connections",
     ):
-
         # Store the connection ID in Redis
         self.redis_client.sadd(connection_type, connection_id)
 

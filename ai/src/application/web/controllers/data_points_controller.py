@@ -16,7 +16,7 @@ async def train_model(
         response = query_service.add_data_to_vector_db(
             train_data.user_query, train_data.sql_query, train_data.source
         )
-        if response == True:
+        if response is True:
             return Response(status_code=200, content="Data added successfully")
-    except Exception as e:
+    except Exception:
         return Response(status_code=500, content="Internal Server Error")

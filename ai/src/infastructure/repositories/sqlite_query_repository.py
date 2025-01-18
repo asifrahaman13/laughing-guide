@@ -1,6 +1,7 @@
 import json
 import psycopg2
 
+
 class SqliteQueryRepository:
     def __init__(self) -> None:
         pass

@@ -7,7 +7,6 @@ from ...config.config import POSTGRES_URL
 
 
 class QueryService(QueryInterface):
-
     def __init__(
         self,
         sqlite_repository,
@@ -21,7 +20,6 @@ class QueryService(QueryInterface):
         self.vector_db_repository = vector_db_repository
 
     async def query_db(self, query: str) -> AsyncGenerator[Dict[str, Any], None]:
-
         await asyncio.sleep(0)
         yield QueryResponse(
             message="Querying the database", answer_type="status", status=True
@@ -103,7 +101,6 @@ class QueryService(QueryInterface):
     def add_data_to_vector_db(
         self, user_query: str, sql_query: str, source: List[Dict[str, Any]]
     ):
-
         data = [
             {
                 "text": f"User prompt: {user_query}\n Sql query: {sql_query}",

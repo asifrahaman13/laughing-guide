@@ -3,24 +3,20 @@ from typing import Dict, List
 import openai
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, VectorParams, Distance
-from qdrant_client.http.models import (
-    VectorParams,
-    Distance,
-    Filter,
-    FieldCondition,
-    MatchValue,
-)
+# from qdrant_client.http.models import (
+#     VectorParams,
+#     Distance,
+# )
 from ...config.config import OPENAI_API_KEY, EMBEDDING_MODEL
 
+
 class EmbeddingService:
-
     def __init__(self):
-
         self.__openai_client = openai.Client(api_key=OPENAI_API_KEY)
         self.__embedding_model = EMBEDDING_MODEL
         self.__embeddings_cache: Dict[str, List[float]] = {}
-    def get_embeddings(self, text: str) -> List[float]:
 
+    def get_embeddings(self, text: str) -> List[float]:
         if text in self.__embeddings_cache:
             return self.__embeddings_cache[text]
         else:
@@ -46,7 +42,6 @@ class QdrantService:
                 raise e
 
     def create_collection(self, collection_name):
-
         if self.collection_exists:
             pass
         else:
@@ -71,7 +66,6 @@ class QdrantService:
 
 
 class QdrantQueryRepository:
-
     def __init__(
         self, embedding_service: EmbeddingService, qdrant_service: QdrantService
     ):
@@ -91,6 +85,7 @@ class QdrantQueryRepository:
             )
             for idx, (text, meta) in enumerate(zip(texts, metadata))
         ]
+
     def initialize_qdrant(self, texts: List[str], metadata: List[Dict]):
         points = self.prepare_points(texts, metadata)
         self.__qdrant_service.upsert_points("sample_collection", points)
