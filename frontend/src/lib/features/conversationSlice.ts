@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define the state and action types
 interface ConversationState {
@@ -11,17 +11,17 @@ interface SetQueryActionPayload {
 }
 
 interface SetHistoryActionPayload {
-  message: string | '';
-  sql_query: string | '';
+  message: string | "";
+  sql_query: string | "";
   messageFrom: string;
   answer_type: string | null;
 }
 
 // Create the conversation slice with typed state and actions
 export const conversationSlice = createSlice({
-  name: 'conversation',
+  name: "conversation",
   initialState: {
-    query: '',
+    query: "",
     history: [],
   } as ConversationState,
   reducers: {
@@ -34,8 +34,8 @@ export const conversationSlice = createSlice({
       const chatResponse = { message, messageFrom, answer_type, sql_query };
       state.history = [...state.history, chatResponse];
       console.log(
-        'The entire history',
-        JSON.parse(JSON.stringify(state.history))
+        "The entire history",
+        JSON.parse(JSON.stringify(state.history)),
       );
     },
     clearHistory: (state) => {

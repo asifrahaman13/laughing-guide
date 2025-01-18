@@ -14,7 +14,7 @@ export default function SignIn() {
       console.log("Token", token);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const response = await axios.get(
-        `${backendUrl}/api/auth/google?token=${token}`
+        `${backendUrl}/api/auth/google?token=${token}`,
       );
 
       console.log(response);

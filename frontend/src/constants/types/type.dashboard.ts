@@ -1,6 +1,6 @@
-import { SiSqlite } from 'react-icons/si';
+import { SiSqlite } from "react-icons/si";
 const TITLE = {
-  sqlite: 'SQLite',
+  sqlite: "SQLite",
 } as const;
 
 const ICONS = {

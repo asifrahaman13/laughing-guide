@@ -37,7 +37,7 @@ const RenderConversation = ({
 }: RenderConversationProps) => {
   const dispatch = useDispatch();
   const conversationSlice = useSelector(
-    (state: RootState) => state.conversation
+    (state: RootState) => state.conversation,
   );
   const [alert, setAlert] = useState<boolean>(false);
   const handleSubmit = (e: { preventDefault: () => void }) => {
@@ -63,7 +63,7 @@ const RenderConversation = ({
           sql_query: "",
           messageFrom: "user",
           answer_type: null,
-        })
+        }),
       );
     }
   };
@@ -100,9 +100,13 @@ const RenderConversation = ({
 
                   {item?.messageFrom === "user" && (
                     <div className=" w-3/4 max-w-3/4  ml-auto flex flex-col items-end ">
-                    <div>
-                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSppkoKsaYMuIoNLDH7O8ePOacLPG1mKXtEng&s" alt="" className="h-12 w-"/>
-                    </div>
+                      <div>
+                        <img
+                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSppkoKsaYMuIoNLDH7O8ePOacLPG1mKXtEng&s"
+                          alt=""
+                          className="h-12 w-"
+                        />
+                      </div>
                       <p className="bg-lime-green text-white rounded-md p-2">
                         {item.message}
                       </p>

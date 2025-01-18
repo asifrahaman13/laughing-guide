@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 interface WebSocketStatus {
   message: string;
   status: boolean;
@@ -7,11 +7,11 @@ const useWebSocket = (
   url: string,
   onMessage: (event: MessageEvent) => void,
   onOpen?: (event: Event) => void,
-  onClose?: (event: CloseEvent) => void
+  onClose?: (event: CloseEvent) => void,
 ) => {
   const websocketRef = useRef<WebSocket | null>(null);
   const [status, setStatus] = useState<WebSocketStatus>({
-    message: '',
+    message: "",
     status: false,
   });
 
@@ -20,7 +20,7 @@ const useWebSocket = (
     websocketRef.current = websocket;
 
     websocket.onopen = (event: Event) => {
-      console.log('Connected to websocket');
+      console.log("Connected to websocket");
       if (onOpen) {
         onOpen(event);
       }
@@ -31,7 +31,7 @@ const useWebSocket = (
     };
 
     websocket.onclose = (event: CloseEvent) => {
-      console.log('Disconnected from websocket');
+      console.log("Disconnected from websocket");
       if (onClose) {
         onClose(event);
       }

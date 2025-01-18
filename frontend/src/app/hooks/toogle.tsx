@@ -1,5 +1,5 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
 
 const useSettingsToggle = (initialState = false) => {
   const [settingsBar, setSettingsBar] = useState(initialState);

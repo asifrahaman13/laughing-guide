@@ -24,7 +24,7 @@ export default function Chat() {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_SOCKET || "";
     const accessToken = localStorage.getItem("access_token");
     const websocket = new WebSocket(
-      `${backendUrl}/query/sqlite-query/${accessToken}`
+      `${backendUrl}/query/sqlite-query/${accessToken}`,
     );
     websocketRef.current = websocket;
     websocket.onopen = () => {
@@ -61,7 +61,7 @@ export default function Chat() {
           sql_query: parsedData?.sql_query,
           messageFrom: "chatbot",
           answer_type: parsedData?.answer_type,
-        })
+        }),
       );
     };
 
@@ -95,7 +95,7 @@ export default function Chat() {
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_AI_BACKEND_URL}/train/data`,
-        trainValue
+        trainValue,
       );
       if (response.status === 200) {
         console.log("The response is :", response.data);

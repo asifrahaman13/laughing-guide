@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface TableViewProps {
   tableData: { [key: string]: string | number | boolean | null }[];
@@ -9,24 +9,24 @@ const TableView = ({ tableData }: TableViewProps) => {
 
   const downloadCSV = () => {
     const csvRows = [];
-    csvRows.push(tableHeaders.join(','));
+    csvRows.push(tableHeaders.join(","));
     for (const row of tableData) {
       const values = tableHeaders.map((header) =>
-        JSON.stringify(row[header], replacer)
+        JSON.stringify(row[header], replacer),
       );
-      csvRows.push(values.join(','));
+      csvRows.push(values.join(","));
     }
-    const csvString = csvRows.join('\n');
-    const blob = new Blob([csvString], { type: 'text/csv' });
+    const csvString = csvRows.join("\n");
+    const blob = new Blob([csvString], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'tableData.csv';
+    a.download = "tableData.csv";
     a.click();
     URL.revokeObjectURL(url);
   };
 
-  const replacer = (key: string, value: null) => (value === null ? '' : value);
+  const replacer = (key: string, value: null) => (value === null ? "" : value);
 
   return (
     <div className="overflow-x-auto text-Pri-Dark">

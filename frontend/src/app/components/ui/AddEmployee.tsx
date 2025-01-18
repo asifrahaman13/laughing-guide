@@ -29,7 +29,7 @@ export default function AddEmployee() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${access_token}`,
           },
-        }
+        },
       );
       if (response.status === 200) {
         showToast("Organization deleted successfully", "success");

@@ -1,4 +1,4 @@
-import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
+import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
 
 export default function ErrorAlert() {
   return (
@@ -12,7 +12,7 @@ export default function ErrorAlert() {
         </div>
         <div className="ml-3">
           <p className="text-sm text-yellow-700">
-            You cannot have blank messages{' '}
+            You cannot have blank messages{" "}
           </p>
         </div>
       </div>

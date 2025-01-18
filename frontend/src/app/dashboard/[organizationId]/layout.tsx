@@ -48,7 +48,7 @@ export default function Layout({ children }: LayoutProps) {
       const access_token = localStorage.getItem("access_token");
       try {
         const response = await axios.get(
-          `${backendUrl}/organizations?token=${access_token}`
+          `${backendUrl}/organizations?token=${access_token}`,
         );
         if (response.status === 200) {
           setOrganizations(response.data);
@@ -74,7 +74,7 @@ export default function Layout({ children }: LayoutProps) {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
         try {
           const response = await axios.get(
-            `${backendUrl}/api/auth/login?token=${access_token}`
+            `${backendUrl}/api/auth/login?token=${access_token}`,
           );
           if (response.status === 200) {
             setUserAgent({
@@ -109,7 +109,7 @@ export default function Layout({ children }: LayoutProps) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${access_token}`,
           },
-        }
+        },
       );
       if (response.status === 200) {
         console.log("Organization added successfully:", response.data);
@@ -195,7 +195,7 @@ export default function Layout({ children }: LayoutProps) {
                       onClick={() => {
                         setIsOpen(false);
                         router.push(
-                          `/dashboard/${org?.organizationId}/employees`
+                          `/dashboard/${org?.organizationId}/employees`,
                         );
                       }}
                       className="flex items-center w-full  px-6"
