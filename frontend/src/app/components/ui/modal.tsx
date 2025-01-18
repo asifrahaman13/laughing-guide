@@ -7,15 +7,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { startLoading, stopLoading } from "@/lib/features/spinnerSlice";
 import { ButtionSpinner } from "./Buttons";
 import { useRouter } from "next/navigation";
-import { usePathname } from 'next/navigation'
+import { usePathname } from "next/navigation";
+import { useToast } from "@/app/hooks/useToast";
+import { Toast } from "../toasts/Toast";
 
 export default function Modal() {
   const dispath = useDispatch();
-  const pathname=usePathname();
+  const pathname = usePathname();
   const modal = useSelector((state: RootState) => state.modal);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const { toast, showToast } = useToast();
 
   const uploadFile = async (file: File) => {
     const formData = new FormData();
@@ -59,9 +62,12 @@ export default function Modal() {
           router.push(`/dashboard/${pathname.split("/")[2]}/employees`);
         }
       } catch (error) {
-        console.error("Error uploading file:", error);
-      }
-      finally{
+        console.log("Error uploading file:", error);
+        showToast(
+          "Something went wrong. Please make sure your CSV file is no currupted.",
+          "error"
+        );
+      } finally {
         dispath(stopLoading());
       }
     }
@@ -71,7 +77,8 @@ export default function Modal() {
     try {
       setLoading(true);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const response = await axios.get(`${backendUrl}/sample-csv`, {
+      const key = "sample.csv";
+      const response = await axios.get(`${backendUrl}/sample-csv?key=${key}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -86,14 +93,15 @@ export default function Modal() {
         document.body.removeChild(link);
       }
     } catch (error) {
-      console.error("Error downloading file:", error);
+      console.log("Error downloading file:", error);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <>
+    <React.Fragment>
+      {toast && <Toast message={toast.message} type={toast.type} />}
       {modal.isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-gray-100 p-6 rounded-lg shadow-md">
@@ -182,6 +190,6 @@ export default function Modal() {
           </div>
         </div>
       )}
-    </>
+    </React.Fragment>
   );
 }

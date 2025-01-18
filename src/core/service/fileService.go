@@ -78,8 +78,7 @@ func (s *fileService) UploadCSVFile(file *multipart.FileHeader, organizationId s
 	return true, nil
 }
 
-func (s *fileService) GetSampleFile() (any, error) {
-	key := "sample.csv"
+func (s *fileService) GetSampleFile(key string) (any, error) {
 	bucket := os.Getenv("AWS_BUCKET_NAME")
 	region := os.Getenv("AWS_REGION")
 

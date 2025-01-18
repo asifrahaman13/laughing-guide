@@ -18,7 +18,7 @@ func NewFileHandler(fileService ports.FileService) *FileHandler {
 func (h *FileHandler) UploadHandler(c *gin.Context) {
 	file, err := c.FormFile("file")
 
-	organizationId:=c.PostForm("organizationId")
+	organizationId := c.PostForm("organizationId")
 	fmt.Println(organizationId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "File is required"})
@@ -34,7 +34,8 @@ func (h *FileHandler) UploadHandler(c *gin.Context) {
 }
 
 func (h *FileHandler) GetSampleCSVHandler(c *gin.Context) {
-	result, err := h.fileService.GetSampleFile()
+	key := c.Query("key")
+	result, err := h.fileService.GetSampleFile(key)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
