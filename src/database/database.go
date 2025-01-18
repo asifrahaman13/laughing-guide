@@ -25,6 +25,30 @@ func InitDB() {
 		log.Fatal(err)
 	}
 
+	if cfg.GinMode == "debug" {
+		dropEmployeesTable := `DROP TABLE IF EXISTS employees;`
+		dropPayrollDataTable := `DROP TABLE IF EXISTS payroll_data;`
+		dropOrganizationsTable := `DROP TABLE IF EXISTS organizations;`
+
+		_, err = Database.Exec(dropEmployeesTable)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		_, err = Database.Exec(dropPayrollDataTable)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		_, err = Database.Exec(dropOrganizationsTable)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Println("All tables dropped successfully.")
+
+	}
+
 	createTableSQL := `CREATE TABLE IF NOT EXISTS employees (
 	    organization_id VARCHAR(50) NOT NULL,
 		employee_id TEXT PRIMARY KEY,

@@ -108,6 +108,10 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 	var request struct {
 		Token string `json:"token" binding:"required"`
 	}
+	fmt.Println("Google Auth Handler...........", request)
+	fmt.Println(request.Token)
+	fmt.Println("token is printed.....")
+	
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
@@ -163,6 +167,7 @@ func generateJWT(tokenType string, claims jwt.MapClaims) (string, error) {
 
 func (h *EmployeeHandler) ValidateTokenHandler(c *gin.Context) {
 	token := c.Query("token")
+	fmt.Println(token)
 	claims, err := validateJWT(token)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
@@ -188,6 +193,8 @@ func validateJWT(token string) (jwt.MapClaims, error) {
 		}
 		return []byte("YOUR_JWT_SECRET"), nil
 	})
+
+	fmt.Println(parsedToken)
 
 	if err != nil {
 		return nil, err

@@ -8,25 +8,33 @@ import axios from "axios";
 export default function SignIn() {
   const router = useRouter();
   const handleSuccess = async (credentialResponse: CredentialResponse) => {
-    const token = credentialResponse.credential;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-    const response = await axios.post(
-      `${backendUrl}/api/auth/google`,
-      {
-        token,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
+    try {
+      const token = credentialResponse.credential;
+      console.log("Credential Response", credentialResponse);
+      console.log("Token", token);
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      const response = await axios.post(
+        `${backendUrl}/api/auth/google`,
+        {
+          token,
         },
-      },
-    );
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-    console.log(response);
-    if (response.status === 200) {
-      console.log("Login Success");
-      localStorage.setItem("access_token", response.data.access_token);
-      router.push("/");
+      console.log(response);
+      if (response.status === 200) {
+        console.log("Login Success");
+        localStorage.setItem("access_token", response.data.access_token);
+        router.push("/");
+      } else {
+        console.error("Login failed with status:", response.status);
+      }
+    } catch (error) {
+      console.error("An error occurred during login:", error);
     }
   };
 
@@ -43,15 +51,6 @@ export default function SignIn() {
               <h1 className="block text-2xl font-bold text-gray-800">
                 Sign in
               </h1>
-              {/* <p className="mt-2 text-sm text-gray-600">
-                Don not have an account yet?
-                <a
-                  className="text-blue-600 decoration-2 hover:underline focus:outline-none focus:underline font-medium"
-                  href="../examples/html/signup.html"
-                >
-                  Sign up here
-                </a>
-              </p> */}
             </div>
 
             <div className="mt-5">
@@ -106,12 +105,6 @@ export default function SignIn() {
                       <label htmlFor="password" className="block text-sm mb-2">
                         Password
                       </label>
-                      {/* <a
-                        className="inline-flex items-center gap-x-1 text-sm text-blue-600 decoration-2 hover:underline focus:outline-none focus:underline font-medium"
-                        href="../examples/html/recover-account.html"
-                      >
-                        Forgot password?
-                      </a> */}
                     </div>
                     <div className="relative">
                       <input

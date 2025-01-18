@@ -21,7 +21,9 @@ const useWebSocket = (
 
     websocket.onopen = (event: Event) => {
       console.log('Connected to websocket');
-      onOpen && onOpen(event);
+      if (onOpen) {
+        onOpen(event);
+      }
     };
 
     websocket.onmessage = (event: MessageEvent) => {
@@ -30,7 +32,9 @@ const useWebSocket = (
 
     websocket.onclose = (event: CloseEvent) => {
       console.log('Disconnected from websocket');
-      onClose && onClose(event);
+      if (onClose) {
+        onClose(event);
+      }
     };
 
     return () => {
