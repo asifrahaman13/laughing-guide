@@ -26,6 +26,10 @@ jobs:
           pip install uv
           uv sync
 
-      - name: Build and deploy
+      - name: Lint the codebase
         run: |
-          docker compose up
+          cd ai
+          ruff format
+          ruff check --fix
+        
+
