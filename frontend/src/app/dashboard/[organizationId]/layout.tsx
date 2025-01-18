@@ -48,7 +48,7 @@ export default function Layout({ children }: LayoutProps) {
       const access_token = localStorage.getItem("access_token");
       try {
         const response = await axios.get(
-          `${backendUrl}/organizations?token=${access_token}`,
+          `${backendUrl}/organizations?token=${access_token}`
         );
         if (response.status === 200) {
           setOrganizations(response.data);
@@ -74,7 +74,7 @@ export default function Layout({ children }: LayoutProps) {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
         try {
           const response = await axios.get(
-            `${backendUrl}/api/auth/login?token=${access_token}`,
+            `${backendUrl}/api/auth/login?token=${access_token}`
           );
           if (response.status === 200) {
             setUserAgent({
@@ -109,7 +109,7 @@ export default function Layout({ children }: LayoutProps) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${access_token}`,
           },
-        },
+        }
       );
       if (response.status === 200) {
         console.log("Organization added successfully:", response.data);
@@ -188,21 +188,20 @@ export default function Layout({ children }: LayoutProps) {
                 {/* Dropdown Menu */}
               </div>
               {isOpen && (
-                <div className=" left-0 z-10 w-56 mt-2 bg-white   rounded-md ">
+                <div className=" left-0 z-10 w-full mt-2   rounded-md ">
                   {organizations?.map((org, index) => (
                     <button
                       key={index}
                       onClick={() => {
-                        console.log(`${org?.organizationId} selected`);
                         setIsOpen(false);
                         router.push(
-                          `/dashboard/${org?.organizationId}/employees`,
+                          `/dashboard/${org?.organizationId}/employees`
                         );
                       }}
-                      className="flex items-center  px-6"
+                      className="flex items-center w-full  px-6"
                     >
                       <img src="/images/dashboard/organization.svg" alt="" />
-                      <div className=" px-4 py-2 text-left text-lack text-base font-md ">
+                      <div className=" px-4 py-2 w-full  text-left text-lack text-base font-md ">
                         {org?.organizationName}
                       </div>
                     </button>

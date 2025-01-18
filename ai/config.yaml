@@ -1,0 +1,18 @@
+# Application settings
+app:
+  title: "Aldrax"
+  version: "1.0.0"
+  description: "Application to query on sql databases."
+
+# Server settings
+server:
+  host: "0.0.0.0"
+  port: 8000
+
+redis:
+  host: "localhost"
+  port: 6379
+  db: 0
+
+
+
