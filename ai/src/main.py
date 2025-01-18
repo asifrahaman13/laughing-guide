@@ -2,7 +2,6 @@ import logging
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
-import schedule
 from math import ceil
 import redis.asyncio as redis
 import uvicorn

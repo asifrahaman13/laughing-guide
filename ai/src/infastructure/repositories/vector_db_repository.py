@@ -1,25 +1,21 @@
 import logging
 from typing import Dict, List
-import openai
+import ollama
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, VectorParams, Distance
-from ...config.config import OPENAI_API_KEY, EMBEDDING_MODEL
 
 
 class EmbeddingService:
     def __init__(self):
-        self.__openai_client = openai.Client(api_key=OPENAI_API_KEY)
-        self.__embedding_model = EMBEDDING_MODEL
         self.__embeddings_cache: Dict[str, List[float]] = {}
 
     def get_embeddings(self, text: str) -> List[float]:
         if text in self.__embeddings_cache:
             return self.__embeddings_cache[text]
         else:
-            result = self.__openai_client.embeddings.create(
-                input=[text], model=self.__embedding_model
+            response = ollama.embeddings(prompt=text, model="mxbai-embed-large"
             )
-            self.__embeddings_cache[text] = result.data[0].embedding
+            self.__embeddings_cache[text] = response.embedding
             return self.__embeddings_cache[text]
 
 

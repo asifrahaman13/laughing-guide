@@ -1,6 +1,6 @@
 import asyncio
 import json
-from typing import Any, AsyncGenerator, Dict, List
+from typing import Any, AsyncGenerator, Awaitable, Dict, List
 from src.internal.entities.router_models import QueryResponse
 from src.internal.interfaces.services.query_interface import QueryInterface
 from ...config.config import POSTGRES_URL
@@ -27,7 +27,6 @@ class QueryService(QueryInterface):
         yield QueryResponse(
             message="Querying the database", answer_type="status", status=True
         )
-        await asyncio.sleep(0)
         logging.info(f"Querying the database with the query: {query}")
 
         cache_key = self.redis_repository.get_cached_key(query)
@@ -43,30 +42,26 @@ class QueryService(QueryInterface):
             )
             sql_query = cached_sql_query.decode("utf-8")
             logging.info("Results found in cache.")
-            await asyncio.sleep(0)
             yield QueryResponse(
                 sql_query=sql_query, answer_type="sql_query", status=False
             )
-            await asyncio.sleep(0)
         else:
-            await asyncio.sleep(0)
             yield QueryResponse(message="Thinking", answer_type="status", status=True)
-            await asyncio.sleep(0)
             top_suggestions = self.vector_db_repository.query_text(query, "1")
+
+            logging.info(f"Top suggestions: {top_suggestions}")
             query_result = self.openai_repository.get_llm_response(
                 query, top_suggestions
             )
             sql_query = query_result
-            await asyncio.sleep(0)
+
+            logging.info(f"Query result: {query_result}")
             yield QueryResponse(
                 message="Executing the query", answer_type="status", status=True
             )
-            await asyncio.sleep(0)
-            await asyncio.sleep(0)
             yield QueryResponse(
                 sql_query=sql_query, answer_type="sql_query", status=False
             )
-            await asyncio.sleep(0)
             results, headers = self.sqlite_repository.query_database(
                 query_result, POSTGRES_URL
             )
@@ -77,21 +72,18 @@ class QueryService(QueryInterface):
             )
 
         if results:
-            await asyncio.sleep(0)
             yield QueryResponse(
                 json_message=results,
                 message=results,
                 answer_type="table_response",
                 status=False,
             )
-            await asyncio.sleep(0)
-
         else:
             logging.info("No results found.")
 
     def add_data_to_vector_db(
         self, user_query: str, sql_query: str, source: List[Dict[str, Any]]
-    ):
+    ) -> Awaitable[Any]:
         data = [
             {
                 "text": f"User prompt: {user_query}\n Sql query: {sql_query}",
