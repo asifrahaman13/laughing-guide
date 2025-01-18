@@ -46,7 +46,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	employeeRepo := repository.NewEmployeeRepository(db)
+	employeeRepo := repository.NewDatabaseRepository(db)
 	employeeService := service.NewEmployeeService(employeeRepo)
 	employeeHandler := handler.NewEmployeeHandler(employeeService)
 

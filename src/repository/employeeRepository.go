@@ -4,20 +4,20 @@ import (
 	"database/sql"
 )
 
-type EmployeeRepository interface {
+type DatabaseRepository interface {
 	Execute(query string, args ...interface{}) (*sql.Rows, error)
 	BeginTransaction() (*sql.Tx, error)
 }
 
-type employeeRepository struct {
+type databaseRepository struct {
 	db *sql.DB
 }
 
-func NewEmployeeRepository(db *sql.DB) EmployeeRepository {
-	return &employeeRepository{db}
+func NewDatabaseRepository(db *sql.DB) DatabaseRepository {
+	return &databaseRepository{db}
 }
 
-func (r *employeeRepository) Execute(query string, args ...interface{}) (*sql.Rows, error) {
+func (r *databaseRepository) Execute(query string, args ...interface{}) (*sql.Rows, error) {
 	rows, err := r.db.Query(query, args...)
 	if err != nil {
 		return nil, err
@@ -25,7 +25,7 @@ func (r *employeeRepository) Execute(query string, args ...interface{}) (*sql.Ro
 	return rows, nil
 }
 
-func (r *employeeRepository) BeginTransaction() (*sql.Tx, error) {
+func (r *databaseRepository) BeginTransaction() (*sql.Tx, error) {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return nil, err

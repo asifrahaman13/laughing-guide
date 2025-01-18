@@ -17,10 +17,10 @@ import (
 )
 
 type fileService struct {
-	employeeRepository repository.EmployeeRepository
+	employeeRepository repository.DatabaseRepository
 }
 
-func NewFileService(employeeRepository repository.EmployeeRepository) ports.FileService {
+func NewFileService(employeeRepository repository.DatabaseRepository) ports.FileService {
 	return &fileService{employeeRepository}
 }
 
