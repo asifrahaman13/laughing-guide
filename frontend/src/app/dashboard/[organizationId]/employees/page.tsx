@@ -143,7 +143,7 @@ export default function Page() {
                 <ButtionSpinner buttonType="primary" />
               ) : (
                 <>
-                  <img src="/images/employees/person.svg" alt="" />
+                  <img src="/images/employees/payroll.svg" alt="" />
                   <div className="text-white">Generate Payroll</div>
                 </>
               )}
