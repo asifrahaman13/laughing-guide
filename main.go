@@ -44,11 +44,11 @@ func main() {
 	}
 
 	databaseURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName, cfg.DBSSLMode)
-
 	db, err := sql.Open("postgres", databaseURL)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	employeeRepo := repository.NewDatabaseRepository(db)
 	sess := session.Must(session.NewSession(&aws.Config{
 		Region: aws.String(cfg.AwsRegion),
@@ -63,16 +63,16 @@ func main() {
 
 	r := gin.Default()
 
-	
-	r.Use(cors.Default())
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
-	r.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "ok",
-		})
-	})
-
-	r = routers.InitRoutes(employeeHandler, fileHandler)
+	routers.InitRoutes(employeeHandler, fileHandler, r)
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,
 		Handler: r,
@@ -80,7 +80,7 @@ func main() {
 
 	go func() {
 		log.Println("Server started on :" + cfg.Port)
-		if err := srv.ListenAndServe(); err != nil {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Failed to start server: %v", err)
 		}
 	}()

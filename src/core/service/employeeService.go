@@ -400,3 +400,25 @@ func (s *employeeService) CreateOrganization(organizationEmail string, organizat
 		OrganizationEmail: organizationEmail,
 	}, nil
 }
+
+func (s *employeeService) DeleteOrganization(organizationId string) (domain.Organizations, error) {
+	rows, err := s.employeeRepository.Execute("DELETE FROM organizations WHERE organization_name = $1 RETURNING organization_id, organization_name, organization_email", organizationId)
+	if err != nil {
+		return domain.Organizations{}, err
+	}
+	defer rows.Close()
+
+	var organization domain.Organizations
+	if rows.Next() {
+		err := rows.Scan(&organization.OrganizationID, &organization.OrganizationName, &organization.OrganizationEmail)
+		if err != nil {
+			return domain.Organizations{}, err
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return domain.Organizations{}, err
+	}
+
+	return organization, nil
+}

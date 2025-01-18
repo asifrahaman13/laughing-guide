@@ -11,7 +11,7 @@ import EmployeeStatus from "@/app/components/charts/EmployeeStatus";
 import EmployeeLine from "@/app/components/charts/EmployeeLine";
 import EmployeeTable from "@/app/components/ui/EmployeeTable";
 import { ButtionSpinner } from "@/app/components/ui/Buttons";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { RootState } from "@/lib/store";
 import Spinner from "@/app/components/ui/Spinner";
 import { useToast } from "@/app/hooks/useToast";
@@ -26,6 +26,7 @@ export default function Page() {
   const [pageLoading, setPageLoading] = useState(false);
   const loading = useSelector((state: RootState) => state.spinner.isLoading);
   const { toast, showToast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     setPageLoading(true);
@@ -81,12 +82,48 @@ export default function Page() {
     }
   }
 
+  async function deleteOrganization() {
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      const access_token = localStorage.getItem("access_token");
+      const response = await axios.post(
+        `${backendUrl}/delete-organization`,
+        {
+          organizationId: pathname.split("/")[2],
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        showToast("Organization deleted successfully", "success");
+          router.push("/dashboard/MyOrg/employees");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <React.Fragment>
       <div className="flex flex-col w-full h-full">
         {toast && <Toast message={toast.message} type={toast.type} />}
         <div className="bg-white border p-2 lg:p-4 h-16 flex justify-between items-center">
-          <div className="font-medium text-xl">Employees</div>
+          <div className="font-medium text-xl flex items-center gap-4">
+            <div className="text-2xl font-semibold">
+              {pathname.split("/")[2]}
+            </div>
+
+            <button onClick={() => deleteOrganization()}>
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Delete-button.svg"
+                alt=""
+              />
+            </button>
+          </div>
           <div className="flex gap-2">
             <button
               className="bg-lime-green rounded-lg px-4 gap-2 items-center py-2 flex"

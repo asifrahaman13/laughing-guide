@@ -9,6 +9,8 @@ import { RootState } from "@/lib/store";
 import { useSelector } from "react-redux";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import axios from "axios";
+import { useToast } from "@/app/hooks/useToast";
+import { Toast } from "@/app/components/toasts/Toast";
 
 interface LayoutProps {
   children: ReactNode;
@@ -32,6 +34,9 @@ export default function Layout({ children }: LayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizationName, setOrganizationName] = useState<string>("");
+  const [organizationModal, setOrganizationModal] = useState<boolean>(false);
+  const { toast, showToast } = useToast();
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -71,8 +76,6 @@ export default function Layout({ children }: LayoutProps) {
             `${backendUrl}/api/auth/login?token=${access_token}`
           );
           if (response.status === 200) {
-            console.log("Token is valid");
-            console.log(response.data);
             setUserAgent({
               email: response.data.email,
               name: response.data.name,
@@ -91,8 +94,37 @@ export default function Layout({ children }: LayoutProps) {
     router.push("/");
   }
 
+  async function addOrganization() {
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      const access_token = localStorage.getItem("access_token");
+      const response = await axios.post(
+        `${backendUrl}/add-organization`,
+        {
+          organizationName: organizationName,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log("Organization added successfully:", response.data);
+        setOrganizations([...organizations, response.data]);
+        showToast("Organization added successfully", "success");
+      }
+    } catch (error) {
+      console.log("Error adding organization:", error);
+    } finally {
+      setOrganizationModal(false);
+    }
+  }
+
   return (
     <React.Fragment>
+      {toast && <Toast message={toast.message} type={toast.type} />}
       <div
         className={`w-screen h-screen overflow-y-hidden flex ${
           modal.isOpen ? "overflow-hidden" : ""
@@ -116,8 +148,8 @@ export default function Layout({ children }: LayoutProps) {
               </div>
               <div>Dashboard</div>
             </div>
-            <div>
-              <div className="relative   text-left">
+            <div className="w-full">
+              <div className="flex items-center justify-between w-full text-left">
                 {/* Dropdown Button */}
                 <button
                   onClick={toggleDropdown}
@@ -141,31 +173,41 @@ export default function Layout({ children }: LayoutProps) {
                     />
                   </svg>
                 </button>
+                <div>
+                  <button
+                    className="bg-white shadow-md rounded-full h-6 w-6 flex justify-center items-center"
+                    onClick={() => {
+                      setOrganizationModal(true);
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
 
                 {/* Dropdown Menu */}
-                {isOpen && (
-                  <div className=" left-0 z-10 w-56 mt-2 bg-white   rounded-md ">
-                    {organizations.map((org, index) => (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          console.log(`${org.organizationName} selected`);
-                          setIsOpen(false);
-                          router.push(
-                            `/dashboard/${org.organizationName}/employees`
-                          );
-                        }}
-                        className="flex items-center  px-6"
-                      >
-                        <img src="/images/dashboard/organization.svg" alt="" />
-                        <div className=" px-4 py-2 text-left text-lack text-base font-md ">
-                          {org?.organizationName}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
               </div>
+              {isOpen && (
+                <div className=" left-0 z-10 w-56 mt-2 bg-white   rounded-md ">
+                  {organizations.map((org, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        console.log(`${org.organizationName} selected`);
+                        setIsOpen(false);
+                        router.push(
+                          `/dashboard/${org.organizationName}/employees`
+                        );
+                      }}
+                      className="flex items-center  px-6"
+                    >
+                      <img src="/images/dashboard/organization.svg" alt="" />
+                      <div className=" px-4 py-2 text-left text-lack text-base font-md ">
+                        {org?.organizationName}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="w-full">
               <div className="text-gray-600 px-4">MANAGE</div>
@@ -236,6 +278,80 @@ export default function Layout({ children }: LayoutProps) {
         <div className="w-5/6 h-full overflow-y-scroll bg-lime-gray">
           {children}
         </div>
+
+        {/* Add Organization Modal */}
+        {organizationModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+              <div className="w-full  flex  justify-end">
+                <button onClick={() => setOrganizationModal(false)}>
+                  Cancel
+                </button>
+              </div>
+              <div className="grid gap-y-4">
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-md mb-2 font-semibold text-gray-700"
+                  >
+                    Enter organization name
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="text"
+                      name="text"
+                      placeholder="organization_a"
+                      className="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none  text-gray-800  dark:placeholder-neutral-500 border dark:focus:ring-neutral-600"
+                      required
+                      aria-describedby="email-error"
+                      onChange={(e) => {
+                        setOrganizationName(e.target.value);
+                      }}
+                    />
+                    <div className="hidden absolute inset-y-0 end-0 pointer-events-none pe-3">
+                      <svg
+                        className="size-5 text-red-500"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                      >
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p
+                    className="hidden text-xs text-red-600 mt-2"
+                    id="email-error"
+                  >
+                    Please include a valid email address so we can get back to
+                    you
+                  </p>
+                </div>
+
+                <div className="flex items-center">
+                  <div className="ms-3">
+                    <label className="text-sm dark:text-white">
+                      Remember me
+                    </label>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-lime-green text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                  onClick={() => {
+                    addOrganization();
+                  }}
+                >
+                  <span>Submit</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Modal */}
         <Modal />

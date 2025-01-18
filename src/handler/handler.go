@@ -223,3 +223,72 @@ func (h *EmployeeHandler) GetOrganizationsHandler(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, result)
 }
+
+func (h *EmployeeHandler) AddOrganizationHandler(c *gin.Context) {
+	var request domain.OrganizationRequest
+	authorizationToken := c.GetHeader("Authorization")
+	if authorizationToken == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	token := authorizationToken[7:]
+	claims, err := validateJWT(token)
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+	organizationEmail, ok := claims["email"].(string)
+
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+	err = c.BindJSON(&request)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	result, err := h.service.CreateOrganization(organizationEmail, request.OrganizationName)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
+func (h *EmployeeHandler) DeleteOrganizationHandler(c *gin.Context) {
+	var request domain.OrganizationRequest
+	authorizationToken := c.GetHeader("Authorization")
+	if authorizationToken == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	// token := authorizationToken[7:]
+	// claims, err := validateJWT(token)
+
+	// if err != nil {
+	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+	// 	return
+	// }
+	// organizationEmail, ok := claims["email"].(string)
+
+	// if !ok {
+	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+	// 	return
+	// }
+	err := c.BindJSON(&request)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+
+	}
+	result, err := h.service.DeleteOrganization(request.OrganizationID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}

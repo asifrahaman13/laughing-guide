@@ -13,4 +13,5 @@ type EmployeeService interface {
 	DeleteEmployees(employeeIds []string, organizationId string) ([]domain.Employee, error)
 	GetOrganizations(organizationEmail string) ([]domain.Organizations, error)
 	CreateOrganization(organizationEmail string, organizationName string) (domain.Organizations, error)
+	DeleteOrganization(organizationId string) (domain.Organizations, error)
 }

@@ -1,16 +1,62 @@
 "use client";
+import { useToast } from "@/app/hooks/useToast";
 /* eslint-disable @next/next/no-img-element */
 import { openModal } from "@/lib/features/modalSlice";
+import axios from "axios";
+import { usePathname } from "next/navigation";
 import React from "react";
 import { useDispatch } from "react-redux";
+import { Toast } from "../toasts/Toast";
+import { useRouter } from "next/navigation";
 
 export default function AddEmployee() {
+  const { toast, showToast } = useToast();
+  const pathname = usePathname();
   const dispatch = useDispatch();
+  const router=useRouter();
+
+  async function deleteOrganization() {
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      const access_token = localStorage.getItem("access_token");
+      const response = await axios.post(
+        `${backendUrl}/delete-organization`,
+        {
+          organizationId: pathname.split("/")[2],
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        showToast("Organization deleted successfully", "success");
+        router.push("/dashboard/MyOrg/employees");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <React.Fragment>
+      {toast && <Toast message={toast.message} type={toast.type} />}
       <div className="flex flex-col w-full h-full bg-gray-100">
         <div className="bg-white p-2 lg:p-4 h-16 flex justify-between items-center">
-          <div className="font-medium text-xl">Employees</div>
+          <div className="font-medium text-xl flex items-center gap-4">
+            <div className="text-2xl font-semibold">
+              {pathname.split("/")[2]}
+            </div>
+
+            <button onClick={() => deleteOrganization()}>
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Delete-button.svg"
+                alt=""
+              />
+            </button>
+          </div>
         </div>
         <div className="h-full">
           <div className="bg-white h-full flex flex-col items-center justify-center lg:h-3/5 border-2 rounded-lg p-4 lg:p-8 m-4 lg:m-8">
