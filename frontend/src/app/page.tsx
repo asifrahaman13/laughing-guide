@@ -4,9 +4,9 @@ import React from "react";
 import HeroSection from "./components/homepage/HeroSection";
 import Banner from "./components/homepage/Banner";
 import Overview from "./components/homepage/Overview";
-import UseCase from "./components/homepage/UseCase";
 import FooterComponent from "./components/homepage/FooterComponent";
 import About from "./components/homepage/About";
+import Faq from "./components/homepage/Faq";
 
 export default function Home() {
   return (
@@ -44,7 +44,6 @@ export default function Home() {
                 <img src="/ss.png" alt="" className="w-3xl" />
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -57,9 +56,11 @@ export default function Home() {
           <About />
         </div>
       </div>
-      <div>
+      {/* <div>
         <UseCase />
-      </div>
+      </div> */}
+    
+      <Faq />
       <div>
         <FooterComponent />
       </div>
