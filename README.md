@@ -109,6 +109,13 @@ cd frontend/
 bun run format
 ```
 
+For the ai it can be done by:
+
+```bash
+cd ai/
+ruff format
+```
+
 ## Docker
 
 To run the application in docker, use the following script after making sure you have the .env credentials for both front end and backend:
