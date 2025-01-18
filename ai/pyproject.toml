@@ -1,7 +1,7 @@
 [project]
-name = "aldrax"
+name = "laughing-guide"
 version = "0.1.0"
-description = "Add your description here"
+description = "AI service of the application that deals with blazing fast HR payroll system"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

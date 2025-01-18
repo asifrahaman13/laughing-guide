@@ -7,123 +7,15 @@ A blazing-fast HR payroll system designed to deal with simplicity as well as bla
 ![Screenshot from 2025-01-16 01-30-09](https://github.com/user-attachments/assets/3a86ee72-1188-4f41-ba60-c1c3893e4a90)
 ![Screenshot from 2025-01-16 01-28-52](https://github.com/user-attachments/assets/317c44f0-116d-459f-8717-77898b3038a2)
 
-## AI
+## Tech stacks
 
-Go to the ai directory.
+A large number of tech stacks are used to apply different concepts and take advantages of their strengths.
 
-```bash
-cd ai/
-```
+`python` `golang` `javascript` `typescript` `fastapi` ` qdrant` `gin` `next js` `postgresql` `docker` `git` `linux` `ollama` `aws`
 
-Now set up virtual environment
+## Considerations
 
-```bash
-uv venv
-source .venv/bin/activate
-```
+The appplication is built with the intention of speed, quality, maintanability as well as developers experience. A large number of different tech stacks are used to take advantages of their respective strength.
 
-Next install the dependencies.
-
-```bash
-uv sync
-```
-
-Create a .env file from the .env.example file
-
-```bash
-mv .env.example .env
-```
-
-Next enter your AWS credentials. Ensure you enter correct access keys as well as the regions.
-
-Now you should be able to run the application.
-
-Now you can run the main script scripts/main.py to check the functions.
-
-```bash
-uv run uvicorn src.main:app --reload --port 8080
-```
-
-## Backend
-
-```bash
-git clone https://github.com/asifrahaman13/laughing-guide.git
-```
-
-Go to the root folder.
-
-```bash
-cd laughing-guide/
-```
-
-Create a .env file from the .env.example file.
-
-```bash
-mv .env.example .env
-```
-
-Next, enter your credentials. Ensure you enter the correct access keys as well as the regions.Now, you should be able to run the application.
-
-```bash
-go build -o myapp && ./myapp
-```
-
-## Front end
-
-Go to the front-end directory
-
-```bash
-cd frontend/
-```
-
-Create a .env file from the .env.example file.
-
-```bash
-mv .env.example .env
-```
-
-Now install the dependencies.
-
-```bash
-bun install
-```
-
-Next, run the server in the local environment.
-
-```bash
-bun run dev
-```
-
-## Formatter
-
-The golang files can be formatted using the following command:
-
-```bash
-go fmt src/
-```
-
-The frontend can be formatte by the following:
-
-```bash
-cd frontend/
-bun run format
-```
-
-For the ai it can be done by:
-
-```bash
-cd ai/
-ruff format
-```
-
-## Docker
-
-To run the application in docker, use the following script after making sure you have the .env credentials for both front end and backend:
-
-```bash
-docker compose up
-```
-
-## Ports
-
-The backend port will run on port `8000` and the frontend will run on port `3000`
+- HR can work on payroll system with ease.
+- AI integrations to help the HRs get the informatin about the payrolls through natural conversation.
