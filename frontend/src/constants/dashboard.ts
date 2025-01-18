@@ -19,6 +19,11 @@ const MANAGE = [
     title: "Claims",
     link: "claims",
   },
+  {
+    icon: "/images/dashboard/more.svg",
+    title: "More",
+    link: "more",
+  },
 ];
 
 export { MANAGE };
