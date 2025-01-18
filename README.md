@@ -11,7 +11,7 @@ A blazing-fast HR payroll system designed to deal with simplicity as well as bla
 
 A large number of tech stacks are used to apply different concepts and take advantages of their strengths.
 
-`python` `golang` `javascript` `typescript` `fastapi` ` qdrant` `gin` `next js` `postgresql` `docker` `git` `linux` `ollama` `aws`
+`python` `golang` `javascript` `typescript` `fastapi` ` qdrant` `gin` `next js` `postgresql` `docker` `redis` `git` `linux` `ollama` `aws`
 
 ## Considerations
 

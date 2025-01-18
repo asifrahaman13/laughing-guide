@@ -16,8 +16,6 @@ from .config.config import REDIS_HOST, REDIS_PORT
 from .application.web.controllers.query_controller import query_controller
 from .application.web.controllers.data_points_controller import data_points
 
-
-# Configure logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
@@ -70,14 +68,6 @@ app.include_router(
 )
 
 app.include_router(data_points, prefix="/train", tags=["Add more contexts"])
-
-
-def job():
-    logging.info("Recommendations scheduled")
-    logging.info("All scheduling done...")
-
-
-schedule.every().day.at("10:30").do(job)
 
 
 @app.get(
