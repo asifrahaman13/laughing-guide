@@ -28,13 +28,6 @@ async def client_identifier(request: Request):
 
 
 async def custom_callback(request: Request, response: Response, pexpire: int):
-    """
-    Default callback when too many requests
-    :param request:
-    :param pexpire: The remaining milliseconds
-    :param response:
-    :return:
-    """
     expire = ceil(pexpire / 1000)
     raise HTTPException(
         status.HTTP_429_TOO_MANY_REQUESTS,
@@ -63,10 +56,10 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"], 
-    allow_headers=["*"],  
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

@@ -3,10 +3,6 @@ from typing import Dict, List
 import openai
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, VectorParams, Distance
-# from qdrant_client.http.models import (
-#     VectorParams,
-#     Distance,
-# )
 from ...config.config import OPENAI_API_KEY, EMBEDDING_MODEL
 
 
@@ -83,7 +79,7 @@ class QdrantQueryRepository:
                 vector=self.__embedding_service.get_embeddings(text),
                 payload={"text": text, **meta},
             )
-            for idx, (text, meta) in enumerate(zip(texts, metadata))
+            for _, (text, meta) in enumerate(zip(texts, metadata))
         ]
 
     def initialize_qdrant(self, texts: List[str], metadata: List[Dict]):
