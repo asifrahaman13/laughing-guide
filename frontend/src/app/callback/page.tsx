@@ -19,7 +19,7 @@ export default function SignIn() {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     console.log(response);

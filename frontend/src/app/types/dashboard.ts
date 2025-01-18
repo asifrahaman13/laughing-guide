@@ -33,6 +33,7 @@ export type Nationality = {
 };
 
 export type EmployeeData = {
+  OrganizationName: string;
   EmployeeStatus: EmployeeStatusType;
   EmploymentType: EmploymentType;
   Nationality: Nationality;

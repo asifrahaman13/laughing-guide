@@ -19,7 +19,7 @@ export default function HeroSection() {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
         try {
           const response = await axios.get(
-            `${backendUrl}/api/auth/login?token=${access_token}`
+            `${backendUrl}/api/auth/login?token=${access_token}`,
           );
           if (response.status === 200) {
             console.log("Token is valid");

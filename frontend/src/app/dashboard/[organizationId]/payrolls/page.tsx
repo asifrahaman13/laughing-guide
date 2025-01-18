@@ -46,7 +46,7 @@ export default function Page() {
       try {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
         const response = await axios.get(
-          `${backendUrl}/payroll?organizationId=${pathname.split("/")[2]}`
+          `${backendUrl}/payroll?organizationId=${pathname.split("/")[2]}`,
         );
         console.log("Payroll data:", response.data);
         if (response.data) {

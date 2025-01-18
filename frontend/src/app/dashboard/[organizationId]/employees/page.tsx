@@ -35,10 +35,10 @@ export default function Page() {
       try {
         const [employeesResponse, statsResponse] = await Promise.all([
           axios.get(
-            `${backendUrl}/employees?organizationId=${pathname.split("/")[2]}`
+            `${backendUrl}/employees?organizationId=${pathname.split("/")[2]}`,
           ),
           axios.get(
-            `${backendUrl}/aggregate?organizationId=${pathname.split("/")[2]}`
+            `${backendUrl}/aggregate?organizationId=${pathname.split("/")[2]}`,
           ),
         ]);
 
@@ -70,7 +70,7 @@ export default function Page() {
       setLoading(true);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const response = await axios.get(
-        `${backendUrl}/calculate-payroll?organizationId=${pathname.split("/")[2]}`
+        `${backendUrl}/calculate-payroll?organizationId=${pathname.split("/")[2]}`,
       );
       if (response.status === 200) {
         showToast("Payroll generated successfully", "success");
@@ -96,7 +96,7 @@ export default function Page() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${access_token}`,
           },
-        }
+        },
       );
       if (response.status === 200) {
         showToast("Organization deleted successfully", "success");
@@ -115,7 +115,7 @@ export default function Page() {
         <div className="bg-white border p-2 lg:p-4 h-16 flex justify-between items-center">
           <div className="font-medium text-xl flex items-center gap-4">
             <div className="text-2xl font-semibold">
-              {pathname.split("/")[2]}
+              {employeeStats?.OrganizationName}
             </div>
 
             <button onClick={() => deleteOrganization()}>

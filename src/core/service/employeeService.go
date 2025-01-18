@@ -183,9 +183,30 @@ func (s *employeeService) AllEmployees(organizationId string) (any, error) {
 
 func (s *employeeService) EmployeeStatistics(organizationId string) (any, error) {
 	rows, err := s.employeeRepository.Execute("SELECT employee_resident, employee_job_type, employee_status FROM employees WHERE organization_id = $1", organizationId)
+
 	if err != nil {
 		return nil, err
 	}
+	// Fetch organization name
+	orgRows, err := s.employeeRepository.Execute("SELECT organization_name FROM organizations WHERE organization_id = $1", organizationId)
+	if err != nil {
+		return nil, err
+	}
+	defer orgRows.Close()
+
+	var organizationName string
+	if orgRows.Next() {
+		if err := orgRows.Scan(&organizationName); err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, fmt.Errorf("no organization found with id: %s", organizationId)
+	}
+	fmt.Println(organizationName)
+	if err != nil {
+		return nil, err
+	}
+
 	defer rows.Close()
 
 	nationalityCount := map[string]int{
@@ -249,10 +270,13 @@ func (s *employeeService) EmployeeStatistics(organizationId string) (any, error)
 		return nil, err
 	}
 
-	return map[string]map[string]int{
-		"Nationality":    nationalityCount,
-		"EmploymentType": employmentTypeCount,
-		"EmployeeStatus": employeeStatusCount,
+	fmt.Println(organizationName)
+
+	return map[string]interface{}{
+		"OrganizationName": organizationName,
+		"Nationality":      nationalityCount,
+		"EmploymentType":   employmentTypeCount,
+		"EmployeeStatus":   employeeStatusCount,
 	}, nil
 }
 

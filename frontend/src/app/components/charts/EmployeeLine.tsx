@@ -51,7 +51,7 @@ export default function EmployeeLine({
   if (total === 0) {
     portions.forEach(() => 0);
   }
-return (
+  return (
     <div className="bg-white border p-4 py-6 rounded-xl h-full w-2/5 flex flex-col">
       <div className="h-2/3 flex justify-between">
         <div className="flex flex-col gap-2">
@@ -68,28 +68,36 @@ return (
           <div className="flex items-center">
             <div className="w-1 h-6 bg-cyan-500 mr-2 rounded-full"></div>
             <span className="flex items-center gap-1">
-              <div className="font-medium text-gray-800">{employeeType?.FullTime}</div>
+              <div className="font-medium text-gray-800">
+                {employeeType?.FullTime}
+              </div>
               <div>Full Timer</div>
             </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-yellow-500 mr-2 rounded-full"></div>
             <span className="flex items-center gap-1">
-              <div className="font-medium text-gray-800">{employeeType?.PartTime}</div>
+              <div className="font-medium text-gray-800">
+                {employeeType?.PartTime}
+              </div>
               <div>Part Timer</div>
             </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-purple-500 mr-2 rounded-full"></div>
             <span className="flex items-center gap-1">
-              <div className="font-medium text-gray-800">{employeeType?.Contract}</div>
+              <div className="font-medium text-gray-800">
+                {employeeType?.Contract}
+              </div>
               <div>Contract</div>
             </span>
           </div>
           <div className="flex items-center">
             <div className="w-1 h-6 bg-gray-300 mr-2 rounded-full"></div>
             <span className="flex items-center gap-1">
-              <div className="font-medium text-gray-800">{employeeType?.Intern}</div>
+              <div className="font-medium text-gray-800">
+                {employeeType?.Intern}
+              </div>
               <div>Intern</div>
             </span>
           </div>

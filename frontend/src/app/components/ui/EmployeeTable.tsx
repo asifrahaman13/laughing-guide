@@ -28,7 +28,7 @@ export default function EmployeeTable() {
       try {
         const [employeesResponse] = await Promise.all([
           axios.get(
-            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}&organizationId=${pathname.split("/")[2]}`
+            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}&organizationId=${pathname.split("/")[2]}`,
           ),
         ]);
 
@@ -81,12 +81,12 @@ export default function EmployeeTable() {
         `${backendUrl}/delete-employees?organizationId=${pathname.split("/")[2]}`,
         {
           employeeIds: selectedRows,
-        }
+        },
       );
       if (response.status === 200) {
         showToast("Employees successfully deleted", "success");
         const updatedEmployees = await axios.get(
-          `${backendUrl}/employees?organizationId=${pathname.split("/")[2]}`
+          `${backendUrl}/employees?organizationId=${pathname.split("/")[2]}`,
         );
         setEmployees(updatedEmployees.data);
         setSelectedRows([]);

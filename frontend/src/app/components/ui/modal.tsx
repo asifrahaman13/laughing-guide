@@ -65,7 +65,7 @@ export default function Modal() {
         console.log("Error uploading file:", error);
         showToast(
           "Something went wrong. Please make sure your CSV file is no currupted.",
-          "error"
+          "error",
         );
       } finally {
         dispath(stopLoading());

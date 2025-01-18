@@ -1,6 +1,6 @@
 "use client";
-import { useToast } from "@/app/hooks/useToast";
 /* eslint-disable @next/next/no-img-element */
+import { useToast } from "@/app/hooks/useToast";
 import { openModal } from "@/lib/features/modalSlice";
 import axios from "axios";
 import { usePathname } from "next/navigation";
@@ -13,7 +13,7 @@ export default function AddEmployee() {
   const { toast, showToast } = useToast();
   const pathname = usePathname();
   const dispatch = useDispatch();
-  const router=useRouter();
+  const router = useRouter();
 
   async function deleteOrganization() {
     try {
