@@ -2,13 +2,27 @@
 
 Thanks for opting to contribute to this repository. Please go through the following instructions to contribute. Make sure you have python, go, node, docker etc installed in your system.
 
+Make sure you are running vector database. Either you can use their servie or you cal use it locally.
+
+```bash
+docker pull qdrant/qdrant
+```
+
+```bash
+docker run -p 6333:6333 -p 6334:6334 \
+    -v $(pwd)/qdrant_storage:/qdrant/storage:z \
+qdrant/qdrant
+```
+
+You should be able to see your collections here: `http://localhost:6333/dashboard#/collections`
+
 ## AI
 
 Go to the ai directory.
 
 ```bash
 cd ai/
-```
+````
 
 Now set up virtual environment
 
