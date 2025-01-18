@@ -17,6 +17,9 @@ import (
 	"github.com/asifrahaman13/laughing-guide/src/handler"
 	"github.com/asifrahaman13/laughing-guide/src/repository"
 	"github.com/asifrahaman13/laughing-guide/src/routers"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -47,10 +50,15 @@ func main() {
 		log.Fatal(err)
 	}
 	employeeRepo := repository.NewDatabaseRepository(db)
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region: aws.String(cfg.AwsRegion),
+	}))
+	s3Client := s3.New(sess)
+	awsRepo := repository.NewAwsRepository(s3Client)
 	employeeService := service.NewEmployeeService(employeeRepo)
 	employeeHandler := handler.NewEmployeeHandler(employeeService)
 
-	fileService := service.NewFileService(employeeRepo)
+	fileService := service.NewFileService(employeeRepo, awsRepo)
 	fileHandler := handler.NewFileHandler(fileService)
 
 	r := gin.Default()

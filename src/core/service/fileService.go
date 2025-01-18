@@ -3,25 +3,21 @@ package service
 import (
 	"encoding/csv"
 	"fmt"
+	"github.com/asifrahaman13/laughing-guide/src/core/ports"
+	"github.com/asifrahaman13/laughing-guide/src/repository"
 	"mime/multipart"
 	"os"
 	"strconv"
 	"strings"
-	"time"
-
-	"github.com/asifrahaman13/laughing-guide/src/core/ports"
-	"github.com/asifrahaman13/laughing-guide/src/repository"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 type fileService struct {
 	employeeRepository repository.DatabaseRepository
+	awsRepository      repository.AwsRepository
 }
 
-func NewFileService(employeeRepository repository.DatabaseRepository) ports.FileService {
-	return &fileService{employeeRepository}
+func NewFileService(employeeRepository repository.DatabaseRepository, awsRepository repository.AwsRepository) ports.FileService {
+	return &fileService{employeeRepository, awsRepository}
 }
 
 func (s *fileService) UploadCSVFile(file *multipart.FileHeader, organizationId string) (bool, error) {
@@ -80,26 +76,10 @@ func (s *fileService) UploadCSVFile(file *multipart.FileHeader, organizationId s
 
 func (s *fileService) GetSampleFile(key string) (any, error) {
 	bucket := os.Getenv("AWS_BUCKET_NAME")
-	region := os.Getenv("AWS_REGION")
-
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(region),
-	})
+	presignedURL, err := s.awsRepository.DownloadFile(bucket, key)
 	if err != nil {
 		return nil, err
 	}
-
-	svc := s3.New(sess)
-	req, _ := svc.GetObjectRequest(&s3.GetObjectInput{
-		Bucket: aws.String(bucket),
-		Key:    aws.String(key),
-	})
-
-	presignedURL, err := req.Presign(5 * time.Minute)
-	if err != nil {
-		return nil, err
-	}
-
 	prepresigned_url := make(map[string]string)
 	prepresigned_url["presigned_url"] = presignedURL
 	return prepresigned_url, nil

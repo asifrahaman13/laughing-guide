@@ -19,6 +19,7 @@ type Config struct {
 	DBSSLMode  string `yaml:"-"`
 	GinMode    string `yaml:"-"`
 	Port       string `yaml:"port"`
+	AwsRegion  string `yaml:"-"`
 }
 
 func LoadConfig() (*Config, error) {
@@ -32,6 +33,7 @@ func LoadConfig() (*Config, error) {
 		DBPort:     os.Getenv("DB_PORT"),
 		DBSSLMode:  os.Getenv("DB_SSLMODE"),
 		GinMode:    os.Getenv("GIN_MODE"),
+		AwsRegion:  os.Getenv("AWS_REGION"),
 	}
 	data, err := os.ReadFile("config.yaml")
 	if err != nil {
