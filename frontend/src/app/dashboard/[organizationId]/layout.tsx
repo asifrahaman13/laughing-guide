@@ -18,18 +18,42 @@ type UserAgent = {
   email: string;
   name: string;
 };
+
+type Organization = {
+  organizationId: string;
+  organizationName: string;
+  organizationEmail: string;
+};
+
 export default function Layout({ children }: LayoutProps) {
   const { organizationId } = useParams<{ organizationId: string }>();
   const modal = useSelector((state: RootState) => state.modal);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  const organizations = ["myorg", "Organization1", "Organization3"];
+  useEffect(() => {
+    async function getOrganizations() {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      const access_token = localStorage.getItem("access_token");
+      try {
+        const response = await axios.get(
+          `${backendUrl}/organizations?token=${access_token}`
+        );
+        if (response.status === 200) {
+          setOrganizations(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching organizations:", error);
+      }
+    }
+    getOrganizations();
+  }, []);
 
   const [userAgent, setUserAgent] = useState<UserAgent>({
     email: "",
@@ -61,6 +85,11 @@ export default function Layout({ children }: LayoutProps) {
     }
     ValidateToken();
   }, []);
+
+  function Logout() {
+    localStorage.removeItem("access_token");
+    router.push("/");
+  }
 
   return (
     <React.Fragment>
@@ -120,16 +149,17 @@ export default function Layout({ children }: LayoutProps) {
                       <button
                         key={index}
                         onClick={() => {
-                          console.log(`${org} selected`);
+                          console.log(`${org.organizationName} selected`);
                           setIsOpen(false);
-                          router.push(`/dashboard/${org}/employees`);
+                          router.push(
+                            `/dashboard/${org.organizationName}/employees`
+                          );
                         }}
                         className="flex items-center  px-6"
                       >
                         <img src="/images/dashboard/organization.svg" alt="" />
                         <div className=" px-4 py-2 text-left text-lack text-base font-md ">
-                          {" "}
-                          {org}
+                          {org?.organizationName}
                         </div>
                       </button>
                     ))}
@@ -182,11 +212,17 @@ export default function Layout({ children }: LayoutProps) {
                 <div className="h-2 w-2 bg-red-500 rounded-full"></div>
               </div>
               <div className="flex items-center gap-2">
-                <img
-                  src="/images/employees/circle.svg"
-                  alt=""
-                  className="h-8 w-8"
-                />
+                <button
+                  onClick={() => {
+                    Logout();
+                  }}
+                >
+                  <img
+                    src="/images/employees/circle.svg"
+                    alt=""
+                    className="h-8 w-8"
+                  />
+                </button>
                 <div>
                   <p className="text-sm text-gray-800">{userAgent?.name}</p>
                   <p className="text-sm text-gray-500">{userAgent?.email}</p>

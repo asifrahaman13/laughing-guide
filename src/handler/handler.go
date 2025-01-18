@@ -143,6 +143,12 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 		return
 	}
 
+	_, err = h.service.CreateOrganization(email, "MyOrg")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, domain.AuthResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
@@ -191,4 +197,29 @@ func validateJWT(token string) (jwt.MapClaims, error) {
 		return claims, nil
 	}
 	return nil, fmt.Errorf("invalid token")
+}
+
+func (h *EmployeeHandler) GetOrganizationsHandler(c *gin.Context) {
+
+	token := c.Query("token")
+
+	claims, err := validateJWT(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+	organizationEmail, ok := claims["email"].(string)
+
+	fmt.Println(organizationEmail)
+
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+	result, err := h.service.GetOrganizations(organizationEmail)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
 }

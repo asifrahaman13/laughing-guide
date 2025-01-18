@@ -296,8 +296,6 @@ func (s *employeeService) FilterEmployees(employeeName string, employeeStatus st
 }
 
 func (s *employeeService) DeleteEmployees(employeeIds []string, organizationId string) ([]domain.Employee, error) {
-	fmt.Println(organizationId)
-	fmt.Println(employeeIds)
 	ids := "'" + strings.Join(employeeIds, "','") + "'"
 	query := fmt.Sprintf("DELETE FROM employees WHERE employee_id IN (%s) AND organization_id='%s'", ids, organizationId)
 	_, err := s.employeeRepository.Execute(query)
@@ -343,4 +341,62 @@ func (s *employeeService) DeleteEmployees(employeeIds []string, organizationId s
 	}
 
 	return updatedEmployees, nil
+}
+
+func (s *employeeService) GetOrganizations(organizationEmail string) ([]domain.Organizations, error) {
+	rows, err := s.employeeRepository.Execute("SELECT organization_id, organization_name, organization_email FROM organizations WHERE organization_email = $1", organizationEmail)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var organizations []domain.Organizations
+
+	for rows.Next() {
+		var organization domain.Organizations
+		err := rows.Scan(&organization.OrganizationID, &organization.OrganizationName, &organization.OrganizationEmail)
+		if err != nil {
+			return nil, err
+		}
+		organizations = append(organizations, organization)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return organizations, nil
+}
+
+func (s *employeeService) CreateOrganization(organizationEmail string, organizationName string) (domain.Organizations, error) {
+	var existingOrg domain.Organizations
+	rows, err := s.employeeRepository.Execute(`
+		SELECT organization_id, organization_name, organization_email 
+		FROM organizations 
+		WHERE organization_name = $1`, organizationName)
+
+	if err != nil {
+		return domain.Organizations{}, fmt.Errorf("error checking organization existence: %w", err)
+	}
+	defer rows.Close()
+	if rows.Next() {
+		if err := rows.Scan(&existingOrg.OrganizationID, &existingOrg.OrganizationName, &existingOrg.OrganizationEmail); err != nil {
+			return domain.Organizations{}, fmt.Errorf("error scanning existing organization: %w", err)
+		}
+		return existingOrg, nil
+	}
+
+	organizationID := helper.GenereateUUID()
+	_, err = s.employeeRepository.Execute(`
+		INSERT INTO organizations (organization_id, organization_name, organization_email) 
+		VALUES ($1, $2, $3)`, organizationID, organizationName, organizationEmail)
+	if err != nil {
+		return domain.Organizations{}, fmt.Errorf("error inserting organization: %w", err)
+	}
+
+	return domain.Organizations{
+		OrganizationID:    organizationID,
+		OrganizationName:  organizationName,
+		OrganizationEmail: organizationEmail,
+	}, nil
 }

@@ -53,7 +53,8 @@ func InitDB() {
 
 	createOrganizations := `CREATE TABLE IF NOT EXISTS organizations (
 		organization_id VARCHAR(50) PRIMARY KEY,
-		organization_name VARCHAR(255) NOT NULL
+		organization_name VARCHAR(255) NOT NULL,
+		organization_email VARCHAR(255) NOT NULL
 	);`
 
 	_, err = Database.Exec(createTableSQL)

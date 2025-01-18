@@ -10,9 +10,9 @@ const EmployeeRow: React.FC<{ employee: EmployeeSalaryDetails }> = ({
   employee,
 }) => (
   <tr key={employee?.employeeId} className="bg-white border-2">
-    <td className="p-3">
+    {/* <td className="p-3">
       <input type="checkbox" />
-    </td>
+    </td> */}
     <td className="p-3">
       <div className="flex items-center">
         <Link
@@ -69,18 +69,18 @@ export default function Page() {
   }
   return (
     <div className=" w-full ">
-      <div className="text-xl items-center flex px-4 font-bold mb-4 text-gray-800 h-20  bg-white">
+      <div className="text-xl items-center flex px-4 font-bold mb-4 border text-gray-800 h-20  bg-white">
         Payrolls
       </div>
 
       {payrollData?.length !== 0 && payrollData && (
         <div className="overflow-hidden px-4 rounded-xl ">
           <table className="min-w-full bg-gray-400 border-none rounded-xl">
-            <thead className="bg-gray-100 border-2 text-gray-600">
+            <thead className="bg-gray-100 border-2 text-gray-600 rounded-xl">
               <tr className="font-medium">
-                <th className="p-3 text-left">
+                {/* <th className="p-3 text-left">
                   <input type="checkbox" />
-                </th>
+                </th> */}
                 <th className="p-3 font-medium text-left">Profile</th>
                 <th className="p-3 font-medium text-left">Name</th>
                 <th className="p-3 font-medium text-left">Email</th>

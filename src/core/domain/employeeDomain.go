@@ -29,3 +29,9 @@ type AuthResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 }
+
+type Organizations struct {
+	OrganizationID    string `json:"organizationId"`
+	OrganizationName  string `json:"organizationName"`
+	OrganizationEmail string `json:"organizationEmail"`
+}

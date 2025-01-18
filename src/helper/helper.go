@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/asifrahaman13/laughing-guide/src/core/domain"
+	"github.com/google/uuid"
 )
 
 func TruncateToTwoDecimals(value float64) float64 {
@@ -37,4 +38,9 @@ func CalculateCPF(age int, salary float64, isCitizen bool) domain.CPFContributio
 		EmployerContribution: employerContribution,
 		TotalContribution:    totalContribution,
 	}
+}
+
+func GenereateUUID() string {
+	newUUID := uuid.New()
+	return newUUID.String()
 }

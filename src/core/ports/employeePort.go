@@ -11,4 +11,6 @@ type EmployeeService interface {
 	EmployeeStatistics(organizationId string) (any, error)
 	FilterEmployees(employeeName string, employeeStatus string, employeeRole string, organizationId string) (any, error)
 	DeleteEmployees(employeeIds []string, organizationId string) ([]domain.Employee, error)
+	GetOrganizations(organizationEmail string) ([]domain.Organizations, error)
+	CreateOrganization(organizationEmail string, organizationName string) (domain.Organizations, error)
 }
