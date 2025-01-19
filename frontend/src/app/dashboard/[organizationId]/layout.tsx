@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import axios from "axios";
 import { useToast } from "@/app/hooks/useToast";
-import { Toast } from "@/app/components/toasts/Toast";
+import Toast from "@/app/components/toasts/Toast";
 
 type LayoutProps = {
   children: ReactNode;

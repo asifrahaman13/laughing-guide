@@ -9,7 +9,7 @@ import { ButtionSpinner } from "./Buttons";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useToast } from "@/app/hooks/useToast";
-import { Toast } from "../toasts/Toast";
+import Toast from "../toasts/Toast";
 
 export default function Modal() {
   const dispath = useDispatch();

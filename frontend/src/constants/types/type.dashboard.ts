@@ -21,7 +21,6 @@ export interface HistoryItem {
 
 export interface RenderConversationProps {
   websocketRef: React.MutableRefObject<WebSocket | null>;
-  texts: string[];
   status: Status;
   db: IconKey;
 }

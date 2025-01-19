@@ -56,10 +56,6 @@ export default function Home() {
           <About />
         </div>
       </div>
-      {/* <div>
-        <UseCase />
-      </div> */}
-
       <Faq />
       <div>
         <FooterComponent />

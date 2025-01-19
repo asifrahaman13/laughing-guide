@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from "react";
+import React from "react";
 import ButtonStatus from "@/app/components/ButtonStatus";
 import Skeleton from "@/app/components/Skeleton";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,9 +13,8 @@ import {
 } from "@/constants/types/type.dashboard";
 import TableView from "./TableView";
 import SqlRender from "@/app/components/SqlRender";
-import ErrorAlert from "@/app/components/ErrorAlert";
 
-const IconComponents: React.FC<IconComponentsProps> = ({ props }) => {
+function IconComponents({ props }: IconComponentsProps) {
   const IconComponent = ICONS[props.slug];
 
   if (!IconComponent) {
@@ -27,11 +26,10 @@ const IconComponents: React.FC<IconComponentsProps> = ({ props }) => {
       <IconComponent className="mr-2" size={200} />
     </div>
   );
-};
+}
 
 const RenderConversation = ({
   websocketRef,
-  texts,
   status,
   db,
 }: RenderConversationProps) => {
@@ -39,15 +37,11 @@ const RenderConversation = ({
   const conversationSlice = useSelector(
     (state: RootState) => state.conversation,
   );
-  const [alert, setAlert] = useState<boolean>(false);
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     if (conversationSlice.query === null || conversationSlice.query === "") {
-      setAlert(true);
-      setTimeout(() => {
-        setAlert(false);
-      }, 2000);
+      setTimeout(() => {}, 2000);
       return;
     }
 
@@ -69,11 +63,8 @@ const RenderConversation = ({
 
   return (
     <React.Fragment>
-      {alert && <ErrorAlert />}
-
       <div className="w-3/5 flex flex-col gap-4  justify-between h-full  p-6 bg-white rounded-2xl">
         <div className="overflow-y-scroll no-scrollbar h-full flex flex-col gap-2 text-justify bg-white">
-          {/* <SqlRender sqlQuery={data} /> */}
           {conversationSlice.history.length > 0 && (
             <>
               {conversationSlice.history.map((item: HistoryItem, index) => (
@@ -119,19 +110,7 @@ const RenderConversation = ({
           {status.status && <Skeleton />}
           <div className=" w-full flex justify-center flex-col gap-2 h-full items-center">
             {conversationSlice.history.length === 0 && (
-              <>
-                <IconComponents props={{ slug: db }} />
-                <div className="flex gap-4  ">
-                  {texts.map((text, index) => (
-                    <div
-                      className="bg-gray-100 w-1/4 p-4 rounded-lg"
-                      key={index}
-                    >
-                      {text}
-                    </div>
-                  ))}
-                </div>
-              </>
+              <IconComponents props={{ slug: db }} />
             )}
           </div>
         </div>

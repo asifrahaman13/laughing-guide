@@ -5,8 +5,8 @@ import { openModal } from "@/lib/features/modalSlice";
 import axios from "axios";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { Toast } from "../toasts/Toast";
 import { useRouter } from "next/navigation";
+import Toast from "../toasts/Toast";
 
 export default function AddEmployee({
   organizationName,

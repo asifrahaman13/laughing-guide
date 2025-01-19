@@ -13,7 +13,7 @@ import { RootState } from "@/lib/store";
 import Spinner from "./Spinner";
 import { usePathname } from "next/navigation";
 import { useToast } from "@/app/hooks/useToast";
-import { Toast } from "../toasts/Toast";
+import Toast from "../toasts/Toast";
 
 export default function EmployeeTable() {
   const pathname = usePathname();

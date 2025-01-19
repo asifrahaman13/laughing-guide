@@ -1,6 +1,5 @@
 "use client";
 import React, { useRef, useState } from "react";
-import { conversationStaticTexts } from "@/constants/static/staticTexts/staticTexts";
 import { Status } from "@/constants/types/type.query";
 
 import RenderConversation from "./RenderConversation";
@@ -8,7 +7,6 @@ import { useDispatch } from "react-redux";
 
 import { setHistory } from "@/lib/features/conversationSlice";
 import axios from "axios";
-import SuccessAlert from "@/app/components/SuccessAlert";
 
 export default function Chat() {
   const db = "sqlite";
@@ -85,8 +83,6 @@ export default function Chat() {
     });
   }
 
-  const [dataAdded, setDataAdded] = useState<boolean>(false);
-
   async function SubmitForTrain() {
     try {
       const response = await axios.post(
@@ -94,19 +90,15 @@ export default function Chat() {
         trainValue,
       );
       if (response.status === 200) {
-        setDataAdded(true);
-        setTimeout(() => {
-          setDataAdded(false);
-        }, 1500);
+        setTimeout(() => {}, 1500);
       }
     } catch {
-      setDataAdded(false);
+      console.log("Error in training the model");
     }
   }
 
   return (
     <React.Fragment>
-      {dataAdded && <SuccessAlert />}
       <div className="flex flex-col h-screen overflow-y-hidden">
         <div className="bg-white px-6 py-6">
           <div className="text-xl font-medium text-gray-800">Kelick AI</div>
@@ -114,7 +106,6 @@ export default function Chat() {
         <div className="w-full flex-row items-left py-4 justify-left h-screen overflow-y-hidden flex gap-6 bg-gray-100">
           <RenderConversation
             websocketRef={websocketRef}
-            texts={conversationStaticTexts}
             status={status}
             db={db}
           />

@@ -26,7 +26,7 @@ const TableView = ({ tableData }: TableViewProps) => {
     URL.revokeObjectURL(url);
   };
 
-  const replacer = (key: string, value: null) => (value === null ? "" : value);
+  const replacer = (_: string, value: null) => (value === null ? "" : value);
 
   return (
     <div className="overflow-x-auto text-Pri-Dark">

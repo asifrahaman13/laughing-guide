@@ -15,7 +15,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { RootState } from "@/lib/store";
 import Spinner from "@/app/components/ui/Spinner";
 import { useToast } from "@/app/hooks/useToast";
-import { Toast } from "@/app/components/toasts/Toast";
+import Toast from "@/app/components/toasts/Toast";
 
 export default function Page() {
   const pathname = usePathname();
