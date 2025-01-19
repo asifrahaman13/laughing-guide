@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import axios from "axios";
+import React from "react";
 
 type User = {
   email: string;
@@ -17,7 +18,7 @@ export default function HeroSection() {
   const [user, setUser] = useState<User | null>(null);
   const [organization, setOrganization] = useState<string | null>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     async function ValidateToken() {
       const access_token = localStorage.getItem("access_token");
       if (access_token) {
@@ -39,7 +40,7 @@ export default function HeroSection() {
     ValidateToken();
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     async function SingleOrganization() {
       const access_token = localStorage.getItem("access_token");
       if (access_token) {

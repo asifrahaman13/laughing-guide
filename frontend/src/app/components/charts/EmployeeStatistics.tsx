@@ -1,16 +1,15 @@
-/* eslint-disable @next/next/no-img-element */
 import React from "react";
 import { Nationality } from "../../types/dashboard";
 
-interface EmployeeStatisticsProps {
+type EmployeeStatisticsProps = {
   title: string;
   description: string;
   nationality: Nationality | null;
-}
+};
 
-interface ArcProps {
+type ArcProps = {
   portions: number[];
-}
+};
 
 const colors = ["#02b9b0", "#b3bebe", "#b774fc", "#fac905"];
 

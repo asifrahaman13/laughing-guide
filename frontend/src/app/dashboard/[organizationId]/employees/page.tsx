@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AddEmployee from "@/app/components/ui/AddEmployee";
 import { useDispatch, useSelector } from "react-redux";
 import { Employee, EmployeeData } from "@/app/types/dashboard";
@@ -27,19 +27,16 @@ export default function Page() {
   const loading = useSelector((state: RootState) => state.spinner.isLoading);
   const { toast, showToast } = useToast();
   const router = useRouter();
+  const organizationId = pathname.split("/")[2];
 
-  useEffect(() => {
+  React.useEffect(() => {
     setPageLoading(true);
     async function fetchData() {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       try {
         const [employeesResponse, statsResponse] = await Promise.all([
-          axios.get(
-            `${backendUrl}/employees?organizationId=${pathname.split("/")[2]}`
-          ),
-          axios.get(
-            `${backendUrl}/aggregate?organizationId=${pathname.split("/")[2]}`
-          ),
+          axios.get(`${backendUrl}/employees?organizationId=${organizationId}`),
+          axios.get(`${backendUrl}/aggregate?organizationId=${organizationId}`),
         ]);
 
         if (employeesResponse?.data === null || statsResponse?.data === null) {
@@ -55,7 +52,7 @@ export default function Page() {
     }
 
     fetchData();
-  }, [loading, pathname]);
+  }, [loading, organizationId, pathname]);
 
   if (loading || pageLoading) {
     return <Spinner />;
@@ -65,7 +62,7 @@ export default function Page() {
     return (
       <AddEmployee
         organizationName={employeeStats?.OrganizationName || ""}
-        organizationId={pathname.split("/")[2]}
+        organizationId={organizationId}
       />
     );
   }
@@ -75,13 +72,14 @@ export default function Page() {
       setLoading(true);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const response = await axios.get(
-        `${backendUrl}/calculate-payroll?organizationId=${pathname.split("/")[2]}`
+        `${backendUrl}/calculate-payroll?organizationId=${organizationId}`,
       );
       if (response.status === 200) {
         showToast("Payroll generated successfully", "success");
       }
     } catch (err) {
       console.log(err);
+      showToast("Error generating payroll", "error");
     } finally {
       setLoading(false);
     }
@@ -94,14 +92,14 @@ export default function Page() {
       const response = await axios.post(
         `${backendUrl}/delete-organization`,
         {
-          organizationId: pathname.split("/")[2],
+          organizationId: organizationId,
         },
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${access_token}`,
           },
-        }
+        },
       );
       if (response.status === 200) {
         showToast("Organization deleted successfully", "success");
@@ -119,7 +117,7 @@ export default function Page() {
       setLoading(true);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const response = await axios.get(
-        `${backendUrl}/csv-file?key=${pathname.split("/")[2]}`
+        `${backendUrl}/csv-file?key=${organizationId}`,
       );
       if (response.status === 200) {
         const presignedUrl = response.data.presigned_url;

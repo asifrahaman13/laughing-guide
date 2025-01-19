@@ -1,12 +1,11 @@
-/* eslint-disable @next/next/no-img-element */
 import React from "react";
 import { EmploymentType } from "../../types/dashboard";
 
-interface EmployeeStatisticsProps {
+type EmployeeStatisticsProps = {
   title: string;
   description: string;
   employeeType: EmploymentType | null;
-}
+};
 
 const colors = ["#fac905", "#b3bebe", "#02b9b0", "#b774fc"];
 

@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 type ToastProps = {
   message: string;
@@ -7,9 +7,9 @@ type ToastProps = {
 };
 
 export const Toast: React.FC<ToastProps> = ({ message, type }) => {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState<boolean>(true);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(false);
     }, 1500);

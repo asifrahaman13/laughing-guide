@@ -94,6 +94,7 @@ export default function Modal() {
       }
     } catch (error) {
       console.log("Error downloading file:", error);
+      showToast("Error downloading file", "error");
     } finally {
       setLoading(false);
     }

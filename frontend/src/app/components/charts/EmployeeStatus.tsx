@@ -1,15 +1,15 @@
 import React from "react";
 import { EmployeeStatusType } from "../../types/dashboard";
 
-interface EmployeeStatisticsProps {
+type EmployeeStatisticsProps = {
   title: string;
   description: string;
   employmentStatus: EmployeeStatusType | null;
-}
+};
 
-interface ArcProps {
+type ArcProps = {
   portions: number[];
-}
+};
 
 const colors = ["#fac905", "#02b9b0", "#b774fc"];
 

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import React from "react";
+import { useRef, useState } from "react";
 interface WebSocketStatus {
   message: string;
   status: boolean;
@@ -15,7 +16,7 @@ const useWebSocket = (
     status: false,
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     const websocket = new WebSocket(url);
     websocketRef.current = websocket;
 

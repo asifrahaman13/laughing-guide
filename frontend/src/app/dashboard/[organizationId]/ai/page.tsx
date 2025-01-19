@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { conversationStaticTexts } from "@/constants/static/staticTexts/staticTexts";
 import { Status } from "@/constants/types/type.query";
 
@@ -20,7 +20,7 @@ export default function Chat() {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  React.useEffect(() => {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_SOCKET || "";
     const accessToken = localStorage.getItem("access_token");
     const websocket = new WebSocket(

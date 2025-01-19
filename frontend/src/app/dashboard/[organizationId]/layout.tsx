@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ReactNode } from "react";
 import { MANAGE } from "@/constants/dashboard";
 import Link from "next/link";
@@ -12,9 +12,9 @@ import axios from "axios";
 import { useToast } from "@/app/hooks/useToast";
 import { Toast } from "@/app/components/toasts/Toast";
 
-interface LayoutProps {
+type LayoutProps = {
   children: ReactNode;
-}
+};
 
 type UserAgent = {
   email: string;
@@ -31,18 +31,19 @@ export default function Layout({ children }: LayoutProps) {
   const { organizationId } = useParams<{ organizationId: string }>();
   const modal = useSelector((state: RootState) => state.modal);
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
-  const pathname = usePathname();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [organizationName, setOrganizationName] = useState<string>("");
   const [organizationModal, setOrganizationModal] = useState<boolean>(false);
+  const [userAgent, setUserAgent] = useState<UserAgent | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
   const { toast, showToast } = useToast();
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     async function getOrganizations() {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const access_token = localStorage.getItem("access_token");
@@ -52,6 +53,7 @@ export default function Layout({ children }: LayoutProps) {
         );
         if (response.status === 200) {
           setOrganizations(response.data);
+          showToast("Organizations fetched successfully", "success");
         }
       } catch (error) {
         console.log("Error fetching organizations:", error);
@@ -61,12 +63,7 @@ export default function Layout({ children }: LayoutProps) {
     getOrganizations();
   }, [showToast]);
 
-  const [userAgent, setUserAgent] = useState<UserAgent>({
-    email: "",
-    name: "",
-  });
-
-  useEffect(() => {
+  React.useEffect(() => {
     async function ValidateToken() {
       const access_token = localStorage.getItem("access_token");
       console.log(access_token);
@@ -77,10 +74,8 @@ export default function Layout({ children }: LayoutProps) {
             `${backendUrl}/api/auth/login?token=${access_token}`,
           );
           if (response.status === 200) {
-            setUserAgent({
-              email: response.data.email,
-              name: response.data.name,
-            });
+            const { email, name } = response.data;
+            setUserAgent({ email, name });
           }
         } catch (error) {
           console.log("Error validating token:", error);

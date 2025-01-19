@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Employee } from "../../types/dashboard";
 import Link from "next/link";
 import DropDownBox from "./Dropdown";
@@ -21,6 +21,9 @@ export default function EmployeeTable() {
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [initialEmployees, setInitialEmployees] = useState<Employee[]>([]);
   const { toast, showToast } = useToast();
+  const [employees, setEmployees] = useState(initialEmployees);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
   React.useEffect(() => {
     setPageLoading(true);
     async function fetchData() {
@@ -51,27 +54,25 @@ export default function EmployeeTable() {
     selection.employeeStatus,
   ]);
 
-  const [employees, setEmployees] = useState(initialEmployees);
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
-
-  useEffect(() => {
+  React.useEffect(() => {
     setEmployees(initialEmployees);
   }, [initialEmployees]);
 
   function selectedRow(employee: string) {
     if (employee === "all") {
-      if (selectedRows.length === employees.length) {
-        setSelectedRows([]);
-        return;
-      }
-      setSelectedRows(employees.map((item) => item.employeeId));
-    } else {
-      if (selectedRows.includes(employee)) {
-        setSelectedRows(selectedRows.filter((row) => row !== employee));
-      } else {
-        setSelectedRows([...selectedRows, employee]);
-      }
+      setSelectedRows(
+        selectedRows.length === employees.length
+          ? []
+          : employees.map((item) => item.employeeId),
+      );
+      return;
     }
+
+    setSelectedRows((prevSelectedRows) =>
+      prevSelectedRows.includes(employee)
+        ? prevSelectedRows.filter((row) => row !== employee)
+        : [...prevSelectedRows, employee],
+    );
   }
 
   async function deleteSelectedRows() {
@@ -93,6 +94,7 @@ export default function EmployeeTable() {
       }
     } catch (error) {
       console.log("Error deleting rows:", error);
+      showToast("Error deleting employees", "error");
     }
   }
 

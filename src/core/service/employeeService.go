@@ -265,9 +265,9 @@ func (s *employeeService) EmployeeStatistics(organizationId string) (any, error)
 		}
 
 		switch jobType {
-		case "Full-time":
+		case "Full time":
 			employmentTypeCount["FullTime"]++
-		case "Part-time":
+		case "Part time":
 			employmentTypeCount["PartTime"]++
 		case "Intern":
 			employmentTypeCount["Intern"]++
