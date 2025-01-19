@@ -90,6 +90,30 @@ func (s *employeeService) CalculatePayroll(organizationId string) (any, error) {
 	return results, nil
 }
 
+func (s *employeeService) GetSingleOrganization(organizationEmail string) (domain.Organizations, error) {
+
+	rows, err := s.employeeRepository.Execute("SELECT organization_id, organization_name, organization_email FROM organizations WHERE organization_email = $1", organizationEmail)
+	if err != nil {
+		return domain.Organizations{}, err
+	}
+	defer rows.Close()
+
+	var organization domain.Organizations
+	if rows.Next() {
+		err := rows.Scan(&organization.OrganizationID, &organization.OrganizationName, &organization.OrganizationEmail)
+		if err != nil {
+			return domain.Organizations{}, err
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return domain.Organizations{}, err
+	}
+
+	return organization, nil
+
+}
+
 func (s *employeeService) AllPayroll(organizationId string) (any, error) {
 	rows, err := s.employeeRepository.Execute(`
         SELECT
@@ -425,7 +449,7 @@ func (s *employeeService) CreateOrganization(organizationEmail string, organizat
 	}, nil
 }
 
-func (s *employeeService) DeleteOrganization(organizationId string) (domain.Organizations, error) {
+func (s *employeeService) DeleteOrganization(organizationId string, organizationEmail string) (domain.Organizations, error) {
 	rows, err := s.employeeRepository.Execute("DELETE FROM organizations WHERE organization_id = $1 RETURNING organization_id, organization_name, organization_email", organizationId)
 	if err != nil {
 		return domain.Organizations{}, err
@@ -449,5 +473,25 @@ func (s *employeeService) DeleteOrganization(organizationId string) (domain.Orga
 		return domain.Organizations{}, err
 	}
 
-	return organization, nil
+	fmt.Println(organizationEmail)
+
+	// Return any existing organization details of the deleted organization
+	orgRows, err := s.employeeRepository.Execute("SELECT organization_id, organization_name, organization_email FROM organizations WHERE organization_email = $1", organizationEmail)
+
+	fmt.Println("organizationEmail", orgRows)
+	if err != nil {
+		return domain.Organizations{}, err
+	}
+	defer orgRows.Close()
+
+	var existingOrganization domain.Organizations
+	if orgRows.Next() {
+		err := orgRows.Scan(&existingOrganization.OrganizationID, &existingOrganization.OrganizationName, &existingOrganization.OrganizationEmail)
+		if err != nil {
+			return domain.Organizations{}, err
+		}
+	}
+
+	fmt.Println(existingOrganization)
+	return existingOrganization, nil
 }

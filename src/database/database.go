@@ -25,7 +25,7 @@ func InitDB() {
 		log.Fatal(err)
 	}
 
-	if cfg.GinMode == "debug" {
+	if cfg.GinMode == "release" {
 		dropEmployeesTable := `DROP TABLE IF EXISTS employees;`
 		dropPayrollDataTable := `DROP TABLE IF EXISTS payroll_data;`
 		dropOrganizationsTable := `DROP TABLE IF EXISTS organizations;`

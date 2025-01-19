@@ -6,15 +6,20 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import axios from "axios";
 
+type User = {
+  email: string;
+  name: string;
+};
+
 export default function HeroSection() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [email, setEmail] = useState<string>("");
+  const [user, setUser] = useState<User | null>(null);
+  const [organization, setOrganization] = useState<string | null>(null);
 
   useEffect(() => {
     async function ValidateToken() {
       const access_token = localStorage.getItem("access_token");
-      console.log(access_token);
       if (access_token) {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
         try {
@@ -22,9 +27,8 @@ export default function HeroSection() {
             `${backendUrl}/api/auth/login?token=${access_token}`,
           );
           if (response.status === 200) {
-            console.log("Token is valid");
-            console.log(response.data);
-            setEmail(response.data.email);
+            const { email, name } = response.data;
+            setUser({ email, name });
             setIsSignedIn(true);
           }
         } catch (error) {
@@ -33,6 +37,28 @@ export default function HeroSection() {
       }
     }
     ValidateToken();
+  }, []);
+
+  useEffect(() => {
+    async function SingleOrganization() {
+      const access_token = localStorage.getItem("access_token");
+      if (access_token) {
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+        try {
+          const response = await axios.get(
+            `${backendUrl}/one-org?token=${access_token}`,
+          );
+          if (response.status === 200) {
+            console.log("Organization:", response.data.organizationId);
+            setOrganization(response.data.organizationId);
+          }
+        } catch (error) {
+          console.log("Error fetching organization:", error);
+        }
+      }
+    }
+
+    SingleOrganization();
   }, []);
 
   return (
@@ -71,7 +97,7 @@ export default function HeroSection() {
             <Link href="#about-section">About</Link>
           </div>
           <div className="inline-flex outline-none items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90">
-            <Link href="/dashboard/MyOrg/employees">Dashboard</Link>
+            <Link href={`/dashboard/${organization}/employees`}>Dashboard</Link>
           </div>
           <Link
             className="bg-black rounded-md font-semibold text-sm gap-2 text-white py-2 px-4 flex items-center"
@@ -96,7 +122,7 @@ export default function HeroSection() {
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {isSignedIn === true ? (
-            <div className="text-lg font-medium">{email}</div>
+            <div className="text-lg font-medium">{user?.name}</div>
           ) : (
             <Link
               href="/callback"

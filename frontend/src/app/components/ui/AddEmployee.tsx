@@ -3,15 +3,19 @@
 import { useToast } from "@/app/hooks/useToast";
 import { openModal } from "@/lib/features/modalSlice";
 import axios from "axios";
-import { usePathname } from "next/navigation";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Toast } from "../toasts/Toast";
 import { useRouter } from "next/navigation";
 
-export default function AddEmployee() {
+export default function AddEmployee({
+  organizationName,
+  organizationId,
+}: {
+  organizationName: string;
+  organizationId: string;
+}) {
   const { toast, showToast } = useToast();
-  const pathname = usePathname();
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -22,7 +26,7 @@ export default function AddEmployee() {
       const response = await axios.post(
         `${backendUrl}/delete-organization`,
         {
-          organizationId: pathname.split("/")[2],
+          organizationId: organizationId,
         },
         {
           headers: {
@@ -33,7 +37,8 @@ export default function AddEmployee() {
       );
       if (response.status === 200) {
         showToast("Organization deleted successfully", "success");
-        router.push("/dashboard/MyOrg/employees");
+        const organizationId = response.data.organizationId;
+        router.push(`/dashboard/${organizationId}/employees`);
       }
     } catch (err) {
       console.log(err);
@@ -47,9 +52,7 @@ export default function AddEmployee() {
       <div className="flex flex-col w-full h-full bg-gray-100">
         <div className="bg-white p-2 lg:p-4 h-16 flex justify-between items-center">
           <div className="font-medium text-xl flex items-center gap-4">
-            <div className="text-2xl font-semibold">
-              {pathname.split("/")[2]}
-            </div>
+            <div className="text-2xl font-semibold">{organizationName}</div>
 
             <button onClick={() => deleteOrganization()}>
               <img

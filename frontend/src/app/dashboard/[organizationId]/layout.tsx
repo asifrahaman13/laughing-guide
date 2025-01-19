@@ -127,12 +127,12 @@ export default function Layout({ children }: LayoutProps) {
     <React.Fragment>
       {toast && <Toast message={toast.message} type={toast.type} />}
       <div
-        className={`w-screen h-screen overflow-y-hidden flex ${
+        className={`w-screen h-screen overflow-y-hidden sm:flex-col md:flex md:flex-row ${
           modal.isOpen ? "overflow-hidden" : ""
         }`}
       >
         {/* Sidebar */}
-        <div className="w-1/6 lg:px-4 lg:text-lg h-full border-2 justify-between flex flex-col gap-4">
+        <div className=" flex-col lg:flex lg:w-1/6  lg:px-4 lg:text-lg h-full border-2 justify-between flex  gap-4">
           <div className="flex flex-col items-start rounded-lg">
             <Link
               href="/"

@@ -109,7 +109,6 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 	fmt.Println("Google Auth Handler...........", token)
 	fmt.Println(token)
 	fmt.Println("token is printed.....")
-	
 
 	payload, err := idtoken.Validate(c.Request.Context(), token, config.LoadGoogleConfig().ClientID)
 	if err != nil {
@@ -141,7 +140,6 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate refresh token"})
 		return
 	}
-	
 
 	_, err = h.service.CreateOrganization(email, "MyOrg")
 	if err != nil {
@@ -200,6 +198,28 @@ func validateJWT(token string) (jwt.MapClaims, error) {
 		return claims, nil
 	}
 	return nil, fmt.Errorf("invalid token")
+}
+
+func (h *EmployeeHandler) GetSingleOrganizationHandler(c *gin.Context) {
+	token := c.Query("token")
+	claims, err := validateJWT(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	organizationEmail, ok := claims["email"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+
+	result, err := h.service.GetSingleOrganization(organizationEmail)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
 }
 
 func (h *EmployeeHandler) GetOrganizationsHandler(c *gin.Context) {
@@ -274,7 +294,22 @@ func (h *EmployeeHandler) DeleteOrganizationHandler(c *gin.Context) {
 		return
 
 	}
-	result, err := h.service.DeleteOrganization(request.OrganizationID)
+
+	token := authorizationToken[7:]
+	claims, err := validateJWT(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	organizationEmail, ok := claims["email"].(string)
+
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+
+	result, err := h.service.DeleteOrganization(request.OrganizationID, organizationEmail)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

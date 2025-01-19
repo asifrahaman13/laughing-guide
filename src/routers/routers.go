@@ -24,6 +24,7 @@ func InitRoutes(employeeHandler *handler.EmployeeHandler, fileHandler *handler.F
 
     r.GET("/api/auth/google", employeeHandler.GoogleAuthHandler)
     r.GET("/api/auth/login", employeeHandler.ValidateTokenHandler)
+    r.GET("/one-org", employeeHandler.GetSingleOrganizationHandler)
 
     r.GET("/organizations", employeeHandler.GetOrganizationsHandler)
     r.POST("/add-organization", employeeHandler.AddOrganizationHandler)

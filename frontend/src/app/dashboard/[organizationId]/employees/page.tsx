@@ -62,7 +62,12 @@ export default function Page() {
   }
 
   if (employees === null || employees === undefined) {
-    return <AddEmployee />;
+    return (
+      <AddEmployee
+        organizationName={employeeStats?.OrganizationName || ""}
+        organizationId={pathname.split("/")[2]}
+      />
+    );
   }
 
   async function generatePayroll() {
@@ -100,7 +105,8 @@ export default function Page() {
       );
       if (response.status === 200) {
         showToast("Organization deleted successfully", "success");
-        router.push("/dashboard/MyOrg/employees");
+        const organizationId = response.data.organizationId;
+        router.push(`/dashboard/${organizationId}/employees`);
       }
     } catch (err) {
       console.log(err);
