@@ -60,6 +60,10 @@ GEMINI_API_KEY= os.getenv("GEMINI_API_KEY")
 assert GEMINI_API_KEY, "Gemini API key not set"
 logging.info("Gemini API key is set")
 
+GEMINI_EMBEDDING_MODEL= os.getenv("GEMINI_EMBEDDING_MODEL")
+assert GEMINI_EMBEDDING_MODEL, "Gemini embedding model is not set"
+logging.info("Gemini embedding model is set")
+
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 assert QDRANT_API_KEY, "Qdrant API key not set"
 

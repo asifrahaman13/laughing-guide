@@ -13,8 +13,8 @@ from ..config.config import (
     REDIS_PORT,
     REDIS_HOST,
     QDRANT_API_ENDPOINT,
-    QDRANT_API_KEY,
 )
+from ..config.config import GEMINI_EMBEDDING_MODEL
 
 
 class DIContainer:
@@ -39,7 +39,8 @@ class DIContainer:
 
     def get_vector_db_repository(self):
         if "vectordb_repoitory" not in self.__instances:
-            embedding_service = EmbeddingService()
+            embedding_model= GEMINI_EMBEDDING_MODEL
+            embedding_service = EmbeddingService(embedding_model)
             qdrant_service = QdrantService(
                 url=QDRANT_API_ENDPOINT
             )
