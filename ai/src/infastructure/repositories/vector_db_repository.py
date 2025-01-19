@@ -3,7 +3,7 @@ from typing import Dict, List
 import ollama
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, VectorParams, Distance
-
+import google.generativeai as genai
 
 class EmbeddingService:
     def __init__(self):
@@ -13,9 +13,10 @@ class EmbeddingService:
         if text in self.__embeddings_cache:
             return self.__embeddings_cache[text]
         else:
-            response = ollama.embeddings(prompt=text, model="mxbai-embed-large"
-            )
-            self.__embeddings_cache[text] = response.embedding
+            result = genai.embed_content(model="models/text-embedding-004",content=text)
+            embedding_result=self.__embeddings_cache[text] = result["embedding"]
+            if not isinstance(embedding_result, list):
+                return []
             return self.__embeddings_cache[text]
 
 
@@ -39,7 +40,7 @@ class QdrantService:
         else:
             self.__client.create_collection(
                 collection_name=collection_name,
-                vectors_config=VectorParams(size=1024, distance=Distance.COSINE),
+                vectors_config=VectorParams(size=768, distance=Distance.COSINE),
             )
 
     def upsert_points(self, collection_name, points):
@@ -80,6 +81,7 @@ class QdrantQueryRepository:
 
     def initialize_qdrant(self, texts: List[str], metadata: List[Dict]):
         points = self.prepare_points(texts, metadata)
+
         self.__qdrant_service.upsert_points("sample_collection", points)
         return True
 
