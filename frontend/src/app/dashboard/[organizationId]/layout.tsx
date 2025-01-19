@@ -59,7 +59,7 @@ export default function Layout({ children }: LayoutProps) {
       }
     }
     getOrganizations();
-  }, []);
+  }, [showToast]);
 
   const [userAgent, setUserAgent] = useState<UserAgent>({
     email: "",
