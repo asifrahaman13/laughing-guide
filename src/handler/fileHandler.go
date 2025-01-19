@@ -33,6 +33,21 @@ func (h *FileHandler) UploadHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+func (h *FileHandler) ProcessfileHandler(c *gin.Context) {
+	var Key struct {
+		OrganizationId string `json:"organizationId"`
+	}
+	c.BindJSON(&Key)
+
+	fmt.Println(Key.OrganizationId)
+	fileprocess, err := h.fileService.ProcessFile(Key.OrganizationId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, fileprocess)
+}
+
 func (h *FileHandler) GetSampleCSVHandler(c *gin.Context) {
 	key := c.Query("key")
 	result, err := h.fileService.GetSampleFile(key)

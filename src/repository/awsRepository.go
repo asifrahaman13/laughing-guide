@@ -2,6 +2,7 @@ package repository
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"time"
@@ -14,6 +15,7 @@ import (
 type AwsRepository interface {
 	DownloadFile(bucketName, fileName string) (string, error)
 	UploadFile(bucketName, fileName string, file io.Reader) error
+	DownloadFileContent(bucketName, fileName string) ([]byte, error)
 }
 
 type awsRepository struct {
@@ -42,6 +44,31 @@ func (r *awsRepository) DownloadFile(bucketName, fileName string) (string, error
 		return "", err
 	}
 	return presignedURL, nil
+}
+
+func (r *awsRepository) DownloadFileContent(bucketName, fileName string) ([]byte, error) {
+	region := os.Getenv("AWS_REGION")
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(region),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create AWS session: %w", err)
+	}
+	svc := s3.New(sess)
+	output, err := svc.GetObject(&s3.GetObjectInput{
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(fileName),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch file from S3: %w", err)
+	}
+	defer output.Body.Close()
+
+	content, err := io.ReadAll(output.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read file content: %w", err)
+	}
+	return content, nil
 }
 
 func (r *awsRepository) UploadFile(bucketName, fileName string, file io.Reader) error {

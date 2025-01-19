@@ -61,7 +61,7 @@ export default function RolesDropDownBox() {
             <Listbox.Option
               key={person.id}
               value={person}
-              className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white data-[focus]:outline-none"
+              className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-lime-green data-[focus]:text-white data-[focus]:outline-none"
             >
               <div className="flex items-center">
                 <span className="ml-3 block font-normal group-data-[selected]:font-semibold">

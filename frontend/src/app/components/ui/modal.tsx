@@ -41,36 +41,45 @@ export default function Modal() {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const UploadFile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (file === null) {
       alert("No file selected");
     }
     if (file) {
       try {
-        dispath(closeModal());
         dispath(startLoading());
         const response = await uploadFile(file);
         if (response === true) {
           console.log("File uploaded successfully:", response);
-          router.push(`/dashboard/${pathname.split("/")[2]}/employees`);
         }
       } catch (error) {
         console.log("Error uploading file:", error);
         showToast(
           "Something went wrong. Please make sure your CSV file is no currupted.",
-          "error",
+          "error"
         );
-      } finally {
-        dispath(stopLoading());
       }
     }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+      await UploadFile(e);
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setFile(e.dataTransfer.files[0]);
+      await UploadFile(e);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
   };
 
   async function DownloadSampleCsv() {
@@ -100,6 +109,36 @@ export default function Modal() {
     }
   }
 
+  async function processFile(e: React.MouseEvent) {
+    e.preventDefault();
+    if (file === null) {
+      alert("No file selected");
+    }
+    if (file) {
+      try {
+        dispath(startLoading());
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+        const response = await axios.post(`${backendUrl}/process-file`, {
+          organizationId: pathname.split("/")[2],
+        });
+        if (response.data === true) {
+          console.log("File uploaded successfully:", response);
+          dispath(closeModal());
+          router.push(`/dashboard/${pathname.split("/")[2]}/employees`);
+        }
+      } catch (error) {
+        console.log("Error uploading file:", error);
+        showToast(
+          "Something went wrong. Please make sure your CSV file is no currupted.",
+          "error"
+        );
+      } finally {
+        dispath(closeModal());
+        dispath(stopLoading());
+      }
+    }
+  }
+
   return (
     <React.Fragment>
       {toast && <Toast message={toast.message} type={toast.type} />}
@@ -108,7 +147,11 @@ export default function Modal() {
           <div className="bg-gray-100 p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-4">Upload File</h2>
             <div>
-              <div className="flex flex-col items-center border-2 border-dashed bg-lime-gray border-gray-300 rounded-lg py-10 px-8 text-center">
+              <div
+                className="flex flex-col items-center border-2 border-dashed bg-lime-gray border-gray-300 rounded-lg py-10 px-8 text-center"
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+              >
                 <img
                   src="/images/dashboard/upload.svg"
                   alt=""
@@ -128,9 +171,7 @@ export default function Modal() {
                   type="file"
                   id="fileInput"
                   className="hidden"
-                  onChange={(e) => {
-                    handleFileChange(e);
-                  }}
+                  onChange={handleFileChange}
                 />
               </div>
 
@@ -181,7 +222,7 @@ export default function Modal() {
                   type="submit"
                   className="bg-lime-green text-white font-semibold py-2 px-4 rounded-xl"
                   onClick={(e) => {
-                    handleSubmit(e);
+                    processFile(e);
                   }}
                 >
                   Continue
