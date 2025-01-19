@@ -40,19 +40,18 @@ export default function Page() {
         ]);
 
         if (employeesResponse?.data === null || statsResponse?.data === null) {
-          console.log("Sorry something went wrong");
+          showToast("Sorry something went wrong", "error");
         }
         setEmployees(employeesResponse?.data);
         setEmployeeStats(statsResponse?.data);
-      } catch (error) {
-        console.log("Error fetching data:", error);
+      } catch {
       } finally {
         setPageLoading(false);
       }
     }
 
     fetchData();
-  }, [loading, organizationId, pathname]);
+  }, [loading, organizationId, pathname, showToast]);
 
   if (loading || pageLoading) {
     return <Spinner />;
@@ -77,8 +76,7 @@ export default function Page() {
       if (response.status === 200) {
         showToast("Payroll generated successfully", "success");
       }
-    } catch (err) {
-      console.log(err);
+    } catch {
       showToast("Error generating payroll", "error");
     } finally {
       setLoading(false);
@@ -106,8 +104,7 @@ export default function Page() {
         const organizationId = response.data.organizationId;
         router.push(`/dashboard/${organizationId}/employees`);
       }
-    } catch (err) {
-      console.log(err);
+    } catch {
       showToast("Error deleting organization", "error");
     }
   }
@@ -128,8 +125,7 @@ export default function Page() {
         link.click();
         document.body.removeChild(link);
       }
-    } catch (error) {
-      console.log("Error downloading file:", error);
+    } catch {
     } finally {
       setLoading(false);
     }

@@ -39,8 +39,8 @@ export default function EmployeeTable() {
           console.log("Sorry something went wrong");
         }
         setInitialEmployees(employeesResponse?.data);
-      } catch (error) {
-        console.log("Error fetching data:", error);
+      } catch {
+        console.log("Error fetching data:");
       } finally {
         setPageLoading(false);
       }
@@ -92,8 +92,7 @@ export default function EmployeeTable() {
         setEmployees(updatedEmployees.data);
         setSelectedRows([]);
       }
-    } catch (error) {
-      console.log("Error deleting rows:", error);
+    } catch {
       showToast("Error deleting employees", "error");
     }
   }

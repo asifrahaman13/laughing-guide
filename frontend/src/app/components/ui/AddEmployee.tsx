@@ -40,8 +40,7 @@ export default function AddEmployee({
         const organizationId = response.data.organizationId;
         router.push(`/dashboard/${organizationId}/employees`);
       }
-    } catch (err) {
-      console.log(err);
+    } catch {
       showToast("Error deleting organization", "error");
     }
   }

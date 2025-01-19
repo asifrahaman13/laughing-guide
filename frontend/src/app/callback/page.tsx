@@ -10,23 +10,19 @@ export default function SignIn() {
   const handleSuccess = async (credentialResponse: CredentialResponse) => {
     try {
       const token = credentialResponse.credential;
-      console.log("Credential Response", credentialResponse);
-      console.log("Token", token);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const response = await axios.get(
-        `${backendUrl}/api/auth/google?token=${token}`
+        `${backendUrl}/api/auth/google?token=${token}`,
       );
 
-      console.log(response);
       if (response.status === 200) {
-        console.log("Login Success");
         localStorage.setItem("access_token", response.data.access_token);
         router.push("/");
       } else {
         console.log("Login failed with status:", response.status);
       }
-    } catch (error) {
-      console.log("An error occurred during login:", error);
+    } catch {
+      console.log("An error occurred during login:");
     }
   };
 

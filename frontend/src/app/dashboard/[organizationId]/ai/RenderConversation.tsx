@@ -44,7 +44,6 @@ const RenderConversation = ({
     e.preventDefault();
 
     if (conversationSlice.query === null || conversationSlice.query === "") {
-      console.log("sorry not possible");
       setAlert(true);
       setTimeout(() => {
         setAlert(false);

@@ -32,8 +32,8 @@ export default function HeroSection() {
             setUser({ email, name });
             setIsSignedIn(true);
           }
-        } catch (error) {
-          console.log("Error validating token:", error);
+        } catch {
+          console.log("Error validating token:");
         }
       }
     }
@@ -50,11 +50,10 @@ export default function HeroSection() {
             `${backendUrl}/one-org?token=${access_token}`,
           );
           if (response.status === 200) {
-            console.log("Organization:", response.data.organizationId);
             setOrganization(response.data.organizationId);
           }
-        } catch (error) {
-          console.log("Error fetching organization:", error);
+        } catch {
+          console.log("Error fetching organization:");
         }
       }
     }

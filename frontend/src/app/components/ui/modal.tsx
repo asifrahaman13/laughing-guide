@@ -50,9 +50,8 @@ export default function Modal() {
       if (response.status === 200) {
         return response.data;
       }
-    } catch (error) {
-      console.log("Error uploading file:", error);
-      throw error;
+    } catch {
+      console.log("Error uploading file:");
     }
   };
 
@@ -65,11 +64,9 @@ export default function Modal() {
         dispath(startLoading());
         const response = await uploadFile(file);
         if (response === true) {
-          console.log("File uploaded successfully:", response);
           setProgress(100);
         }
-      } catch (error) {
-        console.log("Error uploading file:", error);
+      } catch {
         showToast(
           "Something went wrong. Please make sure your CSV file is no currupted.",
           "error",
@@ -115,8 +112,7 @@ export default function Modal() {
         link.click();
         document.body.removeChild(link);
       }
-    } catch (error) {
-      console.log("Error downloading file:", error);
+    } catch {
       showToast("Error downloading file", "error");
     } finally {
       setLoading(false);
@@ -136,12 +132,10 @@ export default function Modal() {
           organizationId: pathname.split("/")[2],
         });
         if (response.data === true) {
-          console.log("File uploaded successfully:", response);
           dispath(closeModal());
           router.push(`/dashboard/${pathname.split("/")[2]}/employees`);
         }
-      } catch (error) {
-        console.log("Error uploading file:", error);
+      } catch {
         showToast(
           "Something went wrong. Please make sure your CSV file is no currupted.",
           "error",

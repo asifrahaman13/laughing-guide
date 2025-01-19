@@ -33,7 +33,6 @@ export default function Chat() {
 
     websocket.onmessage = (event) => {
       const parsedData = JSON.parse(event.data);
-      console.log("############ The parsed data is :", parsedData);
       if (parsedData.status === true) {
         setStatus({
           message: parsedData.message,
@@ -42,7 +41,6 @@ export default function Chat() {
         return;
       }
       if (parsedData.answer_type === "sql_query") {
-        console.log("############ Triggered The parsed data is :", parsedData);
         setStatus({
           message: parsedData.sql_query,
           status: false,
@@ -54,7 +52,6 @@ export default function Chat() {
         });
       }
 
-      console.log("##########################", status);
       dispatch(
         setHistory({
           message: parsedData?.message,
@@ -82,7 +79,6 @@ export default function Chat() {
   });
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    console.log("The value is :", e.target.value);
     setTrainValue({
       ...trainValue,
       [e.target.name]: e.target.value,
@@ -98,14 +94,12 @@ export default function Chat() {
         trainValue,
       );
       if (response.status === 200) {
-        console.log("The response is :", response.data);
         setDataAdded(true);
         setTimeout(() => {
           setDataAdded(false);
         }, 1500);
       }
-    } catch (err) {
-      console.log("The error is :", err);
+    } catch {
       setDataAdded(false);
     }
   }

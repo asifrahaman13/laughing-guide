@@ -55,8 +55,7 @@ export default function Layout({ children }: LayoutProps) {
           setOrganizations(response.data);
           showToast("Organizations fetched successfully", "success");
         }
-      } catch (error) {
-        console.log("Error fetching organizations:", error);
+      } catch {
         showToast("Error fetching organizations", "error");
       }
     }
@@ -66,7 +65,6 @@ export default function Layout({ children }: LayoutProps) {
   React.useEffect(() => {
     async function ValidateToken() {
       const access_token = localStorage.getItem("access_token");
-      console.log(access_token);
       if (access_token) {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
         try {
@@ -77,8 +75,8 @@ export default function Layout({ children }: LayoutProps) {
             const { email, name } = response.data;
             setUserAgent({ email, name });
           }
-        } catch (error) {
-          console.log("Error validating token:", error);
+        } catch {
+          console.log("Error validating token");
         }
       }
     }
@@ -107,13 +105,11 @@ export default function Layout({ children }: LayoutProps) {
         },
       );
       if (response.status === 200) {
-        console.log("Organization added successfully:", response.data);
         setOrganizations([...organizations, response.data]);
         showToast("Organization added successfully", "success");
         router.push(`/dashboard/${response.data.organizationId}/employees`);
       }
-    } catch (error) {
-      console.log("Error adding organization:", error);
+    } catch {
     } finally {
       setOrganizationModal(false);
     }

@@ -46,12 +46,11 @@ export default function Page() {
         const response = await axios.get(
           `${backendUrl}/payroll?organizationId=${pathname.split("/")[2]}`,
         );
-        console.log("Payroll data:", response.data);
         if (response.data) {
           setPayrollData(response.data);
         }
-      } catch (error) {
-        console.log("Error fetching data:", error);
+      } catch {
+        console.log("Error fetching data");
       }
     }
     fetchPayrollId();
