@@ -2,9 +2,9 @@ import React from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-interface SQLHighlighterProps {
+type SQLHighlighterProps = {
   sqlQuery: string | undefined;
-}
+};
 
 const SqlRender: React.FC<SQLHighlighterProps> = ({
   sqlQuery,

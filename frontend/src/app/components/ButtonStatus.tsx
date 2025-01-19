@@ -1,8 +1,8 @@
 import React from "react";
 
-interface ButtonStatusProps {
+type ButtonStatusProps = {
   message: string;
-}
+};
 
 const ButtonStatus = ({ message }: ButtonStatusProps) => {
   return (

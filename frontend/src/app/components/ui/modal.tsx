@@ -19,7 +19,6 @@ export default function Modal() {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const { toast, showToast } = useToast();
-
   const [progress, setProgress] = useState<number>(0);
 
   async function startProgress() {
