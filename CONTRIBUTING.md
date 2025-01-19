@@ -22,7 +22,7 @@ Go to the ai directory.
 
 ```bash
 cd ai/
-````
+```
 
 Now set up virtual environment
 
@@ -128,6 +128,14 @@ ruff format
 ## Docker
 
 To run the application in docker, use the following script after making sure you have the .env credentials for both front end, backend as well as the AI stack.
+
+First make sure you have the build file in your root. If not present create the same.
+
+```bash
+go build -o myapp
+```
+
+Now spin up your docker containers.
 
 ```bash
 docker compose up
