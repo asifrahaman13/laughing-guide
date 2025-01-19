@@ -30,7 +30,7 @@ export default function DropDownBox() {
   const dispatch = useDispatch();
 
   const handleSelectionChange = (
-    person: SetStateAction<{ id: number; name: string }>
+    person: SetStateAction<{ id: number; name: string }>,
   ) => {
     setSelected(person);
     dispatch(selectEmployeeStatus({ employeeStatus: person.name }));

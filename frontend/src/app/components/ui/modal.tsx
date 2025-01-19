@@ -56,8 +56,7 @@ export default function Modal() {
     }
   };
 
-  const UploadFile = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const UploadFile = async (file: File | null) => {
     if (file === null) {
       alert("No file selected");
     }
@@ -73,7 +72,7 @@ export default function Modal() {
         console.log("Error uploading file:", error);
         showToast(
           "Something went wrong. Please make sure your CSV file is no currupted.",
-          "error"
+          "error",
         );
       }
     }
@@ -82,15 +81,14 @@ export default function Modal() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
-      await UploadFile(e);
+      await UploadFile(e.target.files[0]);
     }
   };
-
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setFile(e.dataTransfer.files[0]);
-      await UploadFile(e);
+      await UploadFile(e.dataTransfer.files[0]);
     }
   };
 
@@ -146,7 +144,7 @@ export default function Modal() {
         console.log("Error uploading file:", error);
         showToast(
           "Something went wrong. Please make sure your CSV file is no currupted.",
-          "error"
+          "error",
         );
       } finally {
         dispath(closeModal());
@@ -161,9 +159,7 @@ export default function Modal() {
       {modal.isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4">
-              Upload File {progress}
-            </h2>
+            <h2 className="text-xl font-semibold mb-4">Upload File</h2>
             <div>
               {progress === 100 || progress === 0 ? (
                 <div
