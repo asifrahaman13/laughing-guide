@@ -2,10 +2,11 @@
 
 A blazing-fast HR payroll system designed to deal with simplicity as well as blazing-fast speed. The application is capable of handling thousands of files concurrently, making it extremely efficient for the HR payroll system.
 
-![Screenshot from 2025-01-16 01-29-49](https://github.com/user-attachments/assets/bc9b7379-8bec-4a15-9058-032965d83768)
-![Screenshot from 2025-01-16 01-28-32](https://github.com/user-attachments/assets/e9adb2d6-3696-4095-a5b6-361dbc09489d)
-![Screenshot from 2025-01-16 01-30-09](https://github.com/user-attachments/assets/3a86ee72-1188-4f41-ba60-c1c3893e4a90)
-![Screenshot from 2025-01-16 01-28-52](https://github.com/user-attachments/assets/317c44f0-116d-459f-8717-77898b3038a2)
+![Screenshot from 2025-01-19 19-21-42](https://github.com/user-attachments/assets/1b1ca2d2-f695-441b-aa7e-4ccee70b9e0e)
+![Screenshot from 2025-01-19 19-22-38](https://github.com/user-attachments/assets/5f7c2f77-734f-438e-a104-cdfff66f36a2)
+![Screenshot from 2025-01-19 19-22-18](https://github.com/user-attachments/assets/eddea66f-33b5-4000-815b-9a3bc50221cf)
+![Screenshot from 2025-01-19 19-23-06](https://github.com/user-attachments/assets/66e6af24-ead4-4ddb-9ea2-77063cca2e53)
+
 
 ## Tech stacks
 
