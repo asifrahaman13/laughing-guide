@@ -32,7 +32,7 @@ func (s *fileService) UploadCSVFile(file *multipart.FileHeader, organizationId s
 	var buf bytes.Buffer
 	tee := io.TeeReader(src, &buf)
 
-	err = s.awsRepository.UploadFile(os.Getenv("AWS_BUCKET_NAME"),  organizationId, tee)
+	err = s.awsRepository.UploadFile(os.Getenv("AWS_BUCKET_NAME"), fmt.Sprintf("%s.csv", organizationId), tee)
 	if err != nil {
 		return false, err
 	}
@@ -87,7 +87,7 @@ func (s *fileService) UploadCSVFile(file *multipart.FileHeader, organizationId s
 
 func (s *fileService) GetSampleFile(key string) (any, error) {
 	bucket := os.Getenv("AWS_BUCKET_NAME")
-	presignedURL, err := s.awsRepository.DownloadFile(bucket, key)
+	presignedURL, err := s.awsRepository.DownloadFile(bucket, fmt.Sprintf("%s.csv", key))
 	if err != nil {
 		return nil, err
 	}

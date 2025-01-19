@@ -77,7 +77,7 @@ export default function Modal() {
     try {
       setLoading(true);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const key = "sample.csv";
+      const key = "sample";
       const response = await axios.get(`${backendUrl}/csv-file?key=${key}`, {
         headers: {
           "Content-Type": "application/json",
