@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import axios from "axios";
 import Link from "next/link";
@@ -10,9 +11,6 @@ const EmployeeRow: React.FC<{ employee: EmployeeSalaryDetails }> = ({
   employee,
 }) => (
   <tr key={employee?.employeeId} className="bg-white border-2">
-    {/* <td className="p-3">
-      <input type="checkbox" />
-    </td> */}
     <td className="p-3">
       <div className="flex items-center">
         <Link
@@ -46,7 +44,7 @@ export default function Page() {
       try {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
         const response = await axios.get(
-          `${backendUrl}/payroll?organizationId=${pathname.split("/")[2]}`,
+          `${backendUrl}/payroll?organizationId=${pathname.split("/")[2]}`
         );
         console.log("Payroll data:", response.data);
         if (response.data) {
@@ -59,6 +57,48 @@ export default function Page() {
     fetchPayrollId();
   }, [pathname]);
 
+  const downloadCSV = () => {
+    if (!payrollData) return;
+
+    const headers = [
+      "Profile",
+      "Name",
+      "Email",
+      "Salary",
+      "Bonuses",
+      "Employee Contribution",
+      "Employer Contribution",
+      "Total Contribution",
+      "Gross Salary",
+      "Net Salary",
+    ];
+
+    const rows = payrollData.map((employee) => [
+      employee.employeeId,
+      employee.employeeName,
+      employee.employeeEmail,
+      employee.salary,
+      employee.bonuses,
+      employee.employeeContribution,
+      employee.employerContribution,
+      employee.totalContribution,
+      employee.grossSalary,
+      employee.netSalary,
+    ]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "payroll_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (payrollData === null) {
     return (
       <InProgress
@@ -68,19 +108,23 @@ export default function Page() {
     );
   }
   return (
-    <div className=" w-full ">
-      <div className="text-xl items-center flex px-4 font-bold mb-4 border text-gray-800 h-20  bg-white">
-        Payrolls
+    <div className="w-full">
+      <div className="text-xl gap-4  items-center flex px-4 font-bold border text-gray-800 h-20 bg-white">
+        <div className="text-gray-900 text-xl">Payrolls</div>
+        <button onClick={downloadCSV} className="flex gap-2 items-center">
+          <img
+            src="https://media.istockphoto.com/id/844294300/vector/download-icon-isolated-vector.jpg?s=612x612&w=0&k=20&c=VCmvy8uEoTQnt9W0kZzjEBplN_opDkGKF_eQTLfkivs="
+            alt=""
+            className="h-8"
+          />
+        </button>
       </div>
 
       {payrollData?.length !== 0 && payrollData && (
-        <div className="overflow-hidden px-4 rounded-xl ">
+        <div className="overflow-hidden px-4 rounded-xl">
           <table className="min-w-full bg-gray-400 border-none rounded-xl">
             <thead className="bg-gray-100 border-2 text-gray-600 rounded-xl">
               <tr className="font-medium">
-                {/* <th className="p-3 text-left">
-                  <input type="checkbox" />
-                </th> */}
                 <th className="p-3 font-medium text-left">Profile</th>
                 <th className="p-3 font-medium text-left">Name</th>
                 <th className="p-3 font-medium text-left">Email</th>
