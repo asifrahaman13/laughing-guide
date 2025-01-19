@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"bytes"
+	"io"
 	"os"
 	"time"
 
@@ -11,6 +13,7 @@ import (
 
 type AwsRepository interface {
 	DownloadFile(bucketName, fileName string) (string, error)
+	UploadFile(bucketName, fileName string, file io.Reader) error
 }
 
 type awsRepository struct {
@@ -39,4 +42,28 @@ func (r *awsRepository) DownloadFile(bucketName, fileName string) (string, error
 		return "", err
 	}
 	return presignedURL, nil
+}
+
+func (r *awsRepository) UploadFile(bucketName, fileName string, file io.Reader) error {
+	region := os.Getenv("AWS_REGION")
+	_, err := session.NewSession(&aws.Config{
+		Region: aws.String(region),
+	})
+	if err != nil {
+		return err
+	}
+
+	buffer := bytes.NewBuffer(nil)
+	_, err = buffer.ReadFrom(file)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.s3Client.PutObject(&s3.PutObjectInput{
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(fileName),
+		Body:   bytes.NewReader(buffer.Bytes()),
+		ACL:    aws.String("private"),
+	})
+	return err
 }

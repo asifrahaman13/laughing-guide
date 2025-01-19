@@ -1,10 +1,12 @@
 package service
 
 import (
+	"bytes"
 	"encoding/csv"
 	"fmt"
 	"github.com/asifrahaman13/laughing-guide/src/core/ports"
 	"github.com/asifrahaman13/laughing-guide/src/repository"
+	"io"
 	"mime/multipart"
 	"os"
 	"strconv"
@@ -27,11 +29,20 @@ func (s *fileService) UploadCSVFile(file *multipart.FileHeader, organizationId s
 	}
 	defer src.Close()
 
-	reader := csv.NewReader(src)
+	var buf bytes.Buffer
+	tee := io.TeeReader(src, &buf)
+
+	err = s.awsRepository.UploadFile(os.Getenv("AWS_BUCKET_NAME"),  organizationId, tee)
+	if err != nil {
+		return false, err
+	}
+
+	reader := csv.NewReader(&buf)
 	records, err := reader.ReadAll()
 	if err != nil {
 		return false, err
 	}
+
 	var values []interface{}
 	query := `INSERT INTO employees (organization_id, employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses) VALUES `
 	var placeholders []string

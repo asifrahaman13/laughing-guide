@@ -35,10 +35,10 @@ export default function Page() {
       try {
         const [employeesResponse, statsResponse] = await Promise.all([
           axios.get(
-            `${backendUrl}/employees?organizationId=${pathname.split("/")[2]}`,
+            `${backendUrl}/employees?organizationId=${pathname.split("/")[2]}`
           ),
           axios.get(
-            `${backendUrl}/aggregate?organizationId=${pathname.split("/")[2]}`,
+            `${backendUrl}/aggregate?organizationId=${pathname.split("/")[2]}`
           ),
         ]);
 
@@ -75,7 +75,7 @@ export default function Page() {
       setLoading(true);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const response = await axios.get(
-        `${backendUrl}/calculate-payroll?organizationId=${pathname.split("/")[2]}`,
+        `${backendUrl}/calculate-payroll?organizationId=${pathname.split("/")[2]}`
       );
       if (response.status === 200) {
         showToast("Payroll generated successfully", "success");
@@ -101,7 +101,7 @@ export default function Page() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${access_token}`,
           },
-        },
+        }
       );
       if (response.status === 200) {
         showToast("Organization deleted successfully", "success");
@@ -111,6 +111,29 @@ export default function Page() {
     } catch (err) {
       console.log(err);
       showToast("Error deleting organization", "error");
+    }
+  }
+
+  async function downloadSampleCsv() {
+    try {
+      setLoading(true);
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      const response = await axios.get(
+        `${backendUrl}/csv-file?key=${pathname.split("/")[2]}`
+      );
+      if (response.status === 200) {
+        const presignedUrl = response.data.presigned_url;
+        const link = document.createElement("a");
+        link.href = presignedUrl;
+        link.download = "sample.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (error) {
+      console.log("Error downloading file:", error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -128,6 +151,17 @@ export default function Page() {
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Delete-button.svg"
                 alt=""
+              />
+            </button>
+            <button
+              onClick={() => {
+                downloadSampleCsv();
+              }}
+            >
+              <img
+                src="https://media.istockphoto.com/id/844294300/vector/download-icon-isolated-vector.jpg?s=612x612&w=0&k=20&c=VCmvy8uEoTQnt9W0kZzjEBplN_opDkGKF_eQTLfkivs="
+                alt=""
+                className="h-8"
               />
             </button>
           </div>

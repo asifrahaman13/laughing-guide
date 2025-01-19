@@ -13,7 +13,7 @@ func InitRoutes(employeeHandler *handler.EmployeeHandler, fileHandler *handler.F
     })
 
     r.POST("/upload", fileHandler.UploadHandler)
-    r.GET("/sample-csv", fileHandler.GetSampleCSVHandler)
+    r.GET("/csv-file", fileHandler.GetSampleCSVHandler)
 
     r.GET("/calculate-payroll", employeeHandler.CalculatePayrollHandler)
     r.GET("/payroll", employeeHandler.FetchPayrollHandler)
