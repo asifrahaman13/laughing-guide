@@ -14,7 +14,7 @@ export default function SignIn() {
       console.log("Token", token);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const response = await axios.get(
-        `${backendUrl}/api/auth/google?token=${token}`,
+        `${backendUrl}/api/auth/google?token=${token}`
       );
 
       console.log(response);
@@ -147,7 +147,7 @@ export default function SignIn() {
 
                   <button
                     type="submit"
-                    className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                    className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-lime-green text-white hover:bg-lime-green focus:outline-none focus:bg-lime-green disabled:opacity-50 disabled:pointer-events-none"
                   >
                     Sign in
                   </button>
