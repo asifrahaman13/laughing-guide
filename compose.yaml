@@ -28,9 +28,6 @@ services:
       - "6380:6379"
     networks:
       - laughing-network
-    # command: ["redis-server", "--requirepass", "your_redis_password_here"]
-    # environment:
-    #   REDIS_PASSWORD: your_redis_password_here
     volumes:
       - redis_data:/data
 

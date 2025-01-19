@@ -41,7 +41,7 @@ class DIContainer:
         if "vectordb_repoitory" not in self.__instances:
             embedding_service = EmbeddingService()
             qdrant_service = QdrantService(
-                url=QDRANT_API_ENDPOINT, api_key=QDRANT_API_KEY
+                url=QDRANT_API_ENDPOINT
             )
             self.__instances["vectordb_repoitory"] = QdrantQueryRepository(
                 embedding_service, qdrant_service

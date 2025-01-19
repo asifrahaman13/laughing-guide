@@ -14,6 +14,8 @@ import os
 from .config.config import REDIS_HOST, REDIS_PORT
 from .application.web.controllers.query_controller import query_controller
 from .application.web.controllers.data_points_controller import data_points
+from .infastructure.repositories.vector_db_repository import QdrantService
+from .config.config import QDRANT_API_ENDPOINT
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -35,8 +37,11 @@ async def custom_callback(request: Request, response: Response, pexpire: int):
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    # Initialize Qdrant
-    # search_repository.initialize_qdrant()
+
+    qdrant_url= QDRANT_API_ENDPOINT
+    logging.info(f"Qdrant url being used: {qdrant_url}")
+    qdrant_service=QdrantService(qdrant_url)
+    qdrant_service.create_collection("sample_collection")
 
     redis_connection = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
     await FastAPILimiter.init(

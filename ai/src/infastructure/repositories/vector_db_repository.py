@@ -20,7 +20,7 @@ class EmbeddingService:
 
 
 class QdrantService:
-    def __init__(self, url, api_key):
+    def __init__(self, url):
         self.__client = QdrantClient(url=url)
 
     def collection_exists(self, collection_name):
@@ -34,7 +34,7 @@ class QdrantService:
                 raise e
 
     def create_collection(self, collection_name):
-        if self.collection_exists:
+        if self.collection_exists(collection_name):
             pass
         else:
             self.__client.create_collection(
