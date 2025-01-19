@@ -211,7 +211,6 @@ func (s *employeeService) EmployeeStatistics(organizationId string) (any, error)
 	if err != nil {
 		return nil, err
 	}
-	// Fetch organization name
 	orgRows, err := s.employeeRepository.Execute("SELECT organization_name FROM organizations WHERE organization_id = $1", organizationId)
 	if err != nil {
 		return nil, err
@@ -225,10 +224,6 @@ func (s *employeeService) EmployeeStatistics(organizationId string) (any, error)
 		}
 	} else {
 		return nil, fmt.Errorf("no organization found with id: %s", organizationId)
-	}
-	fmt.Println(organizationName)
-	if err != nil {
-		return nil, err
 	}
 
 	defer rows.Close()
@@ -473,12 +468,7 @@ func (s *employeeService) DeleteOrganization(organizationId string, organization
 		return domain.Organizations{}, err
 	}
 
-	fmt.Println(organizationEmail)
-
-	// Return any existing organization details of the deleted organization
 	orgRows, err := s.employeeRepository.Execute("SELECT organization_id, organization_name, organization_email FROM organizations WHERE organization_email = $1", organizationEmail)
-
-	fmt.Println("organizationEmail", orgRows)
 	if err != nil {
 		return domain.Organizations{}, err
 	}
@@ -491,7 +481,5 @@ func (s *employeeService) DeleteOrganization(organizationId string, organization
 			return domain.Organizations{}, err
 		}
 	}
-
-	fmt.Println(existingOrganization)
 	return existingOrganization, nil
 }
