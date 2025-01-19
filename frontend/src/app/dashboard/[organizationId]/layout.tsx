@@ -115,6 +115,7 @@ export default function Layout({ children }: LayoutProps) {
         console.log("Organization added successfully:", response.data);
         setOrganizations([...organizations, response.data]);
         showToast("Organization added successfully", "success");
+        router.push(`/dashboard/${response.data.organizationId}/employees`);
       }
     } catch (error) {
       console.log("Error adding organization:", error);
