@@ -20,7 +20,22 @@ export default function Modal() {
   const router = useRouter();
   const { toast, showToast } = useToast();
 
+  const [progress, setProgress] = useState<number>(0);
+
+  async function startProgress() {
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 1000);
+  }
+
   const uploadFile = async (file: File) => {
+    startProgress();
     const formData = new FormData();
     formData.append("file", file);
     formData.append("organizationId", pathname.split("/")[2]);
@@ -52,6 +67,7 @@ export default function Modal() {
         const response = await uploadFile(file);
         if (response === true) {
           console.log("File uploaded successfully:", response);
+          setProgress(100);
         }
       } catch (error) {
         console.log("Error uploading file:", error);
@@ -145,35 +161,45 @@ export default function Modal() {
       {modal.isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4">Upload File</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Upload File {progress}
+            </h2>
             <div>
-              <div
-                className="flex flex-col items-center border-2 border-dashed bg-lime-gray border-gray-300 rounded-lg py-10 px-8 text-center"
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-              >
-                <img
-                  src="/images/dashboard/upload.svg"
-                  alt=""
-                  className="h-20"
-                />
-                <p className="text-sm text-gray-500">
-                  Drag and drop your files here
-                </p>
-
-                <label
-                  htmlFor="fileInput"
-                  className="mt-2 inline-block px-4 py-2 cursor-pointer"
+              {progress === 100 || progress === 0 ? (
+                <div
+                  className="flex flex-col items-center border-2 border-dashed bg-lime-gray border-gray-300 rounded-lg py-10 px-8 text-center"
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
                 >
-                  or Click to upload
-                </label>
-                <input
-                  type="file"
-                  id="fileInput"
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-              </div>
+                  <img
+                    src="/images/dashboard/upload.svg"
+                    alt=""
+                    className="h-20"
+                  />
+                  <p className="text-sm text-gray-500">
+                    Drag and drop your files here
+                  </p>
+
+                  <label
+                    htmlFor="fileInput"
+                    className="mt-2 inline-block px-4 py-2 cursor-pointer"
+                  >
+                    or Click to upload
+                  </label>
+                  <input
+                    type="file"
+                    id="fileInput"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                </div>
+              ) : (
+                <div className="w-full bg-white">
+                  <div
+                    className={`bg-lime-green h-8 rounded-md w-[${progress}%]`}
+                  ></div>
+                </div>
+              )}
 
               <div className="mt-4 flex justify-between">
                 <p className="text-sm text-gray-500">
