@@ -50,14 +50,15 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 assert SECRET_KEY, "Secret key is not set"
 logging.info("Secret key is set")
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-assert OPENAI_API_KEY, "OpenAI client is not set"
-logging.info("OpenAI client is set")
 
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL")
 assert EMBEDDING_MODEL, "Embedding model is not set"
 logging.info("Embedding model is set")
 
+
+GEMINI_API_KEY= os.getenv("GEMINI_API_KEY")
+assert GEMINI_API_KEY, "Gemini API key not set"
+logging.info("Gemini API key is set")
 
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 assert QDRANT_API_KEY, "Qdrant API key not set"

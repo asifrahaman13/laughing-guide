@@ -1,6 +1,5 @@
 from src.constants.prompts.prompts import Prompt
-from ollama import chat
-from ollama import ChatResponse
+import google.generativeai as genai
 
 
 class OpenAIRepository:
@@ -13,12 +12,13 @@ class OpenAIRepository:
         for item in top_suggestions:
             combined_prompt += f"\n{item["text"]}\n"
 
-        response: ChatResponse = chat(
-            model="llama3.1",
-            messages=[
-                {"role": "system", "content": combined_prompt},
-                {"role": "user", "content": f"The user prompt is: {prompt}"},
-            ],
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        response = model.generate_content(
+            combined_prompt + f"\n The user prompt is: {prompt}"
         )
-        result = response["message"]["content"]
-        return result
+
+        result = response.text
+
+        final = result.strip("\n").strip("sql").strip("\n").strip("`").strip("sql")
+
+        return final

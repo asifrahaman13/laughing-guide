@@ -40,6 +40,9 @@ class Prompt:
     Give me the SQL query corresonspoing to the user prompt.\n You will be given some few examples of previous correct sql query corresponding to the users query. You need to take them into account to give more accurate response.
     Take the example to get insignts on how to generate the sql query. \n
 
+    
+    Only give the sql query in string which can be readily executable. Do no use any other text like `, sql etc.
+
     The examples are as follows: \n
     """
 

@@ -27,6 +27,9 @@ async def client_identifier(request: Request):
 
 
 async def custom_callback(request: Request, response: Response, pexpire: int):
+    logging.info(f"Request from IP: {request.client.host}")
+    logging.info(f"Request path: {request.url.path}")
+    logging.info(f"Request method: {response.status_code}")
     expire = ceil(pexpire / 1000)
     raise HTTPException(
         status.HTTP_429_TOO_MANY_REQUESTS,
