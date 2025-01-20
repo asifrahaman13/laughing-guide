@@ -32,11 +32,9 @@ const StatusBadge: React.FC<StatusProps> = ({ status }) => {
   };
 
   return (
-    <div
-      className={`text-center flex py-2 items-center px-4 ${bg} rounded-2xl ${text}`}
-    >
+    <div className={`inline-flex items-center ${bg} px-4 rounded-2xl ${text}`}>
       {icon && <img src={icon} alt={status} className="mr-2" />}
-      {status}
+      <span className="py-2 ">{status}</span>
     </div>
   );
 };

@@ -4,7 +4,7 @@ type EmployeeData = {
   EmployeeId: string;
   EmployeeProfile: string;
   EmployeeEmail: string;
-  EmployeeeRole: string;
+  EmployeeRole: string;
   EmployeeStatus: string;
 };
 
@@ -15,15 +15,15 @@ export const employeeDataSlice = createSlice({
       EmployeeId: "",
       EmployeeProfile: "",
       EmployeeEmail: "",
-      EmployeeeRole: "",
+      EmployeeRole: "",
       EmployeeStatus: "",
     },
   },
 
   reducers: {
     setEmployeeData: (state, action) => {
+      console.log("set employee data: ", action.payload);
       state.employeeData = action.payload;
-      console.log("state.employeeData: ", JSON.stringify(state.employeeData));
     },
     updateemploeeData: (state, action) => {
       const { key, value } = action.payload;

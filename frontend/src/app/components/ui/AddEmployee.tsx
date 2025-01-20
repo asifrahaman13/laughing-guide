@@ -8,13 +8,15 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import Toast from "../toasts/Toast";
 
+type EmployeeProps = {
+  organizationName: string;
+  organizationId: string;
+};
+
 export default function AddEmployee({
   organizationName,
   organizationId,
-}: {
-  organizationName: string;
-  organizationId: string;
-}) {
+}: EmployeeProps) {
   const { toast, showToast } = useToast();
   const dispatch = useDispatch();
   const router = useRouter();

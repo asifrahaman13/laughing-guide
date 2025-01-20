@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import AddEmployee from "@/app/components/ui/AddEmployee";
 import { useDispatch, useSelector } from "react-redux";
 import { Employee, EmployeeData } from "@/app/types/dashboard";
@@ -10,88 +11,75 @@ import EmployeeStatistics from "@/app/components/charts/EmployeeStatistics";
 import EmployeeStatus from "@/app/components/charts/EmployeeStatus";
 import EmployeeLine from "@/app/components/charts/EmployeeLine";
 import EmployeeTable from "@/app/components/ui/EmployeeTable";
-import { ButtionSpinner } from "@/app/components/ui/Buttons";
+import ButtonSpinner from "@/app/components/ui/Buttons";
 import { usePathname, useRouter } from "next/navigation";
 import { RootState } from "@/lib/store";
 import Spinner from "@/app/components/ui/Spinner";
 import { useToast } from "@/app/hooks/useToast";
 import Toast from "@/app/components/toasts/Toast";
 
-export default function Page() {
+const Page: React.FC = () => {
   const pathname = usePathname();
   const dispatch = useDispatch();
   const [employees, setEmployees] = useState<Employee[] | null>(null);
   const [employeeStats, setEmployeeStats] = useState<EmployeeData | null>(null);
-  const [buttonLoading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
   const loading = useSelector((state: RootState) => state.spinner.isLoading);
   const { toast, showToast } = useToast();
   const router = useRouter();
   const organizationId = pathname.split("/")[2];
 
-  React.useEffect(() => {
-    setPageLoading(true);
-    async function fetchData() {
+  useEffect(() => {
+    const fetchData = async () => {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      setPageLoading(true);
       try {
         const [employeesResponse, statsResponse] = await Promise.all([
-          axios.get(`${backendUrl}/employees?organizationId=${organizationId}`),
-          axios.get(`${backendUrl}/aggregate?organizationId=${organizationId}`),
+          axios.get(`${backendUrl}/employees`, { params: { organizationId } }),
+          axios.get(`${backendUrl}/aggregate`, { params: { organizationId } }),
         ]);
 
-        if (employeesResponse?.data === null || statsResponse?.data === null) {
-          showToast("Sorry something went wrong", "error");
-        }
-        setEmployees(employeesResponse?.data);
-        setEmployeeStats(statsResponse?.data);
+        setEmployees(employeesResponse.data);
+        setEmployeeStats(statsResponse.data);
       } catch {
+        showToast("Sorry something went wrong", "error");
       } finally {
         setPageLoading(false);
       }
-    }
+    };
 
     fetchData();
-  }, [loading, organizationId, pathname, showToast]);
+  }, [loading, organizationId, showToast]);
 
-  if (loading || pageLoading) {
-    return <Spinner />;
-  }
+  const handleActionError = (action: string) => {
+    showToast(`Error ${action}`, "error");
+  };
 
-  if (employees === null || employees === undefined) {
-    return (
-      <AddEmployee
-        organizationName={employeeStats?.OrganizationName || ""}
-        organizationId={organizationId}
-      />
-    );
-  }
-
-  async function generatePayroll() {
+  const handlePayrollGeneration = async () => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+    setButtonLoading(true);
     try {
-      setLoading(true);
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const response = await axios.get(
-        `${backendUrl}/calculate-payroll?organizationId=${organizationId}`,
-      );
+      const response = await axios.get(`${backendUrl}/calculate-payroll`, {
+        params: { organizationId },
+      });
       if (response.status === 200) {
         showToast("Payroll generated successfully", "success");
       }
     } catch {
-      showToast("Error generating payroll", "error");
+      handleActionError("generating payroll");
     } finally {
-      setLoading(false);
+      setButtonLoading(false);
     }
-  }
+  };
 
-  async function deleteOrganization() {
+  const handleOrganizationDeletion = async () => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+    const access_token = localStorage.getItem("access_token");
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const access_token = localStorage.getItem("access_token");
       const response = await axios.post(
         `${backendUrl}/delete-organization`,
-        {
-          organizationId: organizationId,
-        },
+        { organizationId },
         {
           headers: {
             "Content-Type": "application/json",
@@ -101,21 +89,20 @@ export default function Page() {
       );
       if (response.status === 200) {
         showToast("Organization deleted successfully", "success");
-        const organizationId = response.data.organizationId;
-        router.push(`/dashboard/${organizationId}/employees`);
+        router.push(`/dashboard/${response.data.organizationId}/employees`);
       }
     } catch {
-      showToast("Error deleting organization", "error");
+      handleActionError("deleting organization");
     }
-  }
+  };
 
-  async function downloadSampleCsv() {
+  const handleCsvDownload = async () => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+    setButtonLoading(true);
     try {
-      setLoading(true);
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const response = await axios.get(
-        `${backendUrl}/csv-file?key=${organizationId}`,
-      );
+      const response = await axios.get(`${backendUrl}/csv-file`, {
+        params: { key: organizationId },
+      });
       if (response.status === 200) {
         const presignedUrl = response.data.presigned_url;
         const link = document.createElement("a");
@@ -126,13 +113,27 @@ export default function Page() {
         document.body.removeChild(link);
       }
     } catch {
+      handleActionError("downloading CSV");
     } finally {
-      setLoading(false);
+      setButtonLoading(false);
     }
+  };
+
+  if (loading || pageLoading) {
+    return <Spinner />;
+  }
+
+  if (!employees) {
+    return (
+      <AddEmployee
+        organizationName={employeeStats?.OrganizationName || ""}
+        organizationId={organizationId}
+      />
+    );
   }
 
   return (
-    <React.Fragment>
+    <>
       <div className="flex flex-col w-full h-full">
         {toast && <Toast message={toast.message} type={toast.type} />}
         <div className="bg-white border p-2 lg:p-4 h-16 flex justify-between items-center">
@@ -140,21 +141,16 @@ export default function Page() {
             <div className="text-2xl font-semibold">
               {employeeStats?.OrganizationName}
             </div>
-
-            <button onClick={() => deleteOrganization()}>
+            <button onClick={handleOrganizationDeletion}>
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Delete-button.svg"
-                alt=""
+                alt="Delete"
               />
             </button>
-            <button
-              onClick={() => {
-                downloadSampleCsv();
-              }}
-            >
+            <button onClick={handleCsvDownload}>
               <img
                 src="https://media.istockphoto.com/id/844294300/vector/download-icon-isolated-vector.jpg?s=612x612&w=0&k=20&c=VCmvy8uEoTQnt9W0kZzjEBplN_opDkGKF_eQTLfkivs="
-                alt=""
+                alt="Download CSV"
                 className="h-8"
               />
             </button>
@@ -162,23 +158,24 @@ export default function Page() {
           <div className="flex gap-2">
             <button
               className="bg-lime-green rounded-lg px-4 gap-2 items-center py-2 flex"
-              onClick={() => {
-                dispatch(openModal());
-              }}
+              onClick={() => dispatch(openModal())}
             >
-              <img src="/images/employees/person.svg" alt="" />
+              <img src="/images/employees/person.svg" alt="Add Employee" />
               <div className="text-white">Add Employee</div>
             </button>
             <button
               className="bg-lime-green rounded-lg gap-2 px-4 items-center flex"
-              onClick={generatePayroll}
+              onClick={handlePayrollGeneration}
               disabled={buttonLoading}
             >
               {buttonLoading ? (
-                <ButtionSpinner buttonType="primary" />
+                <ButtonSpinner buttonType="primary" />
               ) : (
                 <>
-                  <img src="/images/employees/payroll.svg" alt="" />
+                  <img
+                    src="/images/employees/payroll.svg"
+                    alt="Generate Payroll"
+                  />
                   <div className="text-white">Generate Payroll</div>
                 </>
               )}
@@ -204,6 +201,8 @@ export default function Page() {
         </div>
         <EmployeeTable />
       </div>
-    </React.Fragment>
+    </>
   );
-}
+};
+
+export default Page;

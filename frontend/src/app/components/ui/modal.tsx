@@ -5,7 +5,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { startLoading, stopLoading } from "@/lib/features/spinnerSlice";
-import { ButtionSpinner } from "./Buttons";
+import ButtionSpinner from "./Buttons";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useToast } from "@/app/hooks/useToast";

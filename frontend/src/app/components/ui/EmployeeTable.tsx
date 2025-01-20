@@ -1,10 +1,9 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Employee } from "../../types/dashboard";
 import DropDownBox from "./Dropdown";
 import SearchBox from "@/app/components/ui/SearchBox";
-import RolesDropDownBox from "./RolesDropDown";
 import StatusBadge from "./StatusBadge";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,194 +16,191 @@ import { openModal } from "@/lib/features/employeeUpdate";
 import { setEmployeeData } from "@/lib/features/employeeDataSlice";
 
 export default function EmployeeTable() {
+  const dispatch = useDispatch();
   const pathname = usePathname();
+  const { toast, showToast } = useToast();
+
   const selection = useSelector((state: RootState) => state.selection);
   const updateEmployee = useSelector((state: RootState) => state.employee);
-  const [pageLoading, setPageLoading] = useState<boolean>(false);
-  const [initialEmployees, setInitialEmployees] = useState<Employee[]>([]);
-  const { toast, showToast } = useToast();
-  const [employees, setEmployees] = useState(initialEmployees);
+
+  const [pageLoading, setPageLoading] = useState(false);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
   const organizationId = pathname.split("/")[2];
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
 
-  React.useEffect(() => {
+  const fetchEmployees = useCallback(async () => {
     setPageLoading(true);
-    async function fetchData() {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      try {
-        const [employeesResponse] = await Promise.all([
-          axios.get(
-            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}&organizationId=${organizationId}`,
-          ),
-        ]);
-
-        if (employeesResponse?.data === null) {
-          console.log("Sorry something went wrong");
-        }
-        setInitialEmployees(employeesResponse?.data);
-      } catch {
-        console.log("Error fetching data:");
-      } finally {
-        setPageLoading(false);
-      }
+    try {
+      const { data } = await axios.get(`${backendUrl}/filter-employees`, {
+        params: {
+          employee_name:
+            selection.employeeName === "All" ? "" : selection.employeeName,
+          employee_status:
+            selection.employeeStatus === "All" ? "" : selection.employeeStatus,
+          employee_role:
+            selection.employeeRole === "All" ? "" : selection.employeeRole,
+          organizationId,
+        },
+      });
+      setEmployees(data || []);
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+    } finally {
+      setPageLoading(false);
     }
+  }, [backendUrl, organizationId, selection]);
 
-    fetchData();
-  }, [
-    organizationId,
-    pathname,
-    selection.employeeName,
-    selection.employeeRole,
-    selection.employeeStatus,
-    updateEmployee,
-  ]);
+  useEffect(() => {
+    fetchEmployees();
+  }, [fetchEmployees, updateEmployee]);
 
-  React.useEffect(() => {
-    setEmployees(initialEmployees);
-  }, [initialEmployees]);
-
-  function selectedRow(employee: string) {
-    if (employee === "all") {
+  const handleRowSelection = (employeeId: string | "all") => {
+    if (employeeId === "all") {
       setSelectedRows(
         selectedRows.length === employees.length
           ? []
-          : employees.map((item) => item.employeeId),
+          : employees.map(({ employeeId }) => employeeId),
       );
-      return;
+    } else {
+      setSelectedRows((prev) =>
+        prev.includes(employeeId)
+          ? prev.filter((id) => id !== employeeId)
+          : [...prev, employeeId],
+      );
     }
+  };
 
-    setSelectedRows((prevSelectedRows) =>
-      prevSelectedRows.includes(employee)
-        ? prevSelectedRows.filter((row) => row !== employee)
-        : [...prevSelectedRows, employee],
-    );
-  }
-
-  async function deleteSelectedRows() {
+  const deleteSelectedRows = async () => {
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const response = await axios.post(
-        `${backendUrl}/delete-employees?organizationId=${organizationId}`,
-        {
-          employeeIds: selectedRows,
-        },
+      const { status } = await axios.post(
+        `${backendUrl}/delete-employees`,
+        { employeeIds: selectedRows },
+        { params: { organizationId } },
       );
-      if (response.status === 200) {
+      if (status === 200) {
         showToast("Employees successfully deleted", "success");
-        const updatedEmployees = await axios.get(
-          `${backendUrl}/employees?organizationId=${organizationId}`,
-        );
-        setEmployees(updatedEmployees.data);
+        fetchEmployees();
         setSelectedRows([]);
       }
-    } catch {
+    } catch (error) {
+      console.error("Error deleting employees:", error);
       showToast("Error deleting employees", "error");
     }
-  }
-  const dispatch = useDispatch();
+  };
 
-  function openEmployeeUpdateModal(employeeId: string) {
-    dispatch(openModal());
-    const employee = initialEmployees.find(
-      (employee) => employee.employeeId === employeeId,
-    );
-    dispatch(
-      setEmployeeData({
-        EmployeeId: employee?.employeeId,
-        EmployeeProfile: employee?.employeeProfile,
-        EmployeeEmail: employee?.employeeEmail,
-        EmployeeeRole: employee?.employeeRole,
-        EmployeeStatus: employee?.employeeStatus,
-      }),
-    );
-  }
+  const handleEmployeeUpdate = (employeeId: string) => {
+    const employee = employees.find((emp) => emp.employeeId === employeeId);
+    if (employee) {
+      dispatch(openModal());
+      dispatch(
+        setEmployeeData({
+          EmployeeId: employee.employeeId,
+          EmployeeProfile: employee.employeeProfile,
+          EmployeeEmail: employee.employeeEmail,
+          EmployeeRole: employee.employeeRole,
+          EmployeeStatus: employee.employeeStatus,
+        }),
+      );
+    }
+  };
 
   return (
     <div className="container mx-auto p-4">
       {toast && <Toast message={toast.message} type={toast.type} />}
+
       <div className="flex items-center justify-between py-4">
-        <div className="text-xl font-bold text-gray-700 h-full flex items-center">
-          All Employees
-        </div>
+        <h1 className="text-xl font-bold text-gray-700">All Employees</h1>
         <div className="flex gap-2">
           <SearchBox />
-          <DropDownBox />
-          <RolesDropDownBox />
+          <DropDownBox dropDownType="employment" />
+          <DropDownBox dropDownType="roles" />
         </div>
       </div>
 
-      {pageLoading && <Spinner />}
-      <div className="overflow-hidden rounded-xl shadow-md">
-        <div className="bg-light-gray-row border-none">
-          <div className="bg-light-gray-row border text-gray-600 flex">
-            <button
-              className="p-3 text-left"
-              onClick={() => selectedRow("all")}
-            >
+      {pageLoading ? (
+        <Spinner />
+      ) : (
+        <div className="overflow-hidden rounded-xl shadow-md">
+          <div className="bg-light-gray-row border-none">
+            <div className="flex bg-light-gray-row border text-gray-600">
+              <button
+                className="p-3 text-left"
+                onClick={() => handleRowSelection("all")}
+              >
+                <div
+                  className={`rounded-lg h-7 w-7 border ${
+                    selectedRows.length === employees.length
+                      ? "bg-lime-green"
+                      : "border-gray-400"
+                  }`}
+                />
+              </button>
+              {["Employee ID", "Profile", "Email", "Role", "Status"].map(
+                (heading) => (
+                  <div
+                    key={heading}
+                    className="p-3 font-normal text-left flex-1"
+                  >
+                    {heading}
+                  </div>
+                ),
+              )}
+            </div>
+            {employees.map((employee) => (
               <div
-                className={`${
-                  selectedRows?.length === employees?.length
-                    ? "bg-lime-green border-none"
-                    : ""
-                } rounded-lg h-7 w-7 border border-gray-400`}
-              ></div>
-            </button>
-            <div className="p-3 font-normal text-left flex-1">Employee ID</div>
-            <div className="p-3 font-normal text-left flex-1">Profile</div>
-            <div className="p-3 font-normal text-left flex-1">Email</div>
-            <div className="p-3 font-normal text-left flex-1">Role</div>
-            <div className="p-3 font-normal text-left flex-1">Status</div>
-          </div>
-          {employees?.map((employee, index) => (
-            <React.Fragment key={employee?.employeeId + index}>
-              <div
-                className={`${selectedRows.includes(employee?.employeeId) ? "bg-light-gray-row" : "bg-white"}  border flex`}
+                key={employee.employeeId}
+                className={`flex border ${
+                  selectedRows.includes(employee.employeeId)
+                    ? "bg-light-gray-row"
+                    : "bg-white"
+                }`}
               >
                 <button
                   className="p-3"
-                  onClick={() => selectedRow(employee?.employeeId)}
+                  onClick={() => handleRowSelection(employee.employeeId)}
                 >
                   <div
-                    className={`${
-                      selectedRows.includes(employee?.employeeId)
-                        ? "bg-lime-green border-none"
-                        : ""
-                    } rounded-lg h-7 w-7 border border-gray-400`}
-                  ></div>
+                    className={`rounded-lg h-7 w-7 border ${
+                      selectedRows.includes(employee.employeeId)
+                        ? "bg-lime-green"
+                        : "border-gray-400"
+                    }`}
+                  />
                 </button>
                 <div className="p-3 flex-1">
-                  <div className="flex items-center">
-                    <button
-                      className="text-[#02b9b0] border-b border-[#02b9b0]"
-                      onClick={() =>
-                        openEmployeeUpdateModal(employee?.employeeId)
-                      }
-                    >
-                      {employee?.employeeId}
-                    </button>
-                  </div>
+                  <button
+                    className="text-[#02b9b0] border-b border-[#02b9b0]"
+                    onClick={() => handleEmployeeUpdate(employee.employeeId)}
+                  >
+                    {employee.employeeId}
+                  </button>
                 </div>
-                <button className="p-3 flex items-center gap-2 flex-1">
-                  <img src="/images/employees/circle.svg" alt="" />
-                  <div>{employee?.employeeProfile}</div>
-                </button>
-                <div className="p-3 flex-1">{employee?.employeeEmail}</div>
-                <div className="p-3 flex-1">{employee?.employeeRole}</div>
-                <div className="p-3 flex-1 flex items-center">
-                  <StatusBadge status={employee?.employeeStatus} />
+                <div className="p-3 flex-1 flex items-center gap-2">
+                  <img
+                    src="/images/employees/circle.svg"
+                    alt="profile"
+                    className="w-6 h-6"
+                  />
+                  <span>{employee.employeeProfile}</span>
+                </div>
+                <div className="p-3 flex-1">{employee.employeeEmail}</div>
+                <div className="p-3 flex-1">{employee.employeeRole}</div>
+                <div className="p-3 flex-1">
+                  <StatusBadge status={employee.employeeStatus} />
                 </div>
               </div>
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
-
-      {selectedRows.length !== 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-md flex justify-between items-center">
-          <div className="flex gap-1">
-            <div>{selectedRows?.length}</div>
-            <div> {selectedRows?.length === 1 ? "row" : "rows"} selected</div>
+            ))}
           </div>
+        </div>
+      )}
+
+      {selectedRows.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-md flex justify-between items-center">
+          <div>{`${selectedRows.length} ${
+            selectedRows.length === 1 ? "row" : "rows"
+          } selected`}</div>
           <button
             className="bg-red-400 text-white px-4 py-2 rounded"
             onClick={deleteSelectedRows}

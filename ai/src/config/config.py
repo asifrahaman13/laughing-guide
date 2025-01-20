@@ -51,11 +51,6 @@ assert SECRET_KEY, "Secret key is not set"
 logging.info("Secret key is set")
 
 
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL")
-assert EMBEDDING_MODEL, "Embedding model is not set"
-logging.info("Embedding model is set")
-
-
 GEMINI_API_KEY= os.getenv("GEMINI_API_KEY")
 assert GEMINI_API_KEY, "Gemini API key not set"
 logging.info("Gemini API key is set")

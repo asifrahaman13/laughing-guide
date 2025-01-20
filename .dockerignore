@@ -1,0 +1,59 @@
+# General files and directories to ignore
+.DS_Store
+.env
+*.log
+*.swp
+*.swo
+*.bak
+*.tmp
+*.pid
+
+# Python-specific files and directories
+__pycache__/
+*.py[cod]
+*.pyo
+*.pytest_cache/
+*.coverage
+.coverage.*
+.mypy_cache/
+*.egg-info/
+.eggs/
+dist/
+build/
+*.spec
+
+# Go-specific files and directories
+*.exe
+*.out
+*.test
+vendor/
+bin/
+pkg/
+go.sum
+go.work
+
+
+# Next.js and Bun-specific files and directories
+node_modules/ # Exclude Node.js/Bun dependencies
+.next/         # Exclude Next.js build files
+.bun/          # Exclude Bun cache and build files
+.env.local     # Exclude environment-specific config files
+.env.development
+.env.production
+
+# Test files and directories
+tests/
+coverage/
+*.test.*
+*.spec.*
+
+# Docker-specific files
+docker-compose.override.yml
+
+# Editor and IDE-specific files
+.vscode/
+.idea/
+*.iml
+
+
+docs/
