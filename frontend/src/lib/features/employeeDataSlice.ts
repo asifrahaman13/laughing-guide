@@ -28,7 +28,10 @@ export const employeeDataSlice = createSlice({
     updateemploeeData: (state, action) => {
       const { key, value } = action.payload;
       state.employeeData[key as keyof EmployeeData] = value;
-      console.log("state.employeeData: ", JSON.parse(JSON.stringify(state.employeeData)));
+      console.log(
+        "state.employeeData: ",
+        JSON.parse(JSON.stringify(state.employeeData)),
+      );
     },
   },
 });

@@ -93,7 +93,7 @@ func (h *EmployeeHandler) UpdateEmployeeHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Println("-------------------",request)
+	fmt.Println("-------------------", request)
 	result, err := h.service.UpdateEmployees(request, request.OrganizationID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

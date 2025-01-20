@@ -39,7 +39,7 @@ export default function UpdateEmployeeModal() {
   const pathname = usePathname();
 
   const handleSelectionChange = (
-    person: SetStateAction<{ id: number; name: string }>
+    person: SetStateAction<{ id: number; name: string }>,
   ) => {
     setSelected(person);
     dispatch(updateemploeeData({ key: "EmployeeStatus", value: person.name }));
@@ -62,8 +62,6 @@ export default function UpdateEmployeeModal() {
       if (response?.status === 200) {
         showToast("Employee data updated successfully", "success");
         dispatch(closeModal());
-        // dispatch()
-        // router.reload();
       }
     } catch {
       console.log("Something went wrong");
@@ -107,7 +105,7 @@ export default function UpdateEmployeeModal() {
                     updateemploeeData({
                       key: "EmployeeeRole",
                       value: e.target.value,
-                    })
+                    }),
                   )
                 }
               />
@@ -123,7 +121,7 @@ export default function UpdateEmployeeModal() {
                     updateemploeeData({
                       key: "EmployeeEmail",
                       value: e.target.value,
-                    })
+                    }),
                   )
                 }
               />
@@ -139,7 +137,7 @@ export default function UpdateEmployeeModal() {
                     updateemploeeData({
                       key: "EmployeeProfile",
                       value: e.target.value,
-                    })
+                    }),
                   )
                 }
               />

@@ -348,7 +348,7 @@ export default function Layout({ children }: LayoutProps) {
 
         {/* Modal */}
         <Modal />
-        <UpdateEmployeeModal/>
+        <UpdateEmployeeModal />
       </div>
     </React.Fragment>
   );

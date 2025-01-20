@@ -19,12 +19,13 @@ import { setEmployeeData } from "@/lib/features/employeeDataSlice";
 export default function EmployeeTable() {
   const pathname = usePathname();
   const selection = useSelector((state: RootState) => state.selection);
+  const updateEmployee = useSelector((state: RootState) => state.employee);
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [initialEmployees, setInitialEmployees] = useState<Employee[]>([]);
   const { toast, showToast } = useToast();
   const [employees, setEmployees] = useState(initialEmployees);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const organizationId=pathname.split("/")[2];
+  const organizationId = pathname.split("/")[2];
 
   React.useEffect(() => {
     setPageLoading(true);
@@ -49,7 +50,14 @@ export default function EmployeeTable() {
     }
 
     fetchData();
-  }, [organizationId, pathname, selection.employeeName, selection.employeeRole, selection.employeeStatus]);
+  }, [
+    organizationId,
+    pathname,
+    selection.employeeName,
+    selection.employeeRole,
+    selection.employeeStatus,
+    updateEmployee,
+  ]);
 
   React.useEffect(() => {
     setEmployees(initialEmployees);
@@ -95,17 +103,20 @@ export default function EmployeeTable() {
   }
   const dispatch = useDispatch();
 
-
-  function openEmployeeUpdateModal(employeeId: string){
+  function openEmployeeUpdateModal(employeeId: string) {
     dispatch(openModal());
-    const employee = initialEmployees.find((employee) => employee.employeeId === employeeId);
-    dispatch(setEmployeeData({
-      EmployeeId: employee?.employeeId,
-      EmployeeProfile: employee?.employeeProfile,
-      EmployeeEmail: employee?.employeeEmail,
-      EmployeeeRole: employee?.employeeRole,
-      EmployeeStatus: employee?.employeeStatus,
-    }));
+    const employee = initialEmployees.find(
+      (employee) => employee.employeeId === employeeId,
+    );
+    dispatch(
+      setEmployeeData({
+        EmployeeId: employee?.employeeId,
+        EmployeeProfile: employee?.employeeProfile,
+        EmployeeEmail: employee?.employeeEmail,
+        EmployeeeRole: employee?.employeeRole,
+        EmployeeStatus: employee?.employeeStatus,
+      }),
+    );
   }
 
   return (
@@ -165,7 +176,9 @@ export default function EmployeeTable() {
                   <div className="flex items-center">
                     <button
                       className="text-[#02b9b0] border-b border-[#02b9b0]"
-                      onClick={()=>openEmployeeUpdateModal(employee?.employeeId)}
+                      onClick={() =>
+                        openEmployeeUpdateModal(employee?.employeeId)
+                      }
                     >
                       {employee?.employeeId}
                     </button>
