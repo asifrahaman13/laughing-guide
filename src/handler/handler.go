@@ -86,6 +86,22 @@ func (h *EmployeeHandler) FetchPayrollHandlerc(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+func (h *EmployeeHandler) UpdateEmployeeHandler(c *gin.Context) {
+	var request domain.Employee
+	err := c.BindJSON(&request)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Println("-------------------",request)
+	result, err := h.service.UpdateEmployees(request, request.OrganizationID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
 func (h *EmployeeHandler) DeleteEmployeeHandler(c *gin.Context) {
 	organizationId := c.Query("organizationId")
 	var request domain.EmployeeRequest

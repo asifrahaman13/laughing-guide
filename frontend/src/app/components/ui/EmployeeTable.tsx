@@ -2,18 +2,19 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 import { Employee } from "../../types/dashboard";
-import Link from "next/link";
 import DropDownBox from "./Dropdown";
 import SearchBox from "@/app/components/ui/SearchBox";
 import RolesDropDownBox from "./RolesDropDown";
 import StatusBadge from "./StatusBadge";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import Spinner from "./Spinner";
 import { usePathname } from "next/navigation";
 import { useToast } from "@/app/hooks/useToast";
 import Toast from "../toasts/Toast";
+import { openModal } from "@/lib/features/employeeUpdate";
+import { setEmployeeData } from "@/lib/features/employeeDataSlice";
 
 export default function EmployeeTable() {
   const pathname = usePathname();
@@ -23,6 +24,7 @@ export default function EmployeeTable() {
   const { toast, showToast } = useToast();
   const [employees, setEmployees] = useState(initialEmployees);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const organizationId=pathname.split("/")[2];
 
   React.useEffect(() => {
     setPageLoading(true);
@@ -31,7 +33,7 @@ export default function EmployeeTable() {
       try {
         const [employeesResponse] = await Promise.all([
           axios.get(
-            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}&organizationId=${pathname.split("/")[2]}`,
+            `${backendUrl}/filter-employees?employee_name=${selection?.employeeName === "All" ? "" : selection.employeeName}&employee_status=${selection?.employeeStatus === "All" ? "" : selection.employeeStatus}&employee_role=${selection?.employeeRole === "All" ? "" : selection.employeeRole}&organizationId=${organizationId}`,
           ),
         ]);
 
@@ -47,12 +49,7 @@ export default function EmployeeTable() {
     }
 
     fetchData();
-  }, [
-    pathname,
-    selection.employeeName,
-    selection.employeeRole,
-    selection.employeeStatus,
-  ]);
+  }, [organizationId, pathname, selection.employeeName, selection.employeeRole, selection.employeeStatus]);
 
   React.useEffect(() => {
     setEmployees(initialEmployees);
@@ -79,7 +76,7 @@ export default function EmployeeTable() {
     try {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const response = await axios.post(
-        `${backendUrl}/delete-employees?organizationId=${pathname.split("/")[2]}`,
+        `${backendUrl}/delete-employees?organizationId=${organizationId}`,
         {
           employeeIds: selectedRows,
         },
@@ -87,7 +84,7 @@ export default function EmployeeTable() {
       if (response.status === 200) {
         showToast("Employees successfully deleted", "success");
         const updatedEmployees = await axios.get(
-          `${backendUrl}/employees?organizationId=${pathname.split("/")[2]}`,
+          `${backendUrl}/employees?organizationId=${organizationId}`,
         );
         setEmployees(updatedEmployees.data);
         setSelectedRows([]);
@@ -95,6 +92,20 @@ export default function EmployeeTable() {
     } catch {
       showToast("Error deleting employees", "error");
     }
+  }
+  const dispatch = useDispatch();
+
+
+  function openEmployeeUpdateModal(employeeId: string){
+    dispatch(openModal());
+    const employee = initialEmployees.find((employee) => employee.employeeId === employeeId);
+    dispatch(setEmployeeData({
+      EmployeeId: employee?.employeeId,
+      EmployeeProfile: employee?.employeeProfile,
+      EmployeeEmail: employee?.employeeEmail,
+      EmployeeeRole: employee?.employeeRole,
+      EmployeeStatus: employee?.employeeStatus,
+    }));
   }
 
   return (
@@ -152,12 +163,12 @@ export default function EmployeeTable() {
                 </button>
                 <div className="p-3 flex-1">
                   <div className="flex items-center">
-                    <Link
-                      href={`/dashboard/payrolls/${employee?.employeeId}`}
+                    <button
                       className="text-[#02b9b0] border-b border-[#02b9b0]"
+                      onClick={()=>openEmployeeUpdateModal(employee?.employeeId)}
                     >
                       {employee?.employeeId}
-                    </Link>
+                    </button>
                   </div>
                 </div>
                 <button className="p-3 flex items-center gap-2 flex-1">

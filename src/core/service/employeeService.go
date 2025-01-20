@@ -323,6 +323,44 @@ func (s *employeeService) FilterEmployees(employeeName string, employeeStatus st
 	return result, nil
 }
 
+func (s *employeeService) UpdateEmployees(employee domain.Employee, organizationId string) ([]domain.Employee, error) {
+	fmt.Println(employee)
+	var params []interface{}
+	query := "UPDATE employees SET "
+	var setClauses []string
+	if employee.EmployeeProfile != "" {
+		setClauses = append(setClauses, fmt.Sprintf("employee_profile=$%d", len(params)+1))
+		params = append(params, employee.EmployeeProfile)
+	}
+	if employee.EmployeeEmail != "" {
+		setClauses = append(setClauses, fmt.Sprintf("employee_email=$%d", len(params)+1))
+		params = append(params, employee.EmployeeEmail)
+	}
+	if employee.EmployeeRole != "" {
+		setClauses = append(setClauses, fmt.Sprintf("employee_role=$%d", len(params)+1))
+		params = append(params, employee.EmployeeRole)
+	}
+	if employee.EmployeeStatus != "" {
+		setClauses = append(setClauses, fmt.Sprintf("employee_status=$%d", len(params)+1))
+		params = append(params, employee.EmployeeStatus)
+	}
+
+	if len(setClauses) == 0 {
+		return nil, fmt.Errorf("no fields to update")
+	}
+
+	query += fmt.Sprintf("%s WHERE employee_id=$%d",
+		strings.Join(setClauses, ", "),
+		len(params)+1)
+	params = append(params, employee.EmployeeID)
+
+	_, err := s.employeeRepository.Execute(query, params...)
+	if err != nil {
+		return nil, err
+	}
+	return s.AllEmployees(organizationId)
+}
+
 func (s *employeeService) DeleteEmployees(employeeIds []string, organizationId string) ([]domain.Employee, error) {
 	ids := "'" + strings.Join(employeeIds, "','") + "'"
 	query := fmt.Sprintf("DELETE FROM employees WHERE employee_id IN (%s) AND organization_id='%s'", ids, organizationId)

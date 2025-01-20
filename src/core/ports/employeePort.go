@@ -10,6 +10,7 @@ type EmployeeService interface {
 	AllEmployees(organationId string) ([]domain.Employee, error)
 	EmployeeStatistics(organizationId string) (map[string]interface{}, error)
 	FilterEmployees(employeeName string, employeeStatus string, employeeRole string, organizationId string) ([]domain.Employee, error)
+	UpdateEmployees(employee domain.Employee, organizationId string) ([]domain.Employee, error)
 	DeleteEmployees(employeeIds []string, organizationId string) ([]domain.Employee, error)
 	GetSingleOrganization(organizationEmail string) (domain.Organizations, error)
 	GetOrganizations(organizationEmail string) ([]domain.Organizations, error)

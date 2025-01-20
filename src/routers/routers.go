@@ -21,6 +21,7 @@ func InitRoutes(employeeHandler *handler.EmployeeHandler, fileHandler *handler.F
 	r.GET("/employees", employeeHandler.GetEmployeesHandler)
 	r.GET("/aggregate", employeeHandler.GetEmployeeStatisticsHandler)
 	r.GET("/filter-employees", employeeHandler.FilterEmployees)
+	r.POST("/update-employees", employeeHandler.UpdateEmployeeHandler)
 	r.POST("/delete-employees", employeeHandler.DeleteEmployeeHandler)
 
 	r.GET("/api/auth/google", employeeHandler.GoogleAuthHandler)

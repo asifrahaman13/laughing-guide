@@ -11,6 +11,7 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import axios from "axios";
 import { useToast } from "@/app/hooks/useToast";
 import Toast from "@/app/components/toasts/Toast";
+import UpdateEmployeeModal from "@/app/components/ui/updateEmployeeModal";
 
 type LayoutProps = {
   children: ReactNode;
@@ -347,6 +348,7 @@ export default function Layout({ children }: LayoutProps) {
 
         {/* Modal */}
         <Modal />
+        <UpdateEmployeeModal/>
       </div>
     </React.Fragment>
   );
