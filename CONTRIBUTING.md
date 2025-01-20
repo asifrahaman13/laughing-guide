@@ -108,7 +108,7 @@ bun run dev
 The golang files can be formatted using the following command:
 
 ```bash
-go fmt src/
+gofmt -w .
 ```
 
 The frontend can be formatte by the following:

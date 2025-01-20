@@ -18,14 +18,14 @@ func NewEmployeeService(employeeRepository repository.DatabaseRepository) ports.
 	return &employeeService{employeeRepository}
 }
 
-func (s *employeeService) CalculatePayroll(organizationId string) (any, error) {
+func (s *employeeService) CalculatePayroll(organizationId string) ([]domain.PayrollData, error) {
 	rows, err := s.employeeRepository.Execute("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees WHERE organization_id = $1", organizationId)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var results []any
+	var results []domain.PayrollData
 	tx, err := s.employeeRepository.BeginTransaction()
 	if err != nil {
 		return nil, err
@@ -61,14 +61,14 @@ func (s *employeeService) CalculatePayroll(organizationId string) (any, error) {
 		grossSalary := salary + bonuses
 		netSalary := grossSalary - cpf.TotalContribution
 
-		result := map[string]interface{}{
-			"employeeId":       employee.EmployeeID,
-			"employeeName":     employee.EmployeeName,
-			"employeeSalary":   salary,
-			"bonuses":          bonuses,
-			"cpfContributions": cpf,
-			"grossSalary":      grossSalary,
-			"netSalary":        netSalary,
+		result := domain.PayrollData{
+			EmployeeID:       employee.EmployeeID,
+			EmployeeName:     employee.EmployeeName,
+			EmployeeSalary:   salary,
+			Bonuses:          bonuses,
+			CPFContributions: cpf,
+			GrossSalary:      grossSalary,
+			NetSalary:        netSalary,
 		}
 
 		results = append(results, result)
@@ -114,7 +114,7 @@ func (s *employeeService) GetSingleOrganization(organizationEmail string) (domai
 
 }
 
-func (s *employeeService) AllPayroll(organizationId string) (any, error) {
+func (s *employeeService) AllPayroll(organizationId string) ([]domain.EmployeePayrolls, error) {
 	rows, err := s.employeeRepository.Execute(`
         SELECT
             p.employee_id,
@@ -129,45 +129,30 @@ func (s *employeeService) AllPayroll(organizationId string) (any, error) {
             e.employee_name
         FROM payroll_data p
         JOIN employees e ON p.employee_id = e.employee_id
-		AND e.organization_id = $1
-		`, organizationId)
+        AND e.organization_id = $1
+        `, organizationId)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var payrollResults []map[string]interface{}
+	var payrollResults []domain.EmployeePayrolls
 	truncateToTwoDecimals := helper.TruncateToTwoDecimals
 
 	for rows.Next() {
-		var employeeID string
-		var grossSalary, netSalary, employeeContribution, employerContribution, totalContribution, bonuses, salary float64
-		var email, name string
+		var payroll domain.EmployeePayrolls
 
-		err := rows.Scan(&employeeID, &grossSalary, &netSalary, &employeeContribution, &employerContribution, &totalContribution, &bonuses, &salary, &email, &name)
+		err := rows.Scan(&payroll.EmployeeID, &payroll.GrossSalary, &payroll.NetSalary, &payroll.EmployeeContribution, &payroll.EmployerContribution, &payroll.TotalContribution, &payroll.Bonuses, &payroll.Salary, &payroll.EmployeeEmail, &payroll.EmployeeName)
 		if err != nil {
 			return nil, err
 		}
-		grossSalary = truncateToTwoDecimals(grossSalary)
-		netSalary = truncateToTwoDecimals(netSalary)
-		employeeContribution = truncateToTwoDecimals(employeeContribution)
-		employerContribution = truncateToTwoDecimals(employerContribution)
-		totalContribution = truncateToTwoDecimals(totalContribution)
-		bonuses = truncateToTwoDecimals(bonuses)
-		salary = truncateToTwoDecimals(salary)
-
-		payroll := map[string]interface{}{
-			"employeeId":           employeeID,
-			"grossSalary":          grossSalary,
-			"netSalary":            netSalary,
-			"employeeContribution": employeeContribution,
-			"employerContribution": employerContribution,
-			"totalContribution":    totalContribution,
-			"bonuses":              bonuses,
-			"salary":               salary,
-			"employeeEmail":        email,
-			"employeeName":         name,
-		}
+		payroll.GrossSalary = truncateToTwoDecimals(payroll.GrossSalary)
+		payroll.NetSalary = truncateToTwoDecimals(payroll.NetSalary)
+		payroll.EmployeeContribution = truncateToTwoDecimals(payroll.EmployeeContribution)
+		payroll.EmployerContribution = truncateToTwoDecimals(payroll.EmployerContribution)
+		payroll.TotalContribution = truncateToTwoDecimals(payroll.TotalContribution)
+		payroll.Bonuses = truncateToTwoDecimals(payroll.Bonuses)
+		payroll.Salary = truncateToTwoDecimals(payroll.Salary)
 
 		payrollResults = append(payrollResults, payroll)
 	}
@@ -178,7 +163,7 @@ func (s *employeeService) AllPayroll(organizationId string) (any, error) {
 	return payrollResults, nil
 }
 
-func (s *employeeService) AllEmployees(organizationId string) (any, error) {
+func (s *employeeService) AllEmployees(organizationId string) ([]domain.Employee, error) {
 	fmt.Println(organizationId)
 
 	rows, err := s.employeeRepository.Execute("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees WHERE organization_id = $1", organizationId)
@@ -205,7 +190,7 @@ func (s *employeeService) AllEmployees(organizationId string) (any, error) {
 	return employees, nil
 }
 
-func (s *employeeService) EmployeeStatistics(organizationId string) (any, error) {
+func (s *employeeService) EmployeeStatistics(organizationId string) (map[string]interface{}, error) {
 	rows, err := s.employeeRepository.Execute("SELECT employee_resident, employee_job_type, employee_status FROM employees WHERE organization_id = $1", organizationId)
 
 	if err != nil {
@@ -299,14 +284,14 @@ func (s *employeeService) EmployeeStatistics(organizationId string) (any, error)
 	}, nil
 }
 
-func (s *employeeService) FilterEmployees(employeeName string, employeeStatus string, employeeJobType string, organizationId string) (any, error) {
+func (s *employeeService) FilterEmployees(employeeName string, employeeStatus string, employeeJobType string, organizationId string) ([]domain.Employee, error) {
 	query := `
         SELECT employee_id, employee_profile, employee_email, employee_name, employee_role,
                employee_status, employee_salary, employee_job_type, employee_resident,
                employee_age, bonuses
         FROM employees
         WHERE employee_name ILIKE $1 AND employee_status ILIKE $2 AND employee_job_type ILIKE $3
-		AND organization_id = $4
+        AND organization_id = $4
     `
 
 	result := make([]domain.Employee, 0)
