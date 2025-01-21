@@ -80,7 +80,7 @@ const Page: React.FC = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
       if (response.status === 200) {
         showToast("Payroll generated successfully", "success");
@@ -104,7 +104,7 @@ const Page: React.FC = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${access_token}`,
           },
-        },
+        }
       );
       if (response.status === 200) {
         showToast("Organization deleted successfully", "success");
@@ -159,7 +159,7 @@ const Page: React.FC = () => {
     <>
       <div className="flex flex-col w-full h-full">
         {toast && <Toast message={toast.message} type={toast.type} />}
-        <div className="bg-white border p-2 lg:p-4 h-16 flex justify-between items-center">
+        <div className="bg-white border p-2 lg:p-4 lg:px-8 h-16 flex justify-between items-center">
           <div className="font-medium text-xl flex items-center gap-4">
             <div className="text-2xl font-semibold">
               {employeeStats?.OrganizationName}
@@ -168,13 +168,6 @@ const Page: React.FC = () => {
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Delete-button.svg"
                 alt="Delete"
-              />
-            </button>
-            <button onClick={handleCsvDownload}>
-              <img
-                src="https://media.istockphoto.com/id/844294300/vector/download-icon-isolated-vector.jpg?s=612x612&w=0&k=20&c=VCmvy8uEoTQnt9W0kZzjEBplN_opDkGKF_eQTLfkivs="
-                alt="Download CSV"
-                className="h-8"
               />
             </button>
           </div>
@@ -205,7 +198,24 @@ const Page: React.FC = () => {
             </button>
           </div>
         </div>
-        <div className="m-8 flex gap-4">
+
+        <div className="flex w-full justify-between py-6  px-8">
+          <div className="text-xl font-medium">Team Overview</div>
+          <div className="rounded-lg border px-2 py-2">
+            <button
+              className="flex gap-2 items-center"
+              onClick={handleCsvDownload}
+            >
+              <img
+                src="https://media.istockphoto.com/id/844294300/vector/download-icon-isolated-vector.jpg?s=612x612&w=0&k=20&c=VCmvy8uEoTQnt9W0kZzjEBplN_opDkGKF_eQTLfkivs="
+                alt=""
+                className="h-6"
+              />
+              <div>Export Employee Data</div>
+            </button>
+          </div>
+        </div>
+        <div className="mx-8 flex gap-4">
           <EmployeeStatistics
             title="Nationality"
             description="Singaporeans"
