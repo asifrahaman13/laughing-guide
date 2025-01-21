@@ -53,6 +53,7 @@ export default function EmployeeTable() {
           },
         },
       );
+      console.log(data);
       setEmployees(data || []);
     } catch (error) {
       console.error("Error fetching employees:", error);
@@ -113,6 +114,7 @@ export default function EmployeeTable() {
       dispatch(
         setEmployeeData({
           EmployeeId: employee.employeeId,
+          EmployeeName: employee.employeeName,
           EmployeeProfile: employee.employeeProfile,
           EmployeeEmail: employee.employeeEmail,
           EmployeeRole: employee.employeeRole,
@@ -153,16 +155,18 @@ export default function EmployeeTable() {
                   }`}
                 />
               </button>
-              {["Employee ID", "Profile", "Email", "Role", "Status"].map(
-                (heading) => (
-                  <div
-                    key={heading}
-                    className="p-3 font-normal text-left flex-1"
-                  >
-                    {heading}
-                  </div>
-                ),
-              )}
+              {[
+                "Employee ID",
+                "Name",
+                "Profile",
+                "Email",
+                "Role",
+                "Status",
+              ].map((heading) => (
+                <div key={heading} className="p-3 font-normal text-left flex-1">
+                  {heading}
+                </div>
+              ))}
             </div>
             {employees.map((employee) => (
               <div
@@ -193,6 +197,7 @@ export default function EmployeeTable() {
                     {employee.employeeId}
                   </button>
                 </div>
+                <div className="p-3 flex-1">{employee.employeeName}</div>
                 <div className="p-3 flex-1 flex items-center gap-2">
                   <img
                     src="/images/employees/circle.svg"

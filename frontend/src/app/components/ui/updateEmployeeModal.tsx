@@ -71,6 +71,7 @@ const UpdateEmployeeModal = () => {
         {
           organizationId: data.organizationId,
           EmployeeId: data.employeeData.EmployeeId,
+          EmployeeName: data.employeeData.EmployeeName,
           EmployeeProfile: data.employeeData.EmployeeProfile,
           EmployeeEmail: data.employeeData.EmployeeEmail,
           EmployeeRole: data.employeeData.EmployeeRole,
@@ -98,7 +99,7 @@ const UpdateEmployeeModal = () => {
       {toast && <Toast message={toast.message} type={toast.type} />}
       {employeeModal.isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white w-1/3 p-4 h-3/4 flex flex-col gap-4 overflow-scroll no-scrollbar rounded-lg">
+          <div className="bg-white w-1/3 p-4 h-4/5 flex flex-col gap-4 overflow-scroll no-scrollbar rounded-lg">
             <div className="flex justify-end">
               <button
                 className="bg-white shadow-md h-6 w-6 rounded-full flex justify-center items-center"
@@ -139,6 +140,19 @@ const UpdateEmployeeModal = () => {
                 )
               }
             />
+            <EmployeeInput
+              placeholder="Employee Name"
+              value={employeeData?.employeeData?.EmployeeName}
+              onChange={(e) =>
+                dispatch(
+                  updateemploeeData({
+                    key: "EmployeeName",
+                    value: e.target.value,
+                  }),
+                )
+              }
+            />
+
             <EmployeeInput
               placeholder="Employee Profile"
               value={employeeData?.employeeData?.EmployeeProfile}

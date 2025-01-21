@@ -7,9 +7,7 @@ export const employeeUpdateSlice = createSlice({
   },
   reducers: {
     openModal: (state) => {
-      console.log("Called openModal");
       state.isOpen = true;
-      console.log("state.isOpen: ", state.isOpen);
     },
     closeModal: (state) => {
       state.isOpen = false;
