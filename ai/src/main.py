@@ -40,10 +40,9 @@ async def custom_callback(request: Request, response: Response, pexpire: int):
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-
-    qdrant_url= QDRANT_API_ENDPOINT
+    qdrant_url = QDRANT_API_ENDPOINT
     logging.info(f"Qdrant url being used: {qdrant_url}")
-    qdrant_service=QdrantService(qdrant_url)
+    qdrant_service = QdrantService(qdrant_url)
     qdrant_service.create_collection("sample_collection")
 
     redis_connection = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)

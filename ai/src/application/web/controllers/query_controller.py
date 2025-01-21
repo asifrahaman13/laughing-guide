@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.INFO)
 
 query_controller = APIRouter()
 
+
 @query_controller.websocket("/sqlite-query/{client_id}")
 async def query_sqlite(
     websocket: WebSocket,

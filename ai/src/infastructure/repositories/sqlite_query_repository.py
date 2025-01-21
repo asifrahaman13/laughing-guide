@@ -5,6 +5,7 @@ from typing import Any
 
 logging.basicConfig(level=logging.INFO)
 
+
 class SqliteQueryRepository:
     def __init__(self) -> None:
         pass

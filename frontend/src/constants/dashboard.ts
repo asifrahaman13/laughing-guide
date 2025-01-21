@@ -20,7 +20,7 @@ const MANAGE = [
     link: "claims",
   },
   {
-    icon: "https://i.pinimg.com/originals/e5/a2/52/e5a252b0d1ceae9c5a7ee8cea147ce6f.jpg",
+    icon: "/images/dashboard/ai.jpg",
     title: "AI",
     link: "ai",
   },

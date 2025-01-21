@@ -4,17 +4,18 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, VectorParams, Distance
 import google.generativeai as genai
 
+
 class EmbeddingService:
     def __init__(self, embedding_model: str):
         self.__embeddings_cache: Dict[str, List[float]] = {}
-        self.embedding_model=embedding_model
+        self.embedding_model = embedding_model
 
     def get_embeddings(self, text: str) -> List[float]:
         if text in self.__embeddings_cache:
             return self.__embeddings_cache[text]
         else:
-            result = genai.embed_content(model=self.embedding_model,content=text)
-            embedding_result=self.__embeddings_cache[text] = result["embedding"]
+            result = genai.embed_content(model=self.embedding_model, content=text)
+            embedding_result = self.__embeddings_cache[text] = result["embedding"]
             if not isinstance(embedding_result, list):
                 return []
             return self.__embeddings_cache[text]

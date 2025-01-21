@@ -51,11 +51,11 @@ assert SECRET_KEY, "Secret key is not set"
 logging.info("Secret key is set")
 
 
-GEMINI_API_KEY= os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 assert GEMINI_API_KEY, "Gemini API key not set"
 logging.info("Gemini API key is set")
 
-GEMINI_EMBEDDING_MODEL= os.getenv("GEMINI_EMBEDDING_MODEL")
+GEMINI_EMBEDDING_MODEL = os.getenv("GEMINI_EMBEDDING_MODEL")
 assert GEMINI_EMBEDDING_MODEL, "Gemini embedding model is not set"
 logging.info("Gemini embedding model is set")
 

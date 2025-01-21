@@ -4,10 +4,13 @@ from src.infastructure.repositories.vector_db_repository import (
     QdrantQueryRepository,
     QdrantService,
 )
+from src.infastructure.repositories.auth_repository import AuthRepository
 from src.infastructure.repositories.openai_repository import OpenAIRepository
 from src.infastructure.repositories.redis_repository import RedisRepository
 from src.infastructure.repositories.sqlite_query_repository import SqliteQueryRepository
+
 from src.internal.use_cases.query_service import QueryService
+from src.internal.use_cases.authentication_service import AuthenticationService
 from src.ConnectionManager.ConnectionManager import ConnectionManager
 from ..config.config import (
     REDIS_PORT,
@@ -39,15 +42,18 @@ class DIContainer:
 
     def get_vector_db_repository(self):
         if "vectordb_repoitory" not in self.__instances:
-            embedding_model= GEMINI_EMBEDDING_MODEL
+            embedding_model = GEMINI_EMBEDDING_MODEL
             embedding_service = EmbeddingService(embedding_model)
-            qdrant_service = QdrantService(
-                url=QDRANT_API_ENDPOINT
-            )
+            qdrant_service = QdrantService(url=QDRANT_API_ENDPOINT)
             self.__instances["vectordb_repoitory"] = QdrantQueryRepository(
                 embedding_service, qdrant_service
             )
         return self.__instances["vectordb_repoitory"]
+
+    def get_auth_repository(self):
+        if "auth_repository" not in self.__instances:
+            self.__instances["auth_repository"] = AuthRepository()
+        return self.__instances["auth_repository"]
 
     def get_sqlite_query_database_service(self):
         if "sqlite_query_service" not in self.__instances:
@@ -59,6 +65,13 @@ class DIContainer:
             )
         return self.__instances["sqlite_query_service"]
 
+    def get_auth_service(self):
+        if "auth_service" not in self.__instances:
+            self.__instances["auth_service"] = AuthenticationService(
+                self.get_auth_repository()
+            )
+        return self.__instances["auth_service"]
+
 
 container = DIContainer()
 websocket_manager = ConnectionManager(REDIS_HOST, REDIS_PORT)
@@ -66,3 +79,7 @@ websocket_manager = ConnectionManager(REDIS_HOST, REDIS_PORT)
 
 def get_sqlite_query_database_service():
     return container.get_sqlite_query_database_service()
+
+
+def get_auth_service():
+    return container.get_auth_service()
