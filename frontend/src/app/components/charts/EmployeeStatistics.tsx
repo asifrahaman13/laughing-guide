@@ -11,7 +11,7 @@ type ArcProps = {
   portions: number[];
 };
 
-const colors = ["#02b9b0", "#b3bebe", "#b774fc", "#fac905"];
+const colors = ["#02b9b0", "#fac905", "#b774fc", "#b3bebe"];
 
 function HollowCircle({ portions }: ArcProps) {
   const radius = 50;
@@ -67,9 +67,9 @@ export default function EmployeeStatistics({
 
   const total =
     nationality?.Singaporean +
+    nationality?.PR +
     nationality?.Foreigner +
-    nationality?.Others +
-    nationality?.PR;
+    nationality?.Others;
 
   const portions = [
     nationality?.Singaporean / total,
