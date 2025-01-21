@@ -7,7 +7,6 @@ A blazing-fast HR payroll system designed to deal with simplicity as well as bla
 ![Screenshot from 2025-01-19 19-22-18](https://github.com/user-attachments/assets/eddea66f-33b5-4000-815b-9a3bc50221cf)
 ![Screenshot from 2025-01-19 19-23-06](https://github.com/user-attachments/assets/66e6af24-ead4-4ddb-9ea2-77063cca2e53)
 
-
 ## Tech stacks
 
 A large number of tech stacks are used to apply different concepts and take advantages of their strengths.
@@ -20,3 +19,19 @@ The appplication is built with the intention of speed, quality, maintanability a
 
 - HR can work on payroll system with ease.
 - AI integrations to help the HRs get the informatin about the payrolls through natural conversation.
+
+## Run the application
+
+The best way to run this application is to use the docker considering a lot of services are being used.
+
+Make sure that you have the correct credentials in your environment and configuration files. You can also change them depending upon the requirements. For example instead of using the postgres, qdrant service locally you can use the hosted services.
+
+```bash
+docker compose up
+```
+
+## Ports
+
+- Ai will run on port `8080`
+- The backend port will run on port `8000`
+- Frontend will run on port `3000`
