@@ -299,7 +299,7 @@ export default function Layout({ children }: LayoutProps) {
                       id="text"
                       name="text"
                       placeholder="organization_a"
-                      className="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none  text-gray-800  dark:placeholder-neutral-500 border dark:focus:ring-neutral-600"
+                      className="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm outline-none  disabled:opacity-50 disabled:pointer-events-none  text-gray-800  dark:placeholder-neutral-500 border dark:focus:ring-neutral-600"
                       required
                       aria-describedby="email-error"
                       onChange={(e) => {
@@ -338,7 +338,7 @@ export default function Layout({ children }: LayoutProps) {
 
                 <button
                   type="submit"
-                  className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-lime-green text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                  className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-lime-green text-white  focus:outline-none  disabled:opacity-50 disabled:pointer-events-none"
                   onClick={() => {
                     addOrganization();
                   }}

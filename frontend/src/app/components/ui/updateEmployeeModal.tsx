@@ -13,7 +13,6 @@ import { RootState } from "@/lib/store";
 import { usePathname } from "next/navigation";
 
 const people = [
-  { id: 0, name: "All" },
   { id: 1, name: "Active" },
   { id: 2, name: "Invite Sent" },
   { id: 3, name: "Payroll Only" },
@@ -45,8 +44,12 @@ const UpdateEmployeeModal = () => {
   const { toast, showToast } = useToast();
   const pathname = usePathname();
 
+  React.useEffect(() => {
+    setSelected({ id: 1, name: employeeData.employeeData.EmployeeStatus });
+  }, [employeeData]);
+
   const handleSelectionChange = (
-    person: React.SetStateAction<{ id: number; name: string }>,
+    person: React.SetStateAction<{ id: number; name: string }>
   ) => {
     setSelected(person);
     dispatch(updateemploeeData({ key: "EmployeeStatus", value: person.name }));
@@ -74,7 +77,7 @@ const UpdateEmployeeModal = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       if (response.status === 200) {
@@ -117,7 +120,7 @@ const UpdateEmployeeModal = () => {
                   updateemploeeData({
                     key: "EmployeeRole",
                     value: e.target.value,
-                  }),
+                  })
                 )
               }
             />
@@ -129,7 +132,7 @@ const UpdateEmployeeModal = () => {
                   updateemploeeData({
                     key: "EmployeeEmail",
                     value: e.target.value,
-                  }),
+                  })
                 )
               }
             />
@@ -141,7 +144,7 @@ const UpdateEmployeeModal = () => {
                   updateemploeeData({
                     key: "EmployeeProfile",
                     value: e.target.value,
-                  }),
+                  })
                 )
               }
             />
