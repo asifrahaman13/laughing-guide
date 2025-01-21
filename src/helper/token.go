@@ -2,60 +2,33 @@ package helper
 
 import (
 	"fmt"
+	"os"
+
 	jwt "github.com/dgrijalva/jwt-go"
-	"time"
 )
 
-var secretKey = []byte("YOUR_JWT_SECRET")
+var secretKey = []byte(os.Getenv("JWT_SECRET"))
 
-func CreateToken(username string, user_type string) (string, error) {
-
-	// Create the token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
-		jwt.MapClaims{
-			"username":  username,
-			"exp":       time.Now().Add(time.Hour * 24).Unix(),
-			"user_type": user_type,
-		})
-
-	// Sign the token
-	tokenString, err := token.SignedString(secretKey)
-
-	// Check if there is an error
-	if err != nil {
-		return "", err
-	}
-
-	// Return the token
-	return tokenString, nil
+func GenerateJWT(tokenType string, claims jwt.MapClaims) (string, error) {
+	fmt.Println(tokenType)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(secretKey)
 }
 
-func VerifyToken(tokenString string) (map[string]interface{}, error) {
-	// Parse the token
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+func ValidateJWT(token string) (jwt.MapClaims, error) {
+	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
 		return secretKey, nil
 	})
 
-	// Validate the token
 	if err != nil {
 		return nil, err
 	}
 
-	// Check if the token is valid
-	if !token.Valid {
-		return nil, fmt.Errorf("invalid token")
+	if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {
+		return claims, nil
 	}
-
-	// Extract the claims
-	claims, ok := token.Claims.(jwt.MapClaims)
-
-	// Check if the claims are valid
-	if !ok {
-		return nil, fmt.Errorf("invalid token claims")
-	}
-
-	// Return the claims
-	fmt.Println("claims", claims)
-
-	return claims, nil
+	return nil, fmt.Errorf("invalid token")
 }

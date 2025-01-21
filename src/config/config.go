@@ -20,6 +20,7 @@ type Config struct {
 	GinMode    string `yaml:"-"`
 	Port       string `yaml:"port"`
 	AwsRegion  string `yaml:"-"`
+	JWTSecretKey  string `yaml:"jwt_secret"`
 }
 
 func LoadConfig() (*Config, error) {
@@ -27,13 +28,14 @@ func LoadConfig() (*Config, error) {
 		log.Println("No .env file found, using default environment variables")
 	}
 	config := &Config{
-		DBUser:     os.Getenv("DB_USER"),
-		DBPassword: os.Getenv("DB_PASSWORD"),
-		DBHost:     os.Getenv("DB_HOST"),
-		DBPort:     os.Getenv("DB_PORT"),
-		DBSSLMode:  os.Getenv("DB_SSLMODE"),
-		GinMode:    os.Getenv("GIN_MODE"),
-		AwsRegion:  os.Getenv("AWS_REGION"),
+		DBUser:       os.Getenv("DB_USER"),
+		DBPassword:   os.Getenv("DB_PASSWORD"),
+		DBHost:       os.Getenv("DB_HOST"),
+		DBPort:       os.Getenv("DB_PORT"),
+		DBSSLMode:    os.Getenv("DB_SSLMODE"),
+		GinMode:      os.Getenv("GIN_MODE"),
+		AwsRegion:    os.Getenv("AWS_REGION"),
+		JWTSecretKey: os.Getenv("JWT_SECRET"),
 	}
 	data, err := os.ReadFile("config.yaml")
 	if err != nil {

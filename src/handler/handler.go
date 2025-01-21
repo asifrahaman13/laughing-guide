@@ -8,6 +8,7 @@ import (
 	"github.com/asifrahaman13/laughing-guide/src/config"
 	"github.com/asifrahaman13/laughing-guide/src/core/domain"
 	"github.com/asifrahaman13/laughing-guide/src/core/ports"
+	"github.com/asifrahaman13/laughing-guide/src/helper"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/api/idtoken"
@@ -136,7 +137,7 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 		"name":  userName,
 		"exp":   time.Now().Add(1500 * time.Minute).Unix(),
 	}
-	accessToken, err := generateJWT("access", claims)
+	accessToken, err := helper.GenerateJWT("access", claims)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate access token"})
 		return
@@ -146,7 +147,7 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 		"name":  userName,
 		"exp":   time.Now().Add(240 * time.Hour).Unix(),
 	}
-	refreshToken, err := generateJWT("refresh", refreshClaims)
+	refreshToken, err := helper.GenerateJWT("refresh", refreshClaims)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate refresh token"})
 		return
@@ -164,16 +165,11 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 	})
 }
 
-func generateJWT(tokenType string, claims jwt.MapClaims) (string, error) {
-	fmt.Println(tokenType)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte("YOUR_JWT_SECRET"))
-}
 
 func (h *EmployeeHandler) ValidateTokenHandler(c *gin.Context) {
 	token := c.Query("token")
 	fmt.Println(token)
-	claims, err := validateJWT(token)
+	claims, err := helper.ValidateJWT(token)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 		return
@@ -191,29 +187,11 @@ func (h *EmployeeHandler) ValidateTokenHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"email": email, "name": userName})
 }
 
-func validateJWT(token string) (jwt.MapClaims, error) {
-	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte("YOUR_JWT_SECRET"), nil
-	})
 
-	fmt.Println(parsedToken)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {
-		return claims, nil
-	}
-	return nil, fmt.Errorf("invalid token")
-}
 
 func (h *EmployeeHandler) GetSingleOrganizationHandler(c *gin.Context) {
 	token := c.Query("token")
-	claims, err := validateJWT(token)
+	claims, err := helper.ValidateJWT(token)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 		return
@@ -237,7 +215,7 @@ func (h *EmployeeHandler) GetOrganizationsHandler(c *gin.Context) {
 
 	token := c.Query("token")
 
-	claims, err := validateJWT(token)
+	claims, err := helper.ValidateJWT(token)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 		return
@@ -267,7 +245,7 @@ func (h *EmployeeHandler) AddOrganizationHandler(c *gin.Context) {
 	}
 
 	token := authorizationToken[7:]
-	claims, err := validateJWT(token)
+	claims, err := helper.ValidateJWT(token)
 
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
@@ -307,7 +285,7 @@ func (h *EmployeeHandler) DeleteOrganizationHandler(c *gin.Context) {
 	}
 
 	token := authorizationToken[7:]
-	claims, err := validateJWT(token)
+	claims, err := helper.ValidateJWT(token)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 		return
