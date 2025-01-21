@@ -27,13 +27,16 @@ const EmployeeInput = ({
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
 }) => (
-  <input
-    type="text"
-    className="w-full h-12 border rounded-md outline-none px-2"
-    placeholder={placeholder}
-    value={value}
-    onChange={onChange}
-  />
+  <div className="py-1 gap-2 flex flex-col">
+    <div className="text-sm text-gray-700 font-medium px-2">{placeholder}</div>
+    <input
+      type="text"
+      className="w-full h-12 border rounded-md outline-none px-2"
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+    />
+  </div>
 );
 
 const UpdateEmployeeModal = () => {
@@ -149,6 +152,9 @@ const UpdateEmployeeModal = () => {
               }
             />
             <div>
+              <div className="text-sm px-2 text-gray-700 font-medium">
+                Status
+              </div>
               <Listbox value={selected} onChange={handleSelectionChange}>
                 <div className="relative">
                   <Listbox.Button className="grid w-48 cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 sm:text-sm/6">
