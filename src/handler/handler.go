@@ -93,7 +93,6 @@ func (h *EmployeeHandler) UpdateEmployeeHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Println("-------------------", request)
 	result, err := h.service.UpdateEmployees(request, request.OrganizationID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -122,10 +121,6 @@ func (h *EmployeeHandler) DeleteEmployeeHandler(c *gin.Context) {
 
 func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 	token := c.Query("token")
-	fmt.Println("Google Auth Handler...........", token)
-	fmt.Println(token)
-	fmt.Println("token is printed.....")
-
 	payload, err := idtoken.Validate(c.Request.Context(), token, config.LoadGoogleConfig().ClientID)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})

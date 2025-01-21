@@ -1,15 +1,15 @@
 import json
 import psycopg2
 import logging
+from typing import Any
 
 logging.basicConfig(level=logging.INFO)
-
 
 class SqliteQueryRepository:
     def __init__(self) -> None:
         pass
 
-    def query_database(self, user_query: str, connection_string: str):
+    def query_database(self, user_query: str, connection_string: str) -> Any:
         try:
             conn = psycopg2.connect(connection_string)
             cursor = conn.cursor()

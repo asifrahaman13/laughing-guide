@@ -41,11 +41,17 @@ export default function Modal() {
 
     try {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const response = await axios.post(`${backendUrl}/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
+      const token = localStorage.getItem("access_token");
+      const response = await axios.post(
+        `${backendUrl}/files/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       if (response.status === 200) {
         return response.data;
       }
@@ -97,11 +103,16 @@ export default function Modal() {
       setLoading(true);
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const key = "sample";
-      const response = await axios.get(`${backendUrl}/csv-file?key=${key}`, {
-        headers: {
-          "Content-Type": "application/json",
+      const token = localStorage.getItem("access_token");
+      const response = await axios.get(
+        `${backendUrl}/files/csv-file?key=${key}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       if (response.status === 200) {
         const presignedUrl = response.data.presigned_url;
         const link = document.createElement("a");
@@ -127,9 +138,18 @@ export default function Modal() {
       try {
         dispath(startLoading());
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-        const response = await axios.post(`${backendUrl}/process-file`, {
-          organizationId: pathname.split("/")[2],
-        });
+        const token = localStorage.getItem("access_token");
+        const response = await axios.post(
+          `${backendUrl}/files/process-file`,
+          {
+            organizationId: pathname.split("/")[2],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
         if (response.data === true) {
           dispath(closeModal());
           router.push(`/dashboard/${pathname.split("/")[2]}/employees`);

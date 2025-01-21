@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
 from src.internal.use_cases.query_service import QueryService
 from ....exports.exports import (
@@ -6,8 +7,9 @@ from ....exports.exports import (
     websocket_manager as manager,
 )
 
-query_controller = APIRouter()
+logging.basicConfig(level=logging.INFO)
 
+query_controller = APIRouter()
 
 @query_controller.websocket("/sqlite-query/{client_id}")
 async def query_sqlite(
@@ -16,7 +18,7 @@ async def query_sqlite(
     query_service: QueryService = Depends(get_sqlite_query_database_service),
 ):
     await manager.connect(websocket, client_id)
-    print(f"Client {client_id} connected")
+    logging.info(f"Client {client_id} connected")
     try:
         while True:
             user_input = await websocket.receive_json()
@@ -27,6 +29,5 @@ async def query_sqlite(
                     await manager.send_personal_message(
                         response.model_dump(), websocket
                     )
-                    await asyncio.sleep(0)
     except WebSocketDisconnect:
         await manager.disconnect(websocket)

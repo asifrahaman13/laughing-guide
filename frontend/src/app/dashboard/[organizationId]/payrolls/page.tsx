@@ -43,8 +43,14 @@ export default function Page() {
     async function fetchPayrollId() {
       try {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+        const token = localStorage.getItem("access_token");
         const response = await axios.get(
-          `${backendUrl}/payroll?organizationId=${pathname.split("/")[2]}`,
+          `${backendUrl}/employees/payroll?organizationId=${pathname.split("/")[2]}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
         if (response.data) {
           setPayrollData(response.data);

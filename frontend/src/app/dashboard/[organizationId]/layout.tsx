@@ -50,11 +50,15 @@ export default function Layout({ children }: LayoutProps) {
       const access_token = localStorage.getItem("access_token");
       try {
         const response = await axios.get(
-          `${backendUrl}/organizations?token=${access_token}`,
+          `${backendUrl}/organizations/organizations?token=${access_token}`,
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          },
         );
         if (response.status === 200) {
           setOrganizations(response.data);
-          showToast("Organizations fetched successfully", "success");
         }
       } catch {
         showToast("Error fetching organizations", "error");
@@ -94,7 +98,7 @@ export default function Layout({ children }: LayoutProps) {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const access_token = localStorage.getItem("access_token");
       const response = await axios.post(
-        `${backendUrl}/add-organization`,
+        `${backendUrl}/organizations/add-organization`,
         {
           organizationName: organizationName,
         },

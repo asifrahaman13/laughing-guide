@@ -33,17 +33,26 @@ export default function EmployeeTable() {
   const fetchEmployees = useCallback(async () => {
     setPageLoading(true);
     try {
-      const { data } = await axios.get(`${backendUrl}/filter-employees`, {
-        params: {
-          employee_name:
-            selection.employeeName === "All" ? "" : selection.employeeName,
-          employee_status:
-            selection.employeeStatus === "All" ? "" : selection.employeeStatus,
-          employee_role:
-            selection.employeeRole === "All" ? "" : selection.employeeRole,
-          organizationId,
+      const token = localStorage.getItem("access_token");
+      const { data } = await axios.get(
+        `${backendUrl}/employees/filter-employees`,
+        {
+          params: {
+            employee_name:
+              selection.employeeName === "All" ? "" : selection.employeeName,
+            employee_status:
+              selection.employeeStatus === "All"
+                ? ""
+                : selection.employeeStatus,
+            employee_role:
+              selection.employeeRole === "All" ? "" : selection.employeeRole,
+            organizationId,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       setEmployees(data || []);
     } catch (error) {
       console.error("Error fetching employees:", error);
@@ -74,11 +83,18 @@ export default function EmployeeTable() {
 
   const deleteSelectedRows = async () => {
     try {
+      const token = localStorage.getItem("access_token");
       const { status } = await axios.post(
-        `${backendUrl}/delete-employees`,
+        `${backendUrl}/employees/delete-employees`,
         { employeeIds: selectedRows },
-        { params: { organizationId } },
+        {
+          params: { organizationId },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
+
       if (status === 200) {
         showToast("Employees successfully deleted", "success");
         fetchEmployees();

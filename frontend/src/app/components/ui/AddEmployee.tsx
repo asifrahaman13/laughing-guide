@@ -26,7 +26,7 @@ export default function AddEmployee({
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       const access_token = localStorage.getItem("access_token");
       const response = await axios.post(
-        `${backendUrl}/delete-organization`,
+        `${backendUrl}/organizations/delete-organization`,
         {
           organizationId: organizationId,
         },

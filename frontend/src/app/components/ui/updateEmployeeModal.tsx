@@ -59,14 +59,23 @@ const UpdateEmployeeModal = () => {
         ...employeeData,
         organizationId: pathname.split("/")[2],
       };
-      const response = await axios.post(`${backendUrl}/update-employees`, {
-        organizationId: data.organizationId,
-        EmployeeId: data.employeeData.EmployeeId,
-        EmployeeProfile: data.employeeData.EmployeeProfile,
-        EmployeeEmail: data.employeeData.EmployeeEmail,
-        EmployeeRole: data.employeeData.EmployeeRole,
-        EmployeeStatus: data.employeeData.EmployeeStatus,
-      });
+      const token = localStorage.getItem("access_token");
+      const response = await axios.post(
+        `${backendUrl}/employees/update-employees`,
+        {
+          organizationId: data.organizationId,
+          EmployeeId: data.employeeData.EmployeeId,
+          EmployeeProfile: data.employeeData.EmployeeProfile,
+          EmployeeEmail: data.employeeData.EmployeeEmail,
+          EmployeeRole: data.employeeData.EmployeeRole,
+          EmployeeStatus: data.employeeData.EmployeeStatus,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
       if (response.status === 200) {
         showToast("Employee data updated successfully", "success");

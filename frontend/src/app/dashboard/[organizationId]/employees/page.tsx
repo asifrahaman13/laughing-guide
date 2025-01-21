@@ -35,9 +35,20 @@ const Page: React.FC = () => {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
       setPageLoading(true);
       try {
+        const token = localStorage.getItem("access_token");
         const [employeesResponse, statsResponse] = await Promise.all([
-          axios.get(`${backendUrl}/employees`, { params: { organizationId } }),
-          axios.get(`${backendUrl}/aggregate`, { params: { organizationId } }),
+          axios.get(`${backendUrl}/employees/employees`, {
+            params: { organizationId },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          axios.get(`${backendUrl}/employees/aggregate`, {
+            params: { organizationId },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
         ]);
 
         setEmployees(employeesResponse.data);
@@ -60,9 +71,17 @@ const Page: React.FC = () => {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
     setButtonLoading(true);
     try {
-      const response = await axios.get(`${backendUrl}/calculate-payroll`, {
-        params: { organizationId },
-      });
+      const token = localStorage.getItem("access_token");
+
+      const response = await axios.get(
+        `${backendUrl}/employees/calculate-payroll`,
+        {
+          params: { organizationId },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       if (response.status === 200) {
         showToast("Payroll generated successfully", "success");
       }
@@ -78,7 +97,7 @@ const Page: React.FC = () => {
     const access_token = localStorage.getItem("access_token");
     try {
       const response = await axios.post(
-        `${backendUrl}/delete-organization`,
+        `${backendUrl}/organizations/delete-organization`,
         { organizationId },
         {
           headers: {
@@ -100,8 +119,12 @@ const Page: React.FC = () => {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
     setButtonLoading(true);
     try {
-      const response = await axios.get(`${backendUrl}/csv-file`, {
+      const token = localStorage.getItem("access_token");
+      const response = await axios.get(`${backendUrl}/files/csv-file`, {
         params: { key: organizationId },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (response.status === 200) {
         const presignedUrl = response.data.presigned_url;
