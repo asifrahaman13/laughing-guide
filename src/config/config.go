@@ -11,16 +11,16 @@ import (
 )
 
 type Config struct {
-	DBUser     string `yaml:"-"`
-	DBPassword string `yaml:"-"`
-	DBName     string `yaml:"db_name"`
-	DBHost     string `yaml:"-"`
-	DBPort     string `yaml:"-"`
-	DBSSLMode  string `yaml:"-"`
-	GinMode    string `yaml:"-"`
-	Port       string `yaml:"port"`
-	AwsRegion  string `yaml:"-"`
-	JWTSecretKey  string `yaml:"jwt_secret"`
+	DBUser       string `yaml:"-"`
+	DBPassword   string `yaml:"-"`
+	DBName       string `yaml:"db_name"`
+	DBHost       string `yaml:"-"`
+	DBPort       string `yaml:"-"`
+	DBSSLMode    string `yaml:"-"`
+	GinMode      string `yaml:"-"`
+	Port         string `yaml:"port"`
+	AwsRegion    string `yaml:"-"`
+	JWTSecretKey string `yaml:"jwt_secret"`
 }
 
 func LoadConfig() (*Config, error) {

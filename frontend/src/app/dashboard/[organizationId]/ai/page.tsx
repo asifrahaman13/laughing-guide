@@ -7,6 +7,8 @@ import { useDispatch } from "react-redux";
 
 import { setHistory } from "@/lib/features/conversationSlice";
 import axios from "axios";
+import { useToast } from "@/app/hooks/useToast";
+import Toast from "@/app/components/toasts/Toast";
 
 export default function Chat() {
   const db = "sqlite";
@@ -15,6 +17,7 @@ export default function Chat() {
     message: "",
     status: false,
   });
+  const { toast, showToast } = useToast();
 
   const dispatch = useDispatch();
 
@@ -90,6 +93,7 @@ export default function Chat() {
         trainValue,
       );
       if (response.status === 200) {
+        showToast("Data added to be trained successfully", "success");
         setTimeout(() => {}, 1500);
       }
     } catch {
@@ -99,6 +103,7 @@ export default function Chat() {
 
   return (
     <React.Fragment>
+      {toast && <Toast message={toast.message} type={toast.type} />}
       <div className="flex flex-col h-screen overflow-y-hidden">
         <div className="bg-white px-6 py-6">
           <div className="text-xl font-medium text-gray-800">Kelick AI</div>

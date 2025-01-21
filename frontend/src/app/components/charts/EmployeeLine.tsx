@@ -7,7 +7,7 @@ type EmployeeStatisticsProps = {
   employeeType: EmploymentType | null;
 };
 
-const colors = [ "#02b9b0", "#fac905","#b774fc", "#b3bebe" ];
+const colors = ["#02b9b0", "#fac905", "#b774fc", "#b3bebe"];
 
 function LineChart({ portions }: { portions: number[] }) {
   return (

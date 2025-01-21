@@ -16,7 +16,7 @@ services:
     networks:
       - laughing-network
     environment:
-      POSTGRES_DB: mydata
+      POSTGRES_DB: postgres 
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     volumes:

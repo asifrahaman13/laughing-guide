@@ -1,2 +1,2 @@
-db_name: mydata
+db_name: postgres 
 port: "8000"

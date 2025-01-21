@@ -80,7 +80,7 @@ const Page: React.FC = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       if (response.status === 200) {
         showToast("Payroll generated successfully", "success");
@@ -104,7 +104,7 @@ const Page: React.FC = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${access_token}`,
           },
-        }
+        },
       );
       if (response.status === 200) {
         showToast("Organization deleted successfully", "success");

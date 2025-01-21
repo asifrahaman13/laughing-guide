@@ -165,7 +165,6 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 	})
 }
 
-
 func (h *EmployeeHandler) ValidateTokenHandler(c *gin.Context) {
 	token := c.Query("token")
 	fmt.Println(token)
@@ -186,8 +185,6 @@ func (h *EmployeeHandler) ValidateTokenHandler(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"email": email, "name": userName})
 }
-
-
 
 func (h *EmployeeHandler) GetSingleOrganizationHandler(c *gin.Context) {
 	token := c.Query("token")

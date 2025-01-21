@@ -1,6 +1,6 @@
 # Application settings
 app:
-  title: "Aldrax"
+  title: "laughing-guide"
   version: "1.0.0"
   description: "Application to query on sql databases."
 

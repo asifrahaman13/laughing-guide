@@ -2,7 +2,7 @@
 
 Thanks for opting to contribute to this repository. Please go through the following instructions to contribute. Make sure you have python, go, node, docker etc installed in your system.
 
-Make sure you are running vector database. Either you can use their servie or you cal use it locally.
+Make sure you are running vector database. Either you can use their service or you can use it locally.
 
 ```bash
 docker pull qdrant/qdrant

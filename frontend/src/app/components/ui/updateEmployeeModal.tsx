@@ -52,7 +52,7 @@ const UpdateEmployeeModal = () => {
   }, [employeeData]);
 
   const handleSelectionChange = (
-    person: React.SetStateAction<{ id: number; name: string }>
+    person: React.SetStateAction<{ id: number; name: string }>,
   ) => {
     setSelected(person);
     dispatch(updateemploeeData({ key: "EmployeeStatus", value: person.name }));
@@ -80,7 +80,7 @@ const UpdateEmployeeModal = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (response.status === 200) {
@@ -123,7 +123,7 @@ const UpdateEmployeeModal = () => {
                   updateemploeeData({
                     key: "EmployeeRole",
                     value: e.target.value,
-                  })
+                  }),
                 )
               }
             />
@@ -135,7 +135,7 @@ const UpdateEmployeeModal = () => {
                   updateemploeeData({
                     key: "EmployeeEmail",
                     value: e.target.value,
-                  })
+                  }),
                 )
               }
             />
@@ -147,7 +147,7 @@ const UpdateEmployeeModal = () => {
                   updateemploeeData({
                     key: "EmployeeProfile",
                     value: e.target.value,
-                  })
+                  }),
                 )
               }
             />
