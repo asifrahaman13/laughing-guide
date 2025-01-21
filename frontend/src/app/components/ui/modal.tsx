@@ -70,6 +70,7 @@ export default function Modal() {
         const response = await uploadFile(file);
         if (response === true) {
           setProgress(100);
+          showToast("File uploaded successfully", "success");
         }
       } catch {
         showToast(

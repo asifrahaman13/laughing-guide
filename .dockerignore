@@ -1,6 +1,5 @@
 # General files and directories to ignore
 .DS_Store
-.env
 *.log
 *.swp
 *.swo
@@ -29,7 +28,6 @@ build/
 vendor/
 bin/
 pkg/
-go.sum
 go.work
 
 
