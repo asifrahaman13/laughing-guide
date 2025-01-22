@@ -19,9 +19,11 @@ async def train_model(
 ):
     extracted_token = token.split(" ")[1]
     response = auth_service.verify_token(extracted_token)
+    if response is None:
+        return Response(status_code=401, content="Unauthorized")
     try:
         response = query_service.add_data_to_vector_db(
-            train_data.user_query, train_data.sql_query, train_data.source
+            train_data.user_query, train_data.sql_query, response["email"]
         )
         if response is True:
             return Response(status_code=200, content="Data added successfully")

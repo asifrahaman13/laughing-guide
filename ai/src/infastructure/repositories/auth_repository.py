@@ -1,3 +1,4 @@
+from typing import Dict, Optional
 from jose import jwt
 from ...config.config import SECRET_KEY
 import logging
@@ -11,7 +12,7 @@ class AuthRepository:
     def __init__(self):
         pass
 
-    def verify_token(self, token: str) -> bool:
+    def verify_token(self, token: str) -> Optional[Dict[str, str]]:
         try:
             claims = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
             print(claims)

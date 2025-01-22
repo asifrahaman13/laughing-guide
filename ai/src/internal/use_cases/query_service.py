@@ -22,7 +22,9 @@ class QueryService(QueryInterface):
         self.openai_repository = openai_repository
         self.vector_db_repository = vector_db_repository
 
-    async def query_db(self, query: str) -> AsyncGenerator[Dict[str, Any], None]:
+    async def query_db(
+        self, query: str, email: str
+    ) -> AsyncGenerator[Dict[str, Any], None]:
         await asyncio.sleep(0)
         yield QueryResponse(
             message="Querying the database", answer_type="status", status=True
@@ -47,7 +49,8 @@ class QueryService(QueryInterface):
             )
         else:
             yield QueryResponse(message="Thinking", answer_type="status", status=True)
-            top_suggestions = self.vector_db_repository.query_text(query, "1")
+            logging.info(email)
+            top_suggestions = self.vector_db_repository.query_text(query, email)
 
             logging.info(f"Top suggestions: {top_suggestions}")
             query_result = self.openai_repository.get_llm_response(

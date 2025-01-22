@@ -3,6 +3,7 @@ from typing import Dict, List
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, VectorParams, Distance
 import google.generativeai as genai
+from qdrant_client.models import Filter, FieldCondition, MatchValue
 
 
 class EmbeddingService:
@@ -48,14 +49,14 @@ class QdrantService:
         self.__client.upsert(collection_name=collection_name, points=points)
 
     def search(self, query_embedding, id, limit=5):
-        # filter_condition = Filter(
-        #     must=[FieldCondition(key="id", match=MatchValue(value=id))]
-        # )
+        filter_condition = Filter(
+            must=[FieldCondition(key="source", match=MatchValue(value=id))]
+        )
         return self.__client.search(
             collection_name="sample_collection",
             query_vector=query_embedding,
             limit=limit,
-            # query_filter=filter_condition,
+            query_filter=filter_condition,
         )
 
 

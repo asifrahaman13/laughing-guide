@@ -61,6 +61,12 @@ export default function HeroSection() {
     SingleOrganization();
   }, []);
 
+  function Logout() {
+    localStorage.removeItem("access_token");
+    setIsSignedIn(false);
+    setUser(null);
+  }
+
   return (
     <header className="sticky bg-white backdrop-filter backdrop-blur-xl inset-x-0 top-0 z-50">
       <nav
@@ -96,9 +102,14 @@ export default function HeroSection() {
           <div className="inline-flex outline-none items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90">
             <Link href="#about-section">About</Link>
           </div>
-          <div className="inline-flex outline-none items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90">
-            <Link href={`/dashboard/${organization}/employees`}>Dashboard</Link>
-          </div>
+          {isSignedIn === true && (
+            <div className="inline-flex outline-none items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90">
+              <Link href={`/dashboard/${organization}/employees`}>
+                Dashboard
+              </Link>
+            </div>
+          )}
+
           <Link
             className="bg-black rounded-md font-semibold text-sm gap-2 text-white py-2 px-4 flex items-center"
             href="https://github.com/asifrahaman13/laughing-guide"
@@ -122,7 +133,12 @@ export default function HeroSection() {
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {isSignedIn === true ? (
-            <div className="text-lg font-medium">{user?.name}</div>
+            <div className="flex items-center gap-x-4">
+              <div className="text-lg font-medium">{user?.name}</div>
+              <div>
+                <button onClick={() => Logout()}>Logout</button>
+              </div>
+            </div>
           ) : (
             <Link
               href="/callback"
