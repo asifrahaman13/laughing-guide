@@ -79,7 +79,6 @@ func (s *fileService) ProcessFile(organizationId string) (bool, error) {
 			return false, fmt.Errorf("invalid bonuses value at row %d: %v", i+1, err)
 		}
 
-		// Prepare the placeholders
 		placeholder := fmt.Sprintf(
 			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d)",
 			len(values)+1, len(values)+2, len(values)+3, len(values)+4,
@@ -90,20 +89,16 @@ func (s *fileService) ProcessFile(organizationId string) (bool, error) {
 		values = append(values, organizationId, row[0], row[1], row[2], row[3], row[4],
 			row[5], salary, row[7], row[8], age, bonuses)
 
-		// Execute the batch when reaching the batch size
 		if len(placeholders) >= batchSize {
 			queryWithPlaceholders := query + strings.Join(placeholders, ", ")
 			if _, err := s.employeeRepository.Execute(queryWithPlaceholders, values...); err != nil {
 				return false, err
 			}
 
-			// Reset for the next batch
 			placeholders = nil
 			values = nil
 		}
 	}
-
-	// Execute any remaining records
 	if len(placeholders) > 0 {
 		queryWithPlaceholders := query + strings.Join(placeholders, ", ")
 		if _, err := s.employeeRepository.Execute(queryWithPlaceholders, values...); err != nil {
