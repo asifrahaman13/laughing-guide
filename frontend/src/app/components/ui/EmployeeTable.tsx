@@ -41,11 +41,13 @@ export default function EmployeeTable() {
             employee_name:
               selection.employeeName === "All" ? "" : selection.employeeName,
             employee_status:
-              selection.employeeStatus === "All"
+              selection.employeeStatus === "All Status"
                 ? ""
                 : selection.employeeStatus,
             employee_role:
-              selection.employeeRole === "All" ? "" : selection.employeeRole,
+              selection.employeeRole === "All Role"
+                ? ""
+                : selection.employeeRole,
             organizationId,
           },
           headers: {
@@ -124,6 +126,20 @@ export default function EmployeeTable() {
     }
   };
 
+  const EMPLOYEE_STATUS = [
+    { id: 0, name: "All Status" },
+    { id: 1, name: "Active" },
+    { id: 2, name: "Invite Sent" },
+    { id: 3, name: "Payroll Only" },
+  ];
+
+  const EMPLOYEE_ROLE = [
+    { id: 0, name: "All Role" },
+    { id: 1, name: "Full Time" },
+    { id: 2, name: "Contract" },
+    { id: 3, name: "Part Time" },
+    { id: 4, name: "Intern" },
+  ];
   return (
     <div className="container mx-auto p-4">
       {toast && <Toast message={toast.message} type={toast.type} />}
@@ -132,8 +148,13 @@ export default function EmployeeTable() {
         <h1 className="text-xl font-bold text-gray-700">All Employees</h1>
         <div className="flex gap-2">
           <SearchBox />
-          <DropDownBox dropDownType="employment" />
-          <DropDownBox dropDownType="roles" />
+
+          <DropDownBox
+            dropDownType="employment"
+            data={EMPLOYEE_STATUS}
+            key={0}
+          />
+          <DropDownBox dropDownType="roles" data={EMPLOYEE_ROLE} key={1} />
         </div>
       </div>
 
