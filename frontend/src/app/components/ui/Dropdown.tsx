@@ -30,7 +30,7 @@ export default function DropDownBox({ dropDownType, data }: DropDownProps) {
     } else if (dropDownType === "employment") {
       setSelected(data[0]);
     }
-  }, []);
+  }, [data, dropDownType]);
   const dispatch = useDispatch();
 
   const handleSelectionChange = (selectedOption: (typeof data)[0]) => {
