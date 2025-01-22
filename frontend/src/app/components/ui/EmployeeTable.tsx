@@ -207,7 +207,7 @@ export default function EmployeeTable() {
                 <div
                   key={heading}
                   className="p-3 font-normal text-left flex-1"
-                  style={{ minWidth: "150px" }} 
+                  style={{ minWidth: "150px" }}
                 >
                   {heading}
                 </div>
