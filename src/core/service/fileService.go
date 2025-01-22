@@ -55,13 +55,13 @@ func (s *fileService) ProcessFile(organizationId string) (bool, error) {
 	}
 	fmt.Println("CSV Records:", records)
 
-	const batchSize = 1000 
+	const batchSize = 1000
 	var values []interface{}
 	query := `INSERT INTO employees (organization_id, employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses) VALUES `
 	var placeholders []string
 
 	for i, row := range records {
-		if i == 0 { 
+		if i == 0 {
 			continue
 		}
 		fmt.Println("Processing row:", row)

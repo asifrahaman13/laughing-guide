@@ -53,9 +53,11 @@ export default function Modal() {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       if (response.status === 200) {
+        console.log("File uploaded successfully");
+        setProgress(100);
         return response.data;
       }
     } catch {
@@ -71,17 +73,16 @@ export default function Modal() {
 
     try {
       dispath(startLoading());
-      await startProgress(); 
+      await startProgress();
       const response = await uploadFile(file);
 
       if (response) {
-        setProgress(100); 
         showToast("File uploaded successfully", "success");
       }
     } catch {
       showToast(
         "Something went wrong. Please make sure your CSV file is not corrupted.",
-        "error"
+        "error",
       );
     } finally {
       dispath(stopLoading()); // Ensure loading is stopped in all cases
@@ -119,7 +120,7 @@ export default function Modal() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       if (response.status === 200) {
         const presignedUrl = response.data.presigned_url;
@@ -157,7 +158,7 @@ export default function Modal() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         if (response.data === true) {
           router.push(`/dashboard/${pathname.split("/")[2]}/employees`);
@@ -165,7 +166,7 @@ export default function Modal() {
       } catch {
         showToast(
           "Something went wrong. Please make sure your CSV file is no currupted.",
-          "error"
+          "error",
         );
       } finally {
         dispath(closeModal());
