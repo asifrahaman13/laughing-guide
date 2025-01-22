@@ -13,7 +13,7 @@ const ButtonSpinner: React.FC<ButtonSpinnerProps> = ({
   buttonType = "primary",
   text = "Loading...",
   isLoading = true,
-  spinnerSize = 16,
+  spinnerSize = 6,
   onClick,
   customStyles = "",
 }) => {
@@ -24,7 +24,7 @@ const ButtonSpinner: React.FC<ButtonSpinnerProps> = ({
 
   return (
     <button
-      className={`font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center gap-2 ${baseStyles} ${customStyles}`}
+      className={`font-medium rounded-lg text-sm px-5 py-2.5 max-h-4 inline-flex items-center gap-2 ${baseStyles} ${customStyles}`}
       onClick={onClick}
       disabled={isLoading}
     >

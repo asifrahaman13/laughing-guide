@@ -187,13 +187,13 @@ const Page: React.FC = () => {
               {buttonLoading ? (
                 <ButtonSpinner buttonType="primary" />
               ) : (
-                <>
+                <div className="max-h-10 flex gap-2 items-center">
                   <img
                     src="/images/employees/payroll.svg"
                     alt="Generate Payroll"
                   />
                   <div className="text-white">Generate Payroll</div>
-                </>
+                </div>
               )}
             </button>
           </div>

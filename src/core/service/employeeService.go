@@ -18,6 +18,8 @@ func NewEmployeeService(employeeRepository repository.DatabaseRepository) ports.
 	return &employeeService{employeeRepository}
 }
 
+const maxParameters = 65535
+
 func (s *employeeService) CalculatePayroll(organizationId string) ([]domain.PayrollData, error) {
 	rows, err := s.employeeRepository.Execute("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees WHERE organization_id = $1", organizationId)
 	if err != nil {
@@ -43,6 +45,9 @@ func (s *employeeService) CalculatePayroll(organizationId string) ([]domain.Payr
         INSERT INTO payroll_data
         (employee_id, gross_salary, net_salary, employee_contribution, employer_contribution, total_contribution, bonuses)
         VALUES `
+
+	batchSize := maxParameters / 7 // 7 parameters per row
+	var batchCount int
 
 	for rows.Next() {
 		var employee domain.Employee
@@ -75,12 +80,30 @@ func (s *employeeService) CalculatePayroll(organizationId string) ([]domain.Payr
 
 		insertQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d), ", len(insertValues)+1, len(insertValues)+2, len(insertValues)+3, len(insertValues)+4, len(insertValues)+5, len(insertValues)+6, len(insertValues)+7)
 		insertValues = append(insertValues, employee.EmployeeID, grossSalary, netSalary, cpf.EmployeeContribution, cpf.EmployerContribution, cpf.TotalContribution, bonuses)
+
+		batchCount++
+		if batchCount >= batchSize {
+			insertQuery = insertQuery[:len(insertQuery)-2] // Remove last comma and space
+			if _, err = tx.Exec(insertQuery+" ON CONFLICT (employee_id) DO UPDATE SET gross_salary = EXCLUDED.gross_salary, net_salary = EXCLUDED.net_salary, employee_contribution = EXCLUDED.employee_contribution, employer_contribution = EXCLUDED.employer_contribution, total_contribution = EXCLUDED.total_contribution, bonuses = EXCLUDED.bonuses", insertValues...); err != nil {
+				return nil, err
+			}
+
+			// Reset for the next batch
+			insertQuery = `
+            INSERT INTO payroll_data
+            (employee_id, gross_salary, net_salary, employee_contribution, employer_contribution, total_contribution, bonuses)
+            VALUES `
+			insertValues = nil
+			batchCount = 0
+		}
 	}
 
-	insertQuery = insertQuery[:len(insertQuery)-2]
-	_, err = tx.Exec(insertQuery+" ON CONFLICT (employee_id) DO UPDATE SET gross_salary = EXCLUDED.gross_salary, net_salary = EXCLUDED.net_salary, employee_contribution = EXCLUDED.employee_contribution, employer_contribution = EXCLUDED.employer_contribution, total_contribution = EXCLUDED.total_contribution, bonuses = EXCLUDED.bonuses", insertValues...)
-	if err != nil {
-		return nil, err
+	// Insert any remaining values
+	if batchCount > 0 {
+		insertQuery = insertQuery[:len(insertQuery)-2] // Remove last comma and space
+		if _, err = tx.Exec(insertQuery+" ON CONFLICT (employee_id) DO UPDATE SET gross_salary = EXCLUDED.gross_salary, net_salary = EXCLUDED.net_salary, employee_contribution = EXCLUDED.employee_contribution, employer_contribution = EXCLUDED.employer_contribution, total_contribution = EXCLUDED.total_contribution, bonuses = EXCLUDED.bonuses", insertValues...); err != nil {
+			return nil, err
+		}
 	}
 
 	if err = rows.Err(); err != nil {

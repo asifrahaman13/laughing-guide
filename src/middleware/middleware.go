@@ -36,7 +36,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		fmt.Println("Access token: ", accessToken)
 		userName, err := helper.ValidateJWT(accessToken)
 		if err != nil {
-			helper.JSONResponse(c, http.StatusUnauthorized, "Unauthorized", nil)
+			helper.JSONResponse(c, http.StatusUnauthorized, "Unauthorized token", nil)
 			c.Abort()
 			return
 		}

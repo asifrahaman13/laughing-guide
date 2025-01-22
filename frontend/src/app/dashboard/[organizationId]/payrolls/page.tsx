@@ -6,6 +6,11 @@ import React from "react";
 import { EmployeeSalaryDetails } from "@/app/types/dashboard";
 import { usePathname } from "next/navigation";
 import InProgress from "@/app/components/ui/InProgress";
+import { useDispatch } from "react-redux";
+import { startLoading, stopLoading } from "@/lib/features/spinnerSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
+import Spinner from "@/app/components/ui/Spinner";
 
 const EmployeeRow: React.FC<{ employee: EmployeeSalaryDetails }> = ({
   employee,
@@ -38,9 +43,12 @@ export default function Page() {
   const [payrollData, setPayrollData] = React.useState<
     EmployeeSalaryDetails[] | null
   >(null);
+  const dispatch = useDispatch();
+  const loading = useSelector((state: RootState) => state.spinner.isLoading);
 
   React.useEffect(() => {
     async function fetchPayrollId() {
+      dispatch(startLoading());
       try {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
         const token = localStorage.getItem("access_token");
@@ -54,13 +62,14 @@ export default function Page() {
         );
         if (response.data) {
           setPayrollData(response.data);
+          dispatch(stopLoading());
         }
       } catch {
         console.log("Error fetching data");
       }
     }
     fetchPayrollId();
-  }, [pathname]);
+  }, [dispatch, pathname]);
 
   const downloadCSV = () => {
     if (!payrollData) return;
@@ -103,6 +112,10 @@ export default function Page() {
     link.click();
     document.body.removeChild(link);
   };
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   if (payrollData === null) {
     return (
