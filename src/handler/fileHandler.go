@@ -17,7 +17,6 @@ func NewFileHandler(fileService ports.FileService) *FileHandler {
 }
 func (h *FileHandler) UploadHandler(c *gin.Context) {
 	file, err := c.FormFile("file")
-
 	organizationId := c.PostForm("organizationId")
 	fmt.Println(organizationId)
 	if err != nil {

@@ -110,6 +110,7 @@ export default function Layout({ children }: LayoutProps) {
         },
       );
       if (response.status === 200) {
+        console.log(response.data);
         setOrganizations([...organizations, response.data]);
         showToast("Organization added successfully", "success");
         router.push(`/dashboard/${response.data.organizationId}/employees`);

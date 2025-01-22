@@ -332,7 +332,7 @@ func (s *employeeService) UpdateEmployees(employee domain.Employee, organization
 		setClauses = append(setClauses, fmt.Sprintf("employee_profile=$%d", len(params)+1))
 		params = append(params, employee.EmployeeProfile)
 	}
-	if employee.EmployeeName!= "" {
+	if employee.EmployeeName != "" {
 		setClauses = append(setClauses, fmt.Sprintf("employee_name=$%d", len(params)+1))
 		params = append(params, employee.EmployeeName)
 	}

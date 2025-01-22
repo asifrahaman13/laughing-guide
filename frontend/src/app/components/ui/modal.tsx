@@ -22,19 +22,22 @@ export default function Modal() {
   const [progress, setProgress] = useState<number>(0);
 
   async function startProgress() {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 1000);
+    setProgress(0);
+    return new Promise((resolve) => {
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            resolve(true);
+            return 100;
+          }
+          return prev + 5;
+        });
+      }, 1000);
+    });
   }
 
   const uploadFile = async (file: File) => {
-    startProgress();
     const formData = new FormData();
     formData.append("file", file);
     formData.append("organizationId", pathname.split("/")[2]);
@@ -50,7 +53,7 @@ export default function Modal() {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
       if (response.status === 200) {
         return response.data;
@@ -61,23 +64,27 @@ export default function Modal() {
   };
 
   const UploadFile = async (file: File | null) => {
-    if (file === null) {
+    if (!file) {
       alert("No file selected");
+      return;
     }
-    if (file) {
-      try {
-        dispath(startLoading());
-        const response = await uploadFile(file);
-        if (response === true) {
-          setProgress(100);
-          showToast("File uploaded successfully", "success");
-        }
-      } catch {
-        showToast(
-          "Something went wrong. Please make sure your CSV file is no currupted.",
-          "error",
-        );
+
+    try {
+      dispath(startLoading());
+      await startProgress(); 
+      const response = await uploadFile(file);
+
+      if (response) {
+        setProgress(100); 
+        showToast("File uploaded successfully", "success");
       }
+    } catch {
+      showToast(
+        "Something went wrong. Please make sure your CSV file is not corrupted.",
+        "error"
+      );
+    } finally {
+      dispath(stopLoading()); // Ensure loading is stopped in all cases
     }
   };
 
@@ -112,7 +119,7 @@ export default function Modal() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
       if (response.status === 200) {
         const presignedUrl = response.data.presigned_url;
@@ -137,6 +144,7 @@ export default function Modal() {
     }
     if (file) {
       try {
+        dispath(closeModal());
         dispath(startLoading());
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
         const token = localStorage.getItem("access_token");
@@ -149,16 +157,15 @@ export default function Modal() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          },
+          }
         );
         if (response.data === true) {
-          dispath(closeModal());
           router.push(`/dashboard/${pathname.split("/")[2]}/employees`);
         }
       } catch {
         showToast(
           "Something went wrong. Please make sure your CSV file is no currupted.",
-          "error",
+          "error"
         );
       } finally {
         dispath(closeModal());
@@ -166,6 +173,12 @@ export default function Modal() {
       }
     }
   }
+
+  React.useEffect(() => {
+    if (modal.isOpen) {
+      setProgress(0);
+    }
+  }, [modal.isOpen]);
 
   return (
     <React.Fragment>
@@ -189,7 +202,6 @@ export default function Modal() {
                   <p className="text-sm text-gray-500">
                     Drag and drop your files here
                   </p>
-
                   <label
                     htmlFor="fileInput"
                     className="mt-2 inline-block px-4 py-2 cursor-pointer"
@@ -204,10 +216,19 @@ export default function Modal() {
                   />
                 </div>
               ) : (
-                <div className="w-full bg-white">
-                  <div
-                    className={`bg-lime-green h-8 rounded-md w-[${progress}%]`}
-                  ></div>
+                <div className="w-full flex gap-4 flex-col items-center">
+                  <div className="w-full bg-gray-200">
+                    <div
+                      className="bg-lime-green h-6 rounded-md"
+                      style={{
+                        width: `${progress}%`,
+                        transition: "width 0.5s ease-in-out",
+                      }}
+                    ></div>
+                  </div>
+                  <div className="w-full flex text-gray-800 justify-center">
+                    Please wait while we uplaod your file...
+                  </div>
                 </div>
               )}
 
@@ -240,7 +261,7 @@ export default function Modal() {
                     onClick={() => DownloadSampleCsv()}
                   >
                     <img src="/images/dashboard/download.svg" alt="" />
-                    <div> Download XLSX</div>
+                    <div> Download CSV</div>
                   </button>
                 )}
               </div>
