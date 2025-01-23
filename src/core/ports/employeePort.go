@@ -5,13 +5,14 @@ import (
 )
 
 type EmployeeService interface {
-	CalculatePayroll(organizationId string) ([]domain.PayrollData, error)
-	AllPayroll(organizationId string) ([]domain.EmployeePayrolls, error)
-	AllEmployees(organationId string) ([]domain.Employee, error)
-	EmployeeStatistics(organizationId string) (map[string]interface{}, error)
-	FilterEmployees(employeeName string, employeeStatus string, employeeRole string, organizationId string) ([]domain.Employee, error)
-	UpdateEmployees(employee domain.Employee, organizationId string) ([]domain.Employee, error)
-	DeleteEmployees(employeeIds []string, organizationId string) ([]domain.Employee, error)
+	ValidateOrganization(organizationId string, organizationEmail string) error
+	CalculatePayroll(organizationId string, organizationEmail string) ([]domain.PayrollData, error)
+	AllPayroll(organizationId string, organizationEmail string) ([]domain.EmployeePayrolls, error)
+	AllEmployees(organationId string, organizationEmail string) ([]domain.Employee, error)
+	EmployeeStatistics(organizationId string, organizationEmail string) (map[string]interface{}, error)
+	FilterEmployees(employeeName string, employeeStatus string, employeeRole string, organizationId string, organizationEmail string) ([]domain.Employee, error)
+	UpdateEmployees(employee domain.Employee, organizationId string, organizationEmail string) ([]domain.Employee, error)
+	DeleteEmployees(employeeIds []string, organizationId string, organizationEmail string) ([]domain.Employee, error)
 	GetSingleOrganization(organizationEmail string) (domain.Organizations, error)
 	GetOrganizations(organizationEmail string) ([]domain.Organizations, error)
 	CreateOrganization(organizationEmail string, organizationName string) (domain.Organizations, error)

@@ -35,7 +35,7 @@ export default function Modal() {
           }
           return prev + 5;
         });
-      }, 100);
+      }, 1000);
     });
   }
 

@@ -34,14 +34,14 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 		accessToken := parts[1]
 		fmt.Println("Access token: ", accessToken)
-		userName, err := helper.ValidateJWT(accessToken)
+		credentaials, err := helper.ValidateJWT(accessToken)
 		if err != nil {
 			helper.JSONResponse(c, http.StatusUnauthorized, "Unauthorized token", nil)
 			c.Abort()
 			return
 		}
-		fmt.Println("User email: ", userName)
-		c.Set("username", userName)
+		fmt.Println("User email: ", credentaials["email"])
+		c.Set("email", credentaials["email"])
 		c.Next()
 	}
 }

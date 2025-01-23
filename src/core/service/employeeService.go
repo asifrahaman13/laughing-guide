@@ -20,7 +20,27 @@ func NewEmployeeService(employeeRepository repository.DatabaseRepository) ports.
 
 const maxParameters = 65535
 
-func (s *employeeService) CalculatePayroll(organizationId string) ([]domain.PayrollData, error) {
+func (s *employeeService) ValidateOrganization(organizationId string, organizationEmail string) error {
+	var count int
+	err := s.employeeRepository.QueryRow(`
+        SELECT COUNT(*)
+        FROM organizations
+        WHERE organization_id = $1 AND organization_email = $2
+    `, organizationId, organizationEmail).Scan(&count)
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return fmt.Errorf("organization email does not belong to the organization ID")
+	}
+	return nil
+}
+
+func (s *employeeService) CalculatePayroll(organizationId string, organizationEmail string) ([]domain.PayrollData, error) {
+	if err := s.ValidateOrganization(organizationId, organizationEmail); err != nil {
+		return nil, err
+	}
+
 	rows, err := s.employeeRepository.Execute("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees WHERE organization_id = $1", organizationId)
 	if err != nil {
 		return nil, err
@@ -46,7 +66,7 @@ func (s *employeeService) CalculatePayroll(organizationId string) ([]domain.Payr
         (employee_id, gross_salary, net_salary, employee_contribution, employer_contribution, total_contribution, bonuses)
         VALUES `
 
-	batchSize := maxParameters / 7 // 7 parameters per row
+	batchSize := maxParameters / 7
 	var batchCount int
 
 	for rows.Next() {
@@ -83,12 +103,11 @@ func (s *employeeService) CalculatePayroll(organizationId string) ([]domain.Payr
 
 		batchCount++
 		if batchCount >= batchSize {
-			insertQuery = insertQuery[:len(insertQuery)-2] // Remove last comma and space
+			insertQuery = insertQuery[:len(insertQuery)-2]
 			if _, err = tx.Exec(insertQuery+" ON CONFLICT (employee_id) DO UPDATE SET gross_salary = EXCLUDED.gross_salary, net_salary = EXCLUDED.net_salary, employee_contribution = EXCLUDED.employee_contribution, employer_contribution = EXCLUDED.employer_contribution, total_contribution = EXCLUDED.total_contribution, bonuses = EXCLUDED.bonuses", insertValues...); err != nil {
 				return nil, err
 			}
 
-			// Reset for the next batch
 			insertQuery = `
             INSERT INTO payroll_data
             (employee_id, gross_salary, net_salary, employee_contribution, employer_contribution, total_contribution, bonuses)
@@ -98,9 +117,8 @@ func (s *employeeService) CalculatePayroll(organizationId string) ([]domain.Payr
 		}
 	}
 
-	// Insert any remaining values
 	if batchCount > 0 {
-		insertQuery = insertQuery[:len(insertQuery)-2] // Remove last comma and space
+		insertQuery = insertQuery[:len(insertQuery)-2]
 		if _, err = tx.Exec(insertQuery+" ON CONFLICT (employee_id) DO UPDATE SET gross_salary = EXCLUDED.gross_salary, net_salary = EXCLUDED.net_salary, employee_contribution = EXCLUDED.employee_contribution, employer_contribution = EXCLUDED.employer_contribution, total_contribution = EXCLUDED.total_contribution, bonuses = EXCLUDED.bonuses", insertValues...); err != nil {
 			return nil, err
 		}
@@ -137,7 +155,10 @@ func (s *employeeService) GetSingleOrganization(organizationEmail string) (domai
 
 }
 
-func (s *employeeService) AllPayroll(organizationId string) ([]domain.EmployeePayrolls, error) {
+func (s *employeeService) AllPayroll(organizationId string, organizationEmail string) ([]domain.EmployeePayrolls, error) {
+	if err := s.ValidateOrganization(organizationId, organizationEmail); err != nil {
+		return nil, err
+	}
 	rows, err := s.employeeRepository.Execute(`
         SELECT
             p.employee_id,
@@ -186,8 +207,10 @@ func (s *employeeService) AllPayroll(organizationId string) ([]domain.EmployeePa
 	return payrollResults, nil
 }
 
-func (s *employeeService) AllEmployees(organizationId string) ([]domain.Employee, error) {
-	fmt.Println(organizationId)
+func (s *employeeService) AllEmployees(organizationId string, organizationEmail string) ([]domain.Employee, error) {
+	if err := s.ValidateOrganization(organizationId, organizationEmail); err != nil {
+		return nil, err
+	}
 
 	rows, err := s.employeeRepository.Execute("SELECT employee_id, employee_profile, employee_email, employee_name, employee_role, employee_status, employee_salary, employee_job_type, employee_resident, employee_age, bonuses FROM employees WHERE organization_id = $1", organizationId)
 	if err != nil {
@@ -213,7 +236,11 @@ func (s *employeeService) AllEmployees(organizationId string) ([]domain.Employee
 	return employees, nil
 }
 
-func (s *employeeService) EmployeeStatistics(organizationId string) (map[string]interface{}, error) {
+func (s *employeeService) EmployeeStatistics(organizationId string, organizationEmail string) (map[string]interface{}, error) {
+	if err := s.ValidateOrganization(organizationId, organizationEmail); err != nil {
+		return nil, err
+	}
+
 	rows, err := s.employeeRepository.Execute("SELECT employee_resident, employee_job_type, employee_status FROM employees WHERE organization_id = $1", organizationId)
 
 	if err != nil {
@@ -307,7 +334,10 @@ func (s *employeeService) EmployeeStatistics(organizationId string) (map[string]
 	}, nil
 }
 
-func (s *employeeService) FilterEmployees(employeeName string, employeeStatus string, employeeJobType string, organizationId string) ([]domain.Employee, error) {
+func (s *employeeService) FilterEmployees(employeeName string, employeeStatus string, employeeJobType string, organizationId string, organizationEmail string) ([]domain.Employee, error) {
+	if err := s.ValidateOrganization(organizationId, organizationEmail); err != nil {
+		return nil, err
+	}
 	query := `
         SELECT employee_id, employee_profile, employee_email, employee_name, employee_role,
                employee_status, employee_salary, employee_job_type, employee_resident,
@@ -346,8 +376,10 @@ func (s *employeeService) FilterEmployees(employeeName string, employeeStatus st
 	return result, nil
 }
 
-func (s *employeeService) UpdateEmployees(employee domain.Employee, organizationId string) ([]domain.Employee, error) {
-	fmt.Println(employee)
+func (s *employeeService) UpdateEmployees(employee domain.Employee, organizationId string, organizationEmail string) ([]domain.Employee, error) {
+	if err := s.ValidateOrganization(organizationId, organizationEmail); err != nil {
+		return nil, err
+	}
 	var params []interface{}
 	query := "UPDATE employees SET "
 	var setClauses []string
@@ -385,10 +417,13 @@ func (s *employeeService) UpdateEmployees(employee domain.Employee, organization
 	if err != nil {
 		return nil, err
 	}
-	return s.AllEmployees(organizationId)
+	return s.AllEmployees(organizationId, organizationEmail)
 }
 
-func (s *employeeService) DeleteEmployees(employeeIds []string, organizationId string) ([]domain.Employee, error) {
+func (s *employeeService) DeleteEmployees(employeeIds []string, organizationId string, organizationEmail string) ([]domain.Employee, error) {
+	if err := s.ValidateOrganization(organizationId, organizationEmail); err != nil {
+		return nil, err
+	}
 	ids := "'" + strings.Join(employeeIds, "','") + "'"
 	query := fmt.Sprintf("DELETE FROM employees WHERE employee_id IN (%s) AND organization_id='%s'", ids, organizationId)
 	_, err := s.employeeRepository.Execute(query)
@@ -495,6 +530,9 @@ func (s *employeeService) CreateOrganization(organizationEmail string, organizat
 }
 
 func (s *employeeService) DeleteOrganization(organizationId string, organizationEmail string) (domain.Organizations, error) {
+	if err := s.ValidateOrganization(organizationId, organizationEmail); err != nil {
+		return domain.Organizations{}, err
+	}
 	rows, err := s.employeeRepository.Execute("DELETE FROM organizations WHERE organization_id = $1 RETURNING organization_id, organization_name, organization_email", organizationId)
 	if err != nil {
 		return domain.Organizations{}, err

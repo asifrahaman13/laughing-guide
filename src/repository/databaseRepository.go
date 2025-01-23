@@ -6,6 +6,7 @@ import (
 
 type DatabaseRepository interface {
 	Execute(query string, args ...interface{}) (*sql.Rows, error)
+	QueryRow(query string, args ...interface{}) *sql.Row
 	BeginTransaction() (*sql.Tx, error)
 }
 
@@ -23,6 +24,10 @@ func (r *databaseRepository) Execute(query string, args ...interface{}) (*sql.Ro
 		return nil, err
 	}
 	return rows, nil
+}
+
+func (r *databaseRepository) QueryRow(query string, args ...interface{}) *sql.Row {
+	return r.db.QueryRow(query, args...)
 }
 
 func (r *databaseRepository) BeginTransaction() (*sql.Tx, error) {

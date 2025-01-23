@@ -24,7 +24,13 @@ func NewEmployeeHandler(service ports.EmployeeService) *EmployeeHandler {
 
 func (h *EmployeeHandler) CalculatePayrollHandler(c *gin.Context) {
 	organizationId := c.Query("organizationId")
-	result, err := h.service.CalculatePayroll(organizationId)
+	organizationEmail, exists := c.Get("email")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	fmt.Println(organizationEmail)
+	result, err := h.service.CalculatePayroll(organizationId, organizationEmail.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -34,7 +40,12 @@ func (h *EmployeeHandler) CalculatePayrollHandler(c *gin.Context) {
 
 func (h *EmployeeHandler) FetchPayrollHandler(c *gin.Context) {
 	organizationId := c.Query("organizationId")
-	result, err := h.service.AllPayroll(organizationId)
+	organizationEmail, exists := c.Get("email")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	result, err := h.service.AllPayroll(organizationId, organizationEmail.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -44,7 +55,12 @@ func (h *EmployeeHandler) FetchPayrollHandler(c *gin.Context) {
 
 func (h *EmployeeHandler) GetEmployeesHandler(c *gin.Context) {
 	organizationId := c.Query("organizationId")
-	result, err := h.service.AllEmployees(organizationId)
+	organizationEmail, exists := c.Get("email")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	result, err := h.service.AllEmployees(organizationId, organizationEmail.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -54,7 +70,12 @@ func (h *EmployeeHandler) GetEmployeesHandler(c *gin.Context) {
 
 func (h *EmployeeHandler) GetEmployeeStatisticsHandler(c *gin.Context) {
 	organizationId := c.Query("organizationId")
-	result, err := h.service.EmployeeStatistics(organizationId)
+	organizationEmail, exists := c.Get("email")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	result, err := h.service.EmployeeStatistics(organizationId, organizationEmail.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -67,8 +88,13 @@ func (h *EmployeeHandler) FilterEmployees(c *gin.Context) {
 	employeeName := c.Query("employee_name")
 	employeeStatus := c.Query("employee_status")
 	employeeRole := c.Query("employee_role")
+	organizationEmail, exists := c.Get("email")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
 	fmt.Println(employeeName, employeeStatus, employeeRole)
-	result, err := h.service.FilterEmployees(employeeName, employeeStatus, employeeRole, organizationId)
+	result, err := h.service.FilterEmployees(employeeName, employeeStatus, employeeRole, organizationId, organizationEmail.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -78,7 +104,12 @@ func (h *EmployeeHandler) FilterEmployees(c *gin.Context) {
 
 func (h *EmployeeHandler) FetchPayrollHandlerc(c *gin.Context) {
 	organizationId := c.Query("organizationId")
-	result, err := h.service.AllPayroll(organizationId)
+	organizationEmail, exists := c.Get("email")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	result, err := h.service.AllPayroll(organizationId, organizationEmail.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -94,7 +125,12 @@ func (h *EmployeeHandler) UpdateEmployeeHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	result, err := h.service.UpdateEmployees(request, request.OrganizationID)
+	organizationEmail, exists := c.Get("email")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	result, err := h.service.UpdateEmployees(request, request.OrganizationID, organizationEmail.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -110,8 +146,13 @@ func (h *EmployeeHandler) DeleteEmployeeHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	organizationEmail, exists := c.Get("email")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
 
-	result, err := h.service.DeleteEmployees(request.EmployeeIds, organizationId)
+	result, err := h.service.DeleteEmployees(request.EmployeeIds, organizationId, organizationEmail.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
