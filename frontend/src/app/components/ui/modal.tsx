@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 import { closeModal } from "@/lib/features/modalSlice";
 import { RootState } from "@/lib/store";
@@ -34,7 +35,7 @@ export default function Modal() {
           }
           return prev + 5;
         });
-      }, 1000);
+      }, 100);
     });
   }
 
@@ -75,8 +76,10 @@ export default function Modal() {
 
     try {
       dispath(startLoading());
-      await startProgress();
-      const response = await uploadFile(file);
+      const [_, response] = await Promise.all([
+        startProgress(),
+        uploadFile(file),
+      ]);
 
       if (response) {
         showToast("File uploaded successfully", "success");
@@ -176,10 +179,13 @@ export default function Modal() {
       }
     }
   }
-
   React.useEffect(() => {
     if (modal.isOpen) {
       setProgress(0);
+    } else {
+      // Cleanup code when modal is closed
+      setProgress(0);
+      setUploaded(false);
     }
   }, [modal.isOpen]);
 
