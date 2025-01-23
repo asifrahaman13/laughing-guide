@@ -74,7 +74,7 @@ const Page: React.FC = () => {
       const token = localStorage.getItem("access_token");
 
       const response = await axios.get(
-        `${backendUrl}/employees/calculate-payroll`,
+        `${backendUrl}/organizations/calculate-payroll`,
         {
           params: { organizationId },
           headers: {

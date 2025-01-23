@@ -53,7 +53,7 @@ export default function Page() {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
         const token = localStorage.getItem("access_token");
         const response = await axios.get(
-          `${backendUrl}/employees/payroll?organizationId=${pathname.split("/")[2]}`,
+          `${backendUrl}/organizations/payroll?organizationId=${pathname.split("/")[2]}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
