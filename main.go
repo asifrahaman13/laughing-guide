@@ -48,15 +48,18 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	employeeRepo := repository.NewDatabaseRepository(db)
 	sess := session.Must(session.NewSession(&aws.Config{
 		Region: aws.String(cfg.AwsRegion),
 	}))
+
 	s3Client := s3.New(sess)
+	employeeRepo := repository.NewDatabaseRepository(db)
+	organizationRepo := repository.NewDatabaseRepository(db)
 	awsRepo := repository.NewAwsRepository(s3Client)
 	employeeService := service.NewEmployeeService(employeeRepo)
+	organizationService := service.NewOrganizationService(organizationRepo)
 	employeeHandler := handler.NewEmployeeHandler(employeeService)
+	organizationHandler := handler.NewOrganizationHandler(organizationService)
 
 	fileService := service.NewFileService(employeeRepo, awsRepo)
 	fileHandler := handler.NewFileHandler(fileService)
@@ -72,7 +75,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	routers.InitRoutes(employeeHandler, fileHandler, r)
+	routers.InitRoutes(employeeHandler, fileHandler, organizationHandler, r)
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,
 		Handler: r,

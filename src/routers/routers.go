@@ -13,8 +13,7 @@ func setUpEmployeeRoutes(employeeHandler *handler.EmployeeHandler, r *gin.Engine
 	for _, middleware := range middlewares {
 		employees.Use(middleware)
 	}
-	employees.GET("/calculate-payroll", employeeHandler.CalculatePayrollHandler)
-	employees.GET("/payroll", employeeHandler.FetchPayrollHandler)
+
 	employees.GET("/employees", employeeHandler.GetEmployeesHandler)
 	employees.GET("/aggregate", employeeHandler.GetEmployeeStatisticsHandler)
 	employees.GET("/filter-employees", employeeHandler.FilterEmployees)
@@ -33,23 +32,25 @@ func setUpFileRoutes(fileHandler *handler.FileHandler, r *gin.Engine, middleware
 	files.GET("/csv-file", fileHandler.GetSampleCSVHandler)
 }
 
-func setUpAuthRoutes(employeeHandler *handler.EmployeeHandler, r *gin.Engine) {
-	r.GET("/api/auth/google", employeeHandler.GoogleAuthHandler)
-	r.GET("/api/auth/login", employeeHandler.ValidateTokenHandler)
-	r.GET("/one-org", employeeHandler.GetSingleOrganizationHandler)
+func setUpAuthRoutes(organizationHandler *handler.OrganizationHandler, r *gin.Engine) {
+	r.GET("/api/auth/google", organizationHandler.GoogleAuthHandler)
+	r.GET("/api/auth/login", organizationHandler.ValidateTokenHandler)
+	r.GET("/one-org", organizationHandler.GetSingleOrganizationHandler)
 }
 
-func setUpOrganizationRoutes(employeeHandler *handler.EmployeeHandler, r *gin.Engine, middlewares ...gin.HandlerFunc) {
+func setUpOrganizationRoutes(organizationHandler *handler.OrganizationHandler, r *gin.Engine, middlewares ...gin.HandlerFunc) {
 	organizations := r.Group("/organizations")
 	for _, middleware := range middlewares {
 		organizations.Use(middleware)
 	}
-	organizations.GET("/organizations", employeeHandler.GetOrganizationsHandler)
-	organizations.POST("/add-organization", employeeHandler.AddOrganizationHandler)
-	organizations.POST("/delete-organization", employeeHandler.DeleteOrganizationHandler)
+	organizations.GET("/organizations", organizationHandler.GetOrganizationsHandler)
+	organizations.POST("/add-organization", organizationHandler.AddOrganizationHandler)
+	organizations.POST("/delete-organization", organizationHandler.DeleteOrganizationHandler)
+	organizations.GET("/calculate-payroll", organizationHandler.CalculatePayrollHandler)
+	organizations.GET("/payroll", organizationHandler.FetchPayrollHandler)
 }
 
-func InitRoutes(employeeHandler *handler.EmployeeHandler, fileHandler *handler.FileHandler, r *gin.Engine) {
+func InitRoutes(employeeHandler *handler.EmployeeHandler, fileHandler *handler.FileHandler, organizationHandler *handler.OrganizationHandler, r *gin.Engine) {
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "ok",
@@ -58,6 +59,6 @@ func InitRoutes(employeeHandler *handler.EmployeeHandler, fileHandler *handler.F
 
 	setUpEmployeeRoutes(employeeHandler, r, middleware.AuthMiddleware())
 	setUpFileRoutes(fileHandler, r, middleware.AuthMiddleware())
-	setUpAuthRoutes(employeeHandler, r)
-	setUpOrganizationRoutes(employeeHandler, r, middleware.AuthMiddleware())
+	setUpAuthRoutes(organizationHandler, r)
+	setUpOrganizationRoutes(organizationHandler, r, middleware.AuthMiddleware())
 }

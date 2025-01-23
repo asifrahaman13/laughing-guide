@@ -30,12 +30,6 @@ type AuthResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-type Organizations struct {
-	OrganizationID    string `json:"organizationId"`
-	OrganizationName  string `json:"organizationName"`
-	OrganizationEmail string `json:"organizationEmail"`
-}
-
 type PayrollData struct {
 	EmployeeID       string
 	EmployeeName     string

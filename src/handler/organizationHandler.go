@@ -14,15 +14,15 @@ import (
 	"google.golang.org/api/idtoken"
 )
 
-type EmployeeHandler struct {
-	service ports.EmployeeService
+type OrganizationHandler struct {
+	service ports.OrganizationService
 }
 
-func NewEmployeeHandler(service ports.EmployeeService) *EmployeeHandler {
-	return &EmployeeHandler{service}
+func NewOrganizationHandler(service ports.OrganizationService) *OrganizationHandler {
+	return &OrganizationHandler{service}
 }
 
-func (h *EmployeeHandler) CalculatePayrollHandler(c *gin.Context) {
+func (h *OrganizationHandler) CalculatePayrollHandler(c *gin.Context) {
 	organizationId := c.Query("organizationId")
 	organizationEmail, exists := c.Get("email")
 	if !exists {
@@ -38,7 +38,7 @@ func (h *EmployeeHandler) CalculatePayrollHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func (h *EmployeeHandler) FetchPayrollHandler(c *gin.Context) {
+func (h *OrganizationHandler) FetchPayrollHandler(c *gin.Context) {
 	organizationId := c.Query("organizationId")
 	organizationEmail, exists := c.Get("email")
 	if !exists {
@@ -53,56 +53,7 @@ func (h *EmployeeHandler) FetchPayrollHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func (h *EmployeeHandler) GetEmployeesHandler(c *gin.Context) {
-	organizationId := c.Query("organizationId")
-	organizationEmail, exists := c.Get("email")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return
-	}
-	result, err := h.service.AllEmployees(organizationId, organizationEmail.(string))
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, result)
-}
-
-func (h *EmployeeHandler) GetEmployeeStatisticsHandler(c *gin.Context) {
-	organizationId := c.Query("organizationId")
-	organizationEmail, exists := c.Get("email")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return
-	}
-	result, err := h.service.EmployeeStatistics(organizationId, organizationEmail.(string))
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, result)
-}
-
-func (h *EmployeeHandler) FilterEmployees(c *gin.Context) {
-	organizationId := c.Query("organizationId")
-	employeeName := c.Query("employee_name")
-	employeeStatus := c.Query("employee_status")
-	employeeRole := c.Query("employee_role")
-	organizationEmail, exists := c.Get("email")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return
-	}
-	fmt.Println(employeeName, employeeStatus, employeeRole)
-	result, err := h.service.FilterEmployees(employeeName, employeeStatus, employeeRole, organizationId, organizationEmail.(string))
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, result)
-}
-
-func (h *EmployeeHandler) FetchPayrollHandlerc(c *gin.Context) {
+func (h *OrganizationHandler) FetchPayrollHandlerc(c *gin.Context) {
 	organizationId := c.Query("organizationId")
 	organizationEmail, exists := c.Get("email")
 	if !exists {
@@ -118,50 +69,7 @@ func (h *EmployeeHandler) FetchPayrollHandlerc(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func (h *EmployeeHandler) UpdateEmployeeHandler(c *gin.Context) {
-	var request domain.Employee
-	err := c.BindJSON(&request)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	organizationEmail, exists := c.Get("email")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return
-	}
-	result, err := h.service.UpdateEmployees(request, request.OrganizationID, organizationEmail.(string))
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, result)
-}
-
-func (h *EmployeeHandler) DeleteEmployeeHandler(c *gin.Context) {
-	organizationId := c.Query("organizationId")
-	var request domain.EmployeeRequest
-	err := c.BindJSON(&request)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	organizationEmail, exists := c.Get("email")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return
-	}
-
-	result, err := h.service.DeleteEmployees(request.EmployeeIds, organizationId, organizationEmail.(string))
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, result)
-}
-
-func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
+func (h *OrganizationHandler) GoogleAuthHandler(c *gin.Context) {
 	token := c.Query("token")
 	payload, err := idtoken.Validate(c.Request.Context(), token, config.LoadGoogleConfig().ClientID)
 	if err != nil {
@@ -206,50 +114,7 @@ func (h *EmployeeHandler) GoogleAuthHandler(c *gin.Context) {
 	})
 }
 
-func (h *EmployeeHandler) ValidateTokenHandler(c *gin.Context) {
-	token := c.Query("token")
-	fmt.Println(token)
-	claims, err := helper.ValidateJWT(token)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-		return
-	}
-	email, ok := claims["email"].(string)
-	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
-		return
-	}
-	userName, ok := claims["name"].(string)
-	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"email": email, "name": userName})
-}
-
-func (h *EmployeeHandler) GetSingleOrganizationHandler(c *gin.Context) {
-	token := c.Query("token")
-	claims, err := helper.ValidateJWT(token)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-		return
-	}
-
-	organizationEmail, ok := claims["email"].(string)
-	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
-		return
-	}
-
-	result, err := h.service.GetSingleOrganization(organizationEmail)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, result)
-}
-
-func (h *EmployeeHandler) GetOrganizationsHandler(c *gin.Context) {
+func (h *OrganizationHandler) GetOrganizationsHandler(c *gin.Context) {
 
 	token := c.Query("token")
 
@@ -274,7 +139,7 @@ func (h *EmployeeHandler) GetOrganizationsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func (h *EmployeeHandler) AddOrganizationHandler(c *gin.Context) {
+func (h *OrganizationHandler) AddOrganizationHandler(c *gin.Context) {
 	var request domain.OrganizationRequest
 	authorizationToken := c.GetHeader("Authorization")
 	if authorizationToken == "" {
@@ -308,7 +173,7 @@ func (h *EmployeeHandler) AddOrganizationHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func (h *EmployeeHandler) DeleteOrganizationHandler(c *gin.Context) {
+func (h *OrganizationHandler) DeleteOrganizationHandler(c *gin.Context) {
 	var request domain.OrganizationRequest
 	authorizationToken := c.GetHeader("Authorization")
 	if authorizationToken == "" {
@@ -337,6 +202,49 @@ func (h *EmployeeHandler) DeleteOrganizationHandler(c *gin.Context) {
 	}
 
 	result, err := h.service.DeleteOrganization(request.OrganizationID, organizationEmail)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
+func (h *OrganizationHandler) ValidateTokenHandler(c *gin.Context) {
+	token := c.Query("token")
+	fmt.Println(token)
+	claims, err := helper.ValidateJWT(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+	email, ok := claims["email"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+	userName, ok := claims["name"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"email": email, "name": userName})
+}
+
+func (h *OrganizationHandler) GetSingleOrganizationHandler(c *gin.Context) {
+	token := c.Query("token")
+	claims, err := helper.ValidateJWT(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	organizationEmail, ok := claims["email"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+
+	result, err := h.service.GetSingleOrganization(organizationEmail)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
