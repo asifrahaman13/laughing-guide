@@ -48,6 +48,7 @@ func setUpOrganizationRoutes(organizationHandler *handler.OrganizationHandler, r
 	organizations.POST("/delete-organization", organizationHandler.DeleteOrganizationHandler)
 	organizations.GET("/calculate-payroll", organizationHandler.CalculatePayrollHandler)
 	organizations.GET("/payroll", organizationHandler.FetchPayrollHandler)
+	organizations.GET("/notify-payroll", organizationHandler.NotifyPayrollHandler)
 }
 
 func InitRoutes(employeeHandler *handler.EmployeeHandler, fileHandler *handler.FileHandler, organizationHandler *handler.OrganizationHandler, r *gin.Engine) {

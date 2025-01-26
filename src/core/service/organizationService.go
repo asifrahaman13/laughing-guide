@@ -11,10 +11,11 @@ import (
 
 type organizationService struct {
 	organizationRepository repository.DatabaseRepository
+	kafkaRepository        repository.KafkaRepository
 }
 
-func NewOrganizationService(organizationRepository repository.DatabaseRepository) ports.OrganizationService {
-	return &organizationService{organizationRepository}
+func NewOrganizationService(organizationRepository repository.DatabaseRepository, kafkaRepository repository.KafkaRepository) ports.OrganizationService {
+	return &organizationService{organizationRepository, kafkaRepository}
 }
 
 func (s *organizationService) ValidateOrganization(organizationId string, organizationEmail string) error {
@@ -107,6 +108,67 @@ func (s *organizationService) AllPayroll(organizationId string, organizationEmai
 	}
 
 	return payrollResults, nil
+}
+
+func (s *organizationService) NotifyPayroll(organizationId string, organizationEmail string) error {
+	if err := s.ValidateOrganization(organizationId, organizationEmail); err != nil {
+		return err
+	}
+
+	rows, err := s.organizationRepository.Execute(`
+		SELECT
+			e.employee_email,
+			p.gross_salary,
+			p.net_salary,
+			p.employee_contribution,
+			p.employer_contribution,
+			p.total_contribution,
+			p.bonuses,
+			e.employee_name
+		FROM payroll_data p
+		JOIN employees e ON p.employee_id = e.employee_id
+		AND e.organization_id = $1
+	`, organizationId)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	var payrollResults []domain.EmployeePayrolls
+	truncateToTwoDecimals := helper.TruncateToTwoDecimals
+
+	for rows.Next() {
+		var payroll domain.EmployeePayrolls
+
+		err := rows.Scan(&payroll.EmployeeEmail, &payroll.GrossSalary, &payroll.NetSalary, &payroll.EmployeeContribution, &payroll.EmployerContribution, &payroll.TotalContribution, &payroll.Bonuses, &payroll.EmployeeName)
+		if err != nil {
+			return err
+		}
+		payroll.GrossSalary = truncateToTwoDecimals(payroll.GrossSalary)
+		payroll.NetSalary = truncateToTwoDecimals(payroll.NetSalary)
+		payroll.EmployeeContribution = truncateToTwoDecimals(payroll.EmployeeContribution)
+		payroll.EmployerContribution = truncateToTwoDecimals(payroll.EmployerContribution)
+		payroll.TotalContribution = truncateToTwoDecimals(payroll.TotalContribution)
+		payroll.Bonuses = truncateToTwoDecimals(payroll.Bonuses)
+
+		payrollResults = append(payrollResults, payroll)
+	}
+	if err = rows.Err(); err != nil {
+		return err
+	}
+
+	fmt.Println(payrollResults)
+
+	for _, payroll := range payrollResults {
+		fmt.Println("Sending email to: ", payroll.EmployeeEmail)
+		fmt.Println("Email content: ", payroll)
+		s.kafkaRepository.ProduceMessage(
+			"payroll",
+			fmt.Sprintf("Hello %s, your net salary is %f", payroll.EmployeeName, payroll.NetSalary),
+		)
+	}
+
+	return nil
 }
 
 func (s *organizationService) CalculatePayroll(organizationId string, organizationEmail string) ([]domain.PayrollData, error) {

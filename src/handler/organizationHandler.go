@@ -69,6 +69,22 @@ func (h *OrganizationHandler) FetchPayrollHandlerc(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+func (h *OrganizationHandler) NotifyPayrollHandler(c *gin.Context) {
+	organizationId := c.Query("organizationId")
+	organizationEmail, exists := c.Get("email")
+
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	err := h.service.NotifyPayroll(organizationId, organizationEmail.(string))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, "Payroll has been notified")
+}
+
 func (h *OrganizationHandler) GoogleAuthHandler(c *gin.Context) {
 	token := c.Query("token")
 	payload, err := idtoken.Validate(c.Request.Context(), token, config.LoadGoogleConfig().ClientID)

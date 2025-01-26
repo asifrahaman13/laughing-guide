@@ -6,6 +6,7 @@ type OrganizationService interface {
 	ValidateOrganization(organizationId string, organizationEmail string) error
 	CalculatePayroll(organizationId string, organizationEmail string) ([]domain.PayrollData, error)
 	AllPayroll(organizationId string, organizatiionEmail string) ([]domain.EmployeePayrolls, error)
+	NotifyPayroll(organizationId string, organizationEmail string) error
 	GetOrganizations(organizationEmail string) ([]domain.Organizations, error)
 	CreateOrganization(organizationEmail string, organizationName string) (domain.Organizations, error)
 	DeleteOrganization(organizationId string, organizationEmail string) (domain.Organizations, error)

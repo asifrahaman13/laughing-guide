@@ -20,6 +20,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -36,7 +37,6 @@ func main() {
 	if cfg.GinMode == "" {
 		cfg.GinMode = "debug"
 	}
-
 	if cfg.GinMode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	} else {
@@ -48,24 +48,31 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	sess := session.Must(session.NewSession(&aws.Config{
 		Region: aws.String(cfg.AwsRegion),
 	}))
-
 	s3Client := s3.New(sess)
+
+	kafkaClient, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "kafka:9092"})
+	if err != nil {
+		log.Fatalf("Error creating Kafka client: %v", err)
+	}
+	kafkaRepo := repository.NewKafkaRepository(kafkaClient)
+
 	employeeRepo := repository.NewDatabaseRepository(db)
 	organizationRepo := repository.NewDatabaseRepository(db)
 	awsRepo := repository.NewAwsRepository(s3Client)
+
 	employeeService := service.NewEmployeeService(employeeRepo)
-	organizationService := service.NewOrganizationService(organizationRepo)
+	organizationService := service.NewOrganizationService(organizationRepo, kafkaRepo)
+	fileService := service.NewFileService(employeeRepo, awsRepo)
+
 	employeeHandler := handler.NewEmployeeHandler(employeeService)
 	organizationHandler := handler.NewOrganizationHandler(organizationService)
-
-	fileService := service.NewFileService(employeeRepo, awsRepo)
 	fileHandler := handler.NewFileHandler(fileService)
 
 	r := gin.Default()
-
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -76,6 +83,11 @@ func main() {
 	}))
 
 	routers.InitRoutes(employeeHandler, fileHandler, organizationHandler, r)
+
+	go func() {
+		kafkaRepo.ConsumeMessage("payroll")
+	}()
+
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,
 		Handler: r,
@@ -92,10 +104,12 @@ func main() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	<-c
 	log.Println("Shutting down server...")
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatalf("Server forced to shutdown: %v", err)
 	}
-	log.Println("Server exiting")
+
+	log.Println("Server exited successfully")
 }
