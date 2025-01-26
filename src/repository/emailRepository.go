@@ -2,9 +2,9 @@ package repository
 
 import (
 	"fmt"
+	"github.com/jordan-wright/email"
 	"net/smtp"
 	"os"
-	"github.com/jordan-wright/email"
 )
 
 type EmailRepository interface {
@@ -19,7 +19,7 @@ func NewEmailRepository(emailClient *email.Email) EmailRepository {
 	return &emailRepository{emailClient}
 }
 
-func (e *emailRepository) SendEmail(to  []string, subject string, body string) error {
+func (e *emailRepository) SendEmail(to []string, subject string, body string) error {
 	from := os.Getenv(("GOOGLE_EMAIL"))
 	password := os.Getenv("GOOGLE_APP_PASSWORD")
 
@@ -30,7 +30,7 @@ func (e *emailRepository) SendEmail(to  []string, subject string, body string) e
 	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message)
 	if err != nil {
 		fmt.Println(err)
-		
+
 	}
 	fmt.Println("Email Sent Successfully!")
 	return nil
